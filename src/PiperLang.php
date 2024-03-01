@@ -40,7 +40,7 @@
         public ?string $variable_pattern = '/{{(.*?)}}/';
 
         /**
-         * @var array[]
+         * @var array
          */
         public array $plural_rules = [];
 
@@ -195,13 +195,19 @@
                 $plural_suffix = '_1';
             }
 
-            $final_key = $key . $plural_suffix;
+            $final_key = $key . (is_array($plural_suffix) ? '' : $plural_suffix);
 
             $missing_translation_message = 'Translation not found.';
 
             $translation = $lang[$final_key] ?? $default_lang[$final_key] ?? $missing_translation_message;
 
-            return $this -> replaceVariables($translation, array_merge($variables, ['count' => $count]));
+            foreach ($variables as $variable_key => $value) {
+                if (is_int($value)) {
+                    $variables[$variable_key] = (string) $value;
+                }
+            }
+
+            return $this -> replaceVariables($translation, $variables);
         }
 
         /**
@@ -308,13 +314,24 @@
          * @param float $number - THE NUMBER TO FORMAT.
          *
          * @return string - THE FORMATTED NUMBER ACCORDING TO THE CURRENT LANGUAGE.
+         *
+         * @throws InvalidArgumentException - THROWN IF THE INPUT IS NOT A VALID NUMBER FOR FORMATTING.
+         * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
         public function numberFormat(float $number): string {
             if (!is_numeric($number)) {
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
-            return (new NumberFormatter($this -> current_language, NumberFormatter::DEFAULT_STYLE)) -> format($number);
+            $formatter = new NumberFormatter($this -> current_language, NumberFormatter::DEFAULT_STYLE);
+
+            $formatted_number = $formatter -> format($number);
+
+            if ($formatted_number === false) {
+                throw new RuntimeException('Number formatting failed.');
+            }
+
+            return $formatted_number;
         }
 
         /**
@@ -324,6 +341,8 @@
          * @param string $currency - THE ISO 4217 CURRENCY CODE, SUCH AS 'usd' OR 'eur'.
          *
          * @return string - THE FORMATTED CURRENCY AMOUNT ACCORDING TO THE CURRENT LANGUAGE.
+         *
+         * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
         public function currencyFormat(float $amount, string $currency): string {
             if (!is_numeric($amount)) {
@@ -334,7 +353,15 @@
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
 
-            return (new NumberFormatter($this -> current_language, NumberFormatter::CURRENCY)) -> formatCurrency($amount, $currency);
+            $formatter = new NumberFormatter($this -> current_language, NumberFormatter::CURRENCY);
+
+            $formatted_currency = $formatter -> formatCurrency($amount, $currency);
+
+            if ($formatted_currency === false) {
+                throw new RuntimeException('Currency formatting failed.');
+            }
+
+            return $formatted_currency;
         }
 
         /**
@@ -344,6 +371,8 @@
          * @param string $format - OPTIONAL. THE DATE FORMAT. CAN BE 'short', 'medium', 'long', OR 'full'. DEFAULTS TO 'long'.
          *
          * @return string - FORMATTED DATE ACCORDING TO THE CURRENT LANGUAGE.
+         *
+         * @throws RuntimeException - THROWN IF DATE FORMATTING FAILS.
          */
         public function dateFormat(DateTime $date, string $format = 'long'): string {
             if (!in_array($format, ['short', 'medium', 'long', 'full'])) {
@@ -352,13 +381,19 @@
 
             $formatter = new IntlDateFormatter($this -> current_language, IntlDateFormatter::{$format}, IntlDateFormatter::NONE);
 
-            return $formatter -> format($date);
+            $formatted_date = $formatter -> format($date);
+
+            if ($formatted_date === false) {
+                throw new RuntimeException('Date formatting failed.');
+            }
+
+            return $formatted_date;
         }
 
         /**
          * RETURNS THE FORMATTING RULES SPECIFIC TO THE CURRENT LANGUAGE LOCALE.
          *
-         * @return array - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
+         * @return array<string, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
          */
         public function getFormattingRules(): array {
             if (empty($this -> current_language)) {
