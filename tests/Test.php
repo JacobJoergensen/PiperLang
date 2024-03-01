@@ -3,8 +3,8 @@
 
     use PHPUnit\Framework\TestCase;
     
-    final class ExceptionTest extends TestCase {
-        //public function testException(): void {
-            //$this -> expectException(InvalidArgumentException::class);
-        //}
+    final class Test extends TestCase {
+        public function greet(string $name): string {
+            return 'Hello, ' . $name . '!';
+        }
     }
