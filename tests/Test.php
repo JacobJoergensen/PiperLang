@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
-    namespace Tests;
+<?php
+	namespace Tests;
 
-    use PHPUnit\Framework\TestCase;
-    
-    final class Test extends TestCase {
-        public function greet(string $name): string {
-            return 'Hello, ' . $name . '!';
-        }
-    }
+	use PHPUnit\Framework\TestCase;
+
+	class Test extends TestCase {
+		public function testAddition(): void {
+			$this -> assertTrue(true);
+		}
+	}
