@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
-	namespace Tests;
-
+    namespace Tests;
+    
     use PHPUnit\Framework\TestCase;
-
-	final class Test extends TestCase {
-
-	}
+    
+    final class Test extends TestCase {
+    
+    }
