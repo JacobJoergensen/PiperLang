@@ -40,7 +40,7 @@
         public ?string $variable_pattern = '/{{(.*?)}}/';
 
         /**
-         * @var array
+         * @var array<string, string>
          */
         public array $plural_rules = [];
 
@@ -184,7 +184,7 @@
          * @throws JsonException - THROWN IF THERE'S ANY PROBLEM IN LOADING AND PARSING THE LANGUAGE FILE.
          */
         public function translateWithPlural(string $key, int $count, array $variables = []): string {
-            $lang = $this -> loadLanguage($this -> current_language);
+            $lang = $this -> loadLanguage($this -> current_language ?? $this -> default_language);
             $default_lang = $this -> loadLanguage($this -> default_language);
 
             $plural_suffix = '_other';
@@ -201,11 +201,11 @@
 
             $translation = $lang[$final_key] ?? $default_lang[$final_key] ?? $missing_translation_message;
 
-            foreach ($variables as $variable_key => $value) {
-                if (is_int($value)) {
-                    $variables[$variable_key] = (string) $value;
-                }
-            }
+            array_walk($variables, function (&$value) {
+                $value = (string) $value;
+            });
+
+            $variables['count'] = (string) $count;
 
             return $this -> replaceVariables($translation, $variables);
         }
