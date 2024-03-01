@@ -203,9 +203,9 @@
 
             $variables['count'] = (string) $count;
 
-            array_walk($variables, function (&$value) {
-                $value = (string) $value;
-            });
+            $variables = array_map(function ($value) {
+                return (string) $value;
+            }, $variables);
 
             return $this -> replaceVariables($translation, $variables);
         }
