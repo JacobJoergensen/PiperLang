@@ -195,17 +195,17 @@
                 $plural_suffix = '_1';
             }
 
-            $final_key = $key . (is_array($plural_suffix) ? '' : $plural_suffix);
+            $final_key = $key . $plural_suffix;
 
             $missing_translation_message = 'Translation not found.';
 
             $translation = $lang[$final_key] ?? $default_lang[$final_key] ?? $missing_translation_message;
 
+            $variables['count'] = (string) $count;
+
             array_walk($variables, function (&$value) {
                 $value = (string) $value;
             });
-
-            $variables['count'] = (string) $count;
 
             return $this -> replaceVariables($translation, $variables);
         }
@@ -323,6 +323,10 @@
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
+            if ($this -> current_language === null) {
+                throw new InvalidArgumentException('Current language not set.');
+            }
+
             $formatter = new NumberFormatter($this -> current_language, NumberFormatter::DEFAULT_STYLE);
 
             $formatted_number = $formatter -> format($number);
@@ -351,6 +355,10 @@
 
             if (!preg_match("/^[A-Z]{3}$/", $currency)) {
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
+            }
+
+            if ($this -> current_language === null) {
+                throw new InvalidArgumentException('Current language not set.');
             }
 
             $formatter = new NumberFormatter($this -> current_language, NumberFormatter::CURRENCY);
