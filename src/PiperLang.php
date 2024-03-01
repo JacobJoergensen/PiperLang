@@ -10,9 +10,9 @@
 
     class PiperLang {
         /**
-         * @var string|mixed|null
+         * @var string|null
          */
-        public string $current_language;
+        public ?string $current_language;
 
         /**
          * @var string
@@ -40,7 +40,7 @@
         public ?string $variable_pattern = '/{{(.*?)}}/';
 
         /**
-         * @var array
+         * @var array[]
          */
         public array $plural_rules = [];
 
@@ -60,7 +60,7 @@
         public string $cookie_key = 'site_language';
 
         /**
-         * @var string|mixed
+         * @var string
          */
         private string $http_accept_language;
 
@@ -163,6 +163,10 @@
          * @return string - THE PROCESSED STRING.
          */
         public function replaceVariables(string $string, array $variables): string {
+            if ($this -> variable_pattern === null) {
+                return $string;
+            }
+
             return preg_replace_callback($this -> variable_pattern, static function ($matches) use ($variables) {
                 return $variables[$matches[1]] ?? $matches[0];
             }, $string) ?: '';
@@ -173,7 +177,7 @@
          *
          * @param string $key - THE KEY IN THE LANGUAGE FILE.
          * @param int $count - THE COUNT TO DETERMINE IF PLURAL FORM SHOULD BE USED.
-         * @param array<string, string> $variables - VARIABLES TO REPLACE IN THE TRANSLATION STRING.
+         * @param array<string, string|int> $variables - VARIABLES TO REPLACE IN THE TRANSLATION STRING.
          *
          * @return string - THE TRANSLATED TEXT WITH REQUIRED PLURALIZATION.
          *
@@ -266,6 +270,10 @@
                 $lang = json_decode($lang_file, true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException $exception) {
                 throw new JsonException("Invalid JSON in language file: $language_file", 0, $exception);
+            }
+
+            if (!is_array($lang) || !array_key_exists('variables', $lang)) {
+                throw new RuntimeException("Missing 'variables' data in language file: $language_file");
             }
 
             $variables = $lang['variables'] ?? [];
