@@ -71,8 +71,6 @@ It's advisable to set the language before calling `numberFormat()` or `currencyF
 
 This fetches currency, number formatting data, as well as other locale-specific information. 
 
-With these examples and key points in mind, using the PiperLang framework should be straightforward. For deeper insights or trouble related to any point, feel free to raise a query.
-
 <br>
 
 ## Issues and Pull Requests
