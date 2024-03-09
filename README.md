@@ -29,7 +29,7 @@ You can change various settings in the `PiperLang` framework. Here's an example 
 
 | Setting | Method  | Description | Default |
 | --- | --- | --- | --- |
-| Default Language | `$piperlang->default_language = 'es'` | Set the default language to Spanish. | 'en' |
+| Default Language | `$piperlang->default_language = 'es'` | Set the default language. | 'en' |
 | Supported Languages | `$piperlang->supported_languages = ['en', 'es', 'fr']` | Add languages that the application should support. | ['en'] |
 | Locale Path | `$piperlang->locale_path = '/path_to_your_locales/'` | Specify the path to your localization files. | '/locales/' |
 | Locale File Extension | `$piperlang->locale_file_extension = 'txt'` | Specify the extension of your localization files. | 'json' |
