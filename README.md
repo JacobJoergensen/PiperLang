@@ -79,8 +79,8 @@ With these examples and key points in mind, using the PiperLang framework should
 
 For bug reports and feature requests, please use the Issues tab.
 
-* **Report bug**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
-* **Request feature**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
+* **Report bug**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
+* **Request feature**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
 
 Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
 
