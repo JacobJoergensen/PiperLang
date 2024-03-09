@@ -82,6 +82,8 @@ For bug reports and feature requests, please use the Issues tab.
 * **Report bug**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
 * **Request feature**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
 
+* **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
+
 Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
 
 <br>
