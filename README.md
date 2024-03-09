@@ -20,8 +20,8 @@ Key methods of `PiperLang` class include:
 * `currencyFormat(float $amount, string $currency)` - Formats a currency amount according to the current language setting.
 * `dateFormat(DateTime $date, string $format = 'long')` - Formats a date according to the current language setting.
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
-
 <br>
+
 ## Initializing
 ```$piperlang = new \PiperLang\PiperLang();```
 
