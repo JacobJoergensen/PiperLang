@@ -10,11 +10,11 @@ Please provide a clear and concise description. Replace this paragraph with your
 ## Type of Pull Request
 Please identify the type of pull request. Place an 'x' in the correct box (e.g., [ x ]).
 
-[ ] Feature Implementation
-[ ] Bug Fix
-[ ] Refactoring
-[ ] Documentation
-[ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Feature Implementation
+- [ ] Bug Fix
+- [ ] Refactoring
+- [ ] Documentation
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
 ## Checklist
 
