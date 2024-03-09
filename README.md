@@ -16,8 +16,23 @@ Key methods of `PiperLang` class include:
 ### Initializing
 ```$languageFramework = new \PiperLang\PiperLang();```
 
+## Configuration
+You can change various settings in the `PiperLang` framework. Here's an example of how you can modify settings after the initializing:
+
+| Setting | Method  | Description |
+| --- | --- | --- |
+| Default Language | `$piperlang->default_language = 'es'` | Set the default language to Spanish. |
+| Supported Languages | `$piperlang->supported_languages = ['en', 'es', 'fr']` | Add languages that the application should support. |
+| Locale Path | `$piperlang->locale_path = '/path_to_your_locales/'` | Specify the path to your localization files. |
+| Locale File Extension | `$piperlang->locale_file_extension = 'txt'` | Specify the extension of your localization files. |
+| Variable Pattern | `$piperlang->variable_pattern = '/<<(.*?)>>/'` | Alter the variable pattern to something other than the default. |
+| Plural Rules | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']` | Define the plural rules for your supported languages. |
+| Session Key | `$piperlang->session_key = 'user_lang'` | Change the session key for storing user language preference. |
+| Cookie Key | `$piperlang->cookie_key = 'user_lang'` | Alter the cookie key for storing user language preference. |
+| Session Management | `$piperlang->session_enabled = false` | Enable or disable session management. |
+
 ### Setting a Language Preference
-```php $languageFramework->setLanguage("fr");```
+```$languageFramework->setLanguage("fr");```
 
 It's important to note that the language chosen should be one amongst the supported languages. The default supported language is English ("en").
 
