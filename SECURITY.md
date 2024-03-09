@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Piperlang is committed to providing security updates for the following versions:
+PiperLang is committed to providing security updates for the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -12,7 +12,7 @@ Please ensure you are using a supported version to receive security updates.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Piperlang, please help us by reporting it. We take all reports seriously and prioritize addressing verified vulnerabilities promptly.
+If you discover a security vulnerability in PiperLang, please help us by reporting it. We take all reports seriously and prioritize addressing verified vulnerabilities promptly.
 
 To report a vulnerability, follow these steps:
 
