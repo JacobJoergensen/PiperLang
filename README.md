@@ -13,7 +13,7 @@ Key methods of `PiperLang` class include:
 * `dateFormat(DateTime $date, string $format = 'long')` - Formats a date according to the current language setting.
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
 
-### Initializing
+## Initializing
 ```$languageFramework = new \PiperLang\PiperLang();```
 
 ## Configuration
