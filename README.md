@@ -14,7 +14,7 @@ Key methods of `PiperLang` class include:
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
 
 ## Initializing
-```$languageFramework = new \PiperLang\PiperLang();```
+```$piperlang = new \PiperLang\PiperLang();```
 
 ## Configuration
 You can change various settings in the `PiperLang` framework. Here's an example of how you can modify settings after the initializing:
@@ -32,12 +32,12 @@ You can change various settings in the `PiperLang` framework. Here's an example 
 | Session Management | `$piperlang->session_enabled = false` | Enable or disable session management. |
 
 ### Setting a Language Preference
-```$languageFramework->setLanguage("fr");```
+```$piperlang->setLanguage("fr");```
 
 It's important to note that the language chosen should be one amongst the supported languages. The default supported language is English ("en").
 
 ### Translating Text with Replacement and Plural Forms
-```$translation = $languageFramework->translateWithPlural("item_count", 5, ["items"=>"books"]);```
+```$translation = $piperlang->translateWithPlural("item_count", 5, ["items"=>"books"]);```
 
 In the provided language files (example `en.json`):
 
@@ -46,20 +46,20 @@ In the provided language files (example `en.json`):
 The corresponding translation considering the plural forms will be used, here `count` in `item_count_other` will be replaced with the provided count.
 
 ### Formatting Date
-```$date = new DateTime("2010-07-05T06:30:00"); $formattedDate = $languageFramework->dateFormat($date, 'long');```
+```$date = new DateTime("2010-07-05T06:30:00"); $formattedDate = $piperlang->dateFormat($date, 'long');```
 
 Remember to set the language before making a call to `dateFormat()`. The provided code will format the date into a 'long' style for the set language.
 
 ### Number Formatting 
-```$formattedNumber = $languageFramework->numberFormat(1234567.89);```
+```$formattedNumber = $piperlang->numberFormat(1234567.89);```
 
 ### Currency Formatting
-```$formattedCurrency = $languageFramework->currencyFormat(1234567.89, "USD");```
+```$formattedCurrency = $piperlang->currencyFormat(1234567.89, "USD");```
 
 It's advisable to set the language before calling `numberFormat()` or `currencyFormat()` for the desired locale-dependent format.
 
 ### Getting Formatting Rules
-```$formattingRules = $languageFramework->getFormattingRules();```
+```$formattingRules = $piperlang->getFormattingRules();```
 
 This fetches currency, number formatting data, as well as other locale-specific information. 
 
