@@ -1,4 +1,4 @@
-# PiperLang (beta - work in progress)
+# PiperLang (BETA STAGE - WORK IN PROGRESS)
 PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based language detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set language.
 
 <br>
