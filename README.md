@@ -22,7 +22,6 @@ Key methods of `PiperLang` class include:
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
 
 <br>
-
 ## Initializing
 ```$piperlang = new \PiperLang\PiperLang();```
 
