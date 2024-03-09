@@ -14,10 +14,10 @@ Key methods of `PiperLang` class include:
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
 
 ### Initializing
-```php $languageFramework = new \PiperLang\PiperLang();```
+```$languageFramework = new \PiperLang\PiperLang();```
 
 ### Setting a Language Preference
-php $languageFramework->setLanguage("fr");
+```php $languageFramework->setLanguage("fr");```
 
 It's important to note that the language chosen should be one amongst the supported languages. The default supported language is English ("en").
 
