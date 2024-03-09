@@ -1,2 +1,51 @@
 # PiperLang
-A PHP language framework for websites
+PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based language detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set language.
+
+## Key Classes and Methods
+Key methods of `PiperLang` class include:
+
+* `detectBrowserLanguage()` - Detects user's browser language.
+* `detectUserLanguage()` - Detects the user's preferred language based on their session or cookie.
+* `setLanguage(string $preferred_language = null)` - Sets the language based on the preference, otherwise fallback to default language.
+* `translateWithPlural(string $key, int $count, array $variables = [])` : Translates the provided key considering the count for plural forms. Replaces variables in the translation string.
+* `numberFormat(float $number)` - Formats a number according to the current language setting.
+* `currencyFormat(float $amount, string $currency)` - Formats a currency amount according to the current language setting.
+* `dateFormat(DateTime $date, string $format = 'long')` - Formats a date according to the current language setting.
+* `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
+
+### Initializing
+```php $languageFramework = new \PiperLang\PiperLang();```
+
+### Setting a Language Preference
+php $languageFramework->setLanguage("fr");
+
+It's important to note that the language chosen should be one amongst the supported languages. The default supported language is English ("en").
+
+### Translating Text with Replacement and Plural Forms
+```$translation = $languageFramework->translateWithPlural("item_count", 5, ["items"=>"books"]);```
+
+In the provided language files (example `en.json`):
+
+    {"item_count_1": "{{count}} item", "item_count_other": "{{count}} items"}
+
+The corresponding translation considering the plural forms will be used, here `count` in `item_count_other` will be replaced with the provided count.
+
+### Formatting Date
+```$date = new DateTime("2010-07-05T06:30:00"); $formattedDate = $languageFramework->dateFormat($date, 'long');```
+
+Remember to set the language before making a call to `dateFormat()`. The provided code will format the date into a 'long' style for the set language.
+
+### Number Formatting 
+```$formattedNumber = $languageFramework->numberFormat(1234567.89);```
+
+### Currency Formatting
+```$formattedCurrency = $languageFramework->currencyFormat(1234567.89, "USD");```
+
+It's advisable to set the language before calling `numberFormat()` or `currencyFormat()` for the desired locale-dependent format.
+
+### Getting Formatting Rules
+```$formattingRules = $languageFramework->getFormattingRules();```
+
+This fetches currency, number formatting data, as well as other locale-specific information. 
+
+With these examples and key points in mind, using the PiperLang framework should be straightforward. For deeper insights or trouble related to any point, feel free to raise a query.
