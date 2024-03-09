@@ -75,12 +75,14 @@ With these examples and key points in mind, using the PiperLang framework should
 
 <br>
 
-## Bugs and Feature Requests
+## Issues and Pull Requests
 
 For bug reports and feature requests, please use the Issues tab.
 
 * **Report bug**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
 * **Request feature**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
+
+For direct code contributions, please open a Pull Request.
 
 * **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
 
