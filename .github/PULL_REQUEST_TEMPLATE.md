@@ -1,7 +1,6 @@
 # PiperLang Pull Request Template
-Thank you for contributing to PiperLang. Before you submit your pull request, please make sure to fulfil the following requirements.
 
-<br>
+Thank you for contributing to PiperLang. Before you submit your pull request, please make sure to fulfil the following requirements.
 
 ### Pull Request Description
 Please provide a clear description. Replace this paragraph with your description and include:
