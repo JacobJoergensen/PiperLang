@@ -24,5 +24,5 @@ Please identify the type of pull request.
 - [ ] I have added relevant tests to cover my changes.
 - [ ] I have updated the documentation (if necessary).
 
-### Related Issue (if applicable)
+## Related Issue (if applicable)
 Reference any related issues here. If this pull request closes or relates to an issue, add the issue number here.
