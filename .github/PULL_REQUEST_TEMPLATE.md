@@ -2,7 +2,7 @@
 
 Thank you for contributing to PiperLang. Before you submit your pull request, please make sure to fulfil the following requirements.
 
-### Pull Request Description
+## Pull Request Description
 Please provide a clear description. Replace this paragraph with your description and include:
 
 1. Why this pull request is necessary, and how it benefits the project.
