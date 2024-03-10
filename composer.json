@@ -1,8 +1,8 @@
 {
-	"name": "piperlang/piperlang",
+	"name": "JacobJoergensen/PiperLang",
 	"type": "library",
 	"description": "PiperLang is a PHP language framework.",
-	"keywords": ["framework", "language", "dev"],
+	"keywords": ["php", "framework", "language", "lang", "web"],
 	"homepage": "https://github.com/JacobJoergensen/PiperLang",
 	"license": "MIT",
 	"authors": [
