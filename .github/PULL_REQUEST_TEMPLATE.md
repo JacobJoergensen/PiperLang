@@ -13,7 +13,7 @@ Please identify the type of pull request.
 
 - [ ] Feature Implementation
 - [ ] Bug Fix
-- [ ] Refactoring
+- [ ] Refactoring or Improvement
 - [ ] Documentation
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
