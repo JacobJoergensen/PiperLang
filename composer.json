@@ -1,5 +1,5 @@
 {
-	"name": "JacobJoergensen/PiperLang",
+	"name": "jacobjoergensen/piperlang",
 	"type": "library",
 	"description": "PiperLang is a PHP language framework.",
 	"keywords": ["php", "framework", "language", "lang", "web"],
