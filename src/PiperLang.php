@@ -140,7 +140,7 @@
         }
 
         /**
-         * THIS METHOD CHANGES THE LANGUAGE ON THE FLY
+         * SWITCH THE LANGUAGE.
          *
          * @param string $new_language - THE NEW LANGUAGE TO BE SET.
          *
