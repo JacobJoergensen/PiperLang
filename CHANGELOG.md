@@ -1,7 +1,5 @@
 # PiperLang Changelog
 
-<br>
-
 ## WIP - Next Version
 * Nothing to see yet
 
