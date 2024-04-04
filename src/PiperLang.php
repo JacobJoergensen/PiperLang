@@ -129,12 +129,25 @@
 
             if ($preferred_language && in_array($preferred_language, $this -> supported_languages, true)) {
                 $this -> current_language = $preferred_language;
+
                 if ($this -> session_enabled) {
                     $_SESSION[$this -> session_key] = $preferred_language;
+                    setcookie($this -> cookie_key, $preferred_language, time() + (86400 * 30), "/");
                 }
             } else {
                 $this -> current_language = $this -> default_language;
             }
+        }
+
+        /**
+         * THIS METHOD CHANGES THE LANGUAGE ON THE FLY
+         *
+         * @param string $new_language - THE NEW LANGUAGE TO BE SET.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function switchLanguage(string $new_language): void {
+            $this -> setLanguage($new_language);
         }
 
         /**
@@ -221,15 +234,21 @@
          */
         public function loadLanguage(string $language): ?array {
             try {
-                $default_lang_file_path = $this -> locale_path . $this -> default_language . $this -> locale_file_extension;
+                $locale_file = $this -> locale_path . $this -> default_language . $this -> locale_file_extension;
 
-                if (!file_exists($default_lang_file_path)) {
-                    throw new RuntimeException("Default language file does not exist: $default_lang_file_path");
+                if (!file_exists($locale_file)) {
+                    throw new RuntimeException("Default language file does not exist: $locale_file");
+                }
+
+                $locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
+
+                if (strtolower($locale_file_extension) !== 'json') {
+                    throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
                 }
 
                 $default_lang = $this -> loadFile($this -> default_language);
             } catch (RuntimeException $exception) {
-                throw new RuntimeException("Error loading default language file '$default_lang_file_path': {$exception -> getMessage()}");
+                throw new RuntimeException("Error loading default language file '$locale_file': {$exception -> getMessage()}");
             }
 
             if ($language === $this -> default_language) {
@@ -256,30 +275,36 @@
          * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
          */
         protected function loadFile(string $language): array {
-            $language_file = $this -> locale_path . $language . $this -> locale_file_extension;
+            $locale_file = $this -> locale_path . $language . $this -> locale_file_extension;
 
-            if (!file_exists($language_file)) {
-                throw new RuntimeException("Language file does not exist: $language_file");
+            if (!file_exists($locale_file)) {
+                throw new RuntimeException("Language file does not exist: $locale_file");
             }
 
-            $lang_file = file_get_contents($language_file);
+            $locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
 
-            if ($lang_file === false) {
-                throw new RuntimeException("Unable to read language file: $language_file");
+            if (strtolower($locale_file_extension) !== 'json') {
+                throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
             }
 
-            if (empty($lang_file)) {
-                throw new RuntimeException("Language file is empty: $language_file");
+            $locale_file_contents = file_get_contents($locale_file);
+
+            if ($locale_file_contents === false) {
+                throw new RuntimeException("Unable to read language file: $locale_file");
+            }
+
+            if (empty($locale_file_contents)) {
+                throw new RuntimeException("Language file is empty: $locale_file");
             }
 
             try {
-                $lang = json_decode($lang_file, true, 512, JSON_THROW_ON_ERROR);
+                $lang = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException $exception) {
-                throw new JsonException("Invalid JSON in language file: $language_file", 0, $exception);
+                throw new JsonException("Invalid JSON in language file: $locale_file", 0, $exception);
             }
 
             if (!is_array($lang) || !array_key_exists('variables', $lang)) {
-                throw new RuntimeException("Missing 'variables' data in language file: $language_file");
+                throw new RuntimeException("Missing 'variables' data in language file: $locale_file");
             }
 
             $variables = $lang['variables'] ?? [];
@@ -288,7 +313,7 @@
              * @phpstan-ignore-next-line
              */
             if (is_null($variables)) {
-                throw new RuntimeException("Language file $language_file does not contain required 'variables' data");
+                throw new RuntimeException("Language file $locale_file does not contain required 'variables' data");
             }
 
             if (is_array($variables)) {
@@ -299,7 +324,7 @@
                         try {
                             $lang[$key] = $this -> replaceVariables($value, $variables);
                         } catch (RuntimeException $exception) {
-                            throw new RuntimeException("Error replacing variable '$key' in language file: $language_file", 0, $exception);
+                            throw new RuntimeException("Error replacing variable '$key' in language file: $locale_file", 0, $exception);
                         }
                     }
                 }
