@@ -72,7 +72,7 @@ It's advisable to set the language before calling `numberFormat()` or `currencyF
 This fetches currency, number formatting data, as well as other locale-specific information.
 
 ## Getting Started (EXAMPLE)
-```use PiperLang\PiperLang;```
+```use PiperLang\PiperLang;``` <br>
 ```$piperLang = new PiperLang\PiperLang();```
 ```$piperLang->setLanguage('fr'); // set language to French```
 ```$greetingText = $piperLang->translateWithPlural('hello', 1); // hello in French```
