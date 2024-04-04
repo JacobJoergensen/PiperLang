@@ -19,7 +19,8 @@
 		"security": "https://github.com/JacobJoergensen/PiperLang/security/policy"
 	},
 	"require": {
-		"php": ">=8.3"
+		"php": ">=8.3", 
+		"ext-intl": "*"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "^1.10.65",
