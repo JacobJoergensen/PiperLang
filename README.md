@@ -78,7 +78,7 @@ This fetches currency, number formatting data, as well as other locale-specific 
 ```$greetingText = $piperLang->translateWithPlural('hello', 1); // hello in French``` <br>
 ```echo $greetingText;``` <br>
 ```$formattedDate = $piperLang->dateFormat(new DateTime()); // today's date in French format``` <br>
-```echo $formattedDate;``` <br>
+```echo $formattedDate;```
 
 <br>
 
