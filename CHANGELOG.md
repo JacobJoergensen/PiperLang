@@ -1,4 +1,4 @@
-### PiperLang Changelog
+# PiperLang Changelog
 
 ## WIP - Next Version
 * Nothing to see yet
