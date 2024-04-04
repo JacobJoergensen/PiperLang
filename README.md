@@ -29,7 +29,7 @@ You can change various settings in the `PiperLang` framework. Here's an example 
 
 | Setting | Method  | Description | Default |
 | --- | --- | --- | --- |
-| Default Language | `$piperlang->default_language = 'es'` | Set the default language to Spanish. | 'en' |
+| Default Language | `$piperlang->default_language = 'es'` | Set the default language. | 'en' |
 | Supported Languages | `$piperlang->supported_languages = ['en', 'es', 'fr']` | Add languages that the application should support. | ['en'] |
 | Locale Path | `$piperlang->locale_path = '/path_to_your_locales/'` | Specify the path to your localization files. | '/locales/' |
 | Locale File Extension | `$piperlang->locale_file_extension = 'txt'` | Specify the extension of your localization files. | 'json' |
@@ -69,11 +69,17 @@ It's advisable to set the language before calling `numberFormat()` or `currencyF
 ### Getting Formatting Rules
 ```$formattingRules = $piperlang->getFormattingRules();```
 
-This fetches currency, number formatting data, as well as other locale-specific information. 
+This fetches currency, number formatting data, as well as other locale-specific information.
 
-With these examples and key points in mind, using the PiperLang framework should be straightforward. For deeper insights or trouble related to any point, feel free to raise a query.
+## Getting Started (EXAMPLE)
+```use PiperLang\PiperLang;``` <br>
+```$piperLang = new PiperLang();``` <br>
+```$piperLang->setLanguage('fr'); // set language to French``` <br>
+```$greetingText = $piperLang->translateWithPlural('hello', 1); // hello in French``` <br>
+```echo $greetingText;``` <br>
+```$formattedDate = $piperLang->dateFormat(new DateTime()); // today's date in French format``` <br>
+```echo $formattedDate;```
 
-<br>
 
 ## Issues and Pull Requests
 
