@@ -55,6 +55,11 @@
         public string $session_key = 'lang';
 
         /**
+         * @var bool
+         */
+        public bool $cookie_enabled = false;
+
+        /**
          * @var string
          */
         public string $cookie_key = 'site_language';
@@ -68,13 +73,12 @@
          * PiperLang CONSTRUCTOR
          */
         public function __construct() {
-            if ($this -> session_enabled && session_status() !== PHP_SESSION_ACTIVE) {
-                session_start();
-            }
-
+            //TODO: ADD PRIORITY SYSTEM SO THE DEVELOPER CAN CHOOSE WHICH TO PRIORITIZE BELOW
             if ($this -> session_enabled && session_status() !== PHP_SESSION_ACTIVE) {
                 session_start();
                 $this -> current_language = isset($_SESSION[$this -> session_key]) && is_string($_SESSION[$this -> session_key]) ? $_SESSION[$this -> session_key] : null;
+            } elseif ($this -> cookie_enabled) {
+                $this -> current_language = isset($_COOKIE[$this -> cookie_key]) && is_string($_COOKIE[$this -> cookie_key]) ? $_COOKIE[$this -> cookie_key] : null;
             } else {
                 $this -> current_language = $this -> default_language;
             }
@@ -88,7 +92,7 @@
          * @return string - THE DETECTED LANGUAGE CODE.
          */
         public function detectBrowserLanguage(): string {
-            foreach (explode(',', $this->http_accept_language) as $lang) {
+            foreach (explode(',', $this -> http_accept_language) as $lang) {
                 $lang_parts = explode(';', $lang, 2);
                 $lang_code = strtolower(substr($lang_parts[0], 0, 2));
 
@@ -103,36 +107,45 @@
         /**
          * DETECT USER'S PREFERRED LANGUAGE BASED ON USER'S SESSION OR COOKIE.
          *
+         * @param string $source - SOURCE FROM WHERE TO DETECT THE LANGUAGE. CAN BE 'session' OR 'cookie'.
+         *
          * @return string - THE DETECTED LANGUAGE CODE.
+         *
+         * @throws InvalidArgumentException - WHEN THE PROVIDED SOURCE IS INVALID OR DISABLED.
          */
-        public function detectUserLanguage(): string {
-            $language = $_SESSION[$this -> session_key] ?? $_COOKIE[$this -> cookie_key] ?? '';
-
-            if (in_array($language, $this -> supported_languages, true)) {
-                return $language;
+        public function detectUserLanguage(string $source = 'session'): string {
+            if ($source === 'session' && $this -> session_enabled) {
+                $lang = $_SESSION[$this -> session_key] ?? '';
+            } elseif ($source === 'cookie' && $this -> cookie_enabled) {
+                $lang = $_COOKIE[$this -> cookie_key] ?? '';
+            } else {
+                throw new InvalidArgumentException("Invalid or disabled source '$source' for detecting language.");
             }
 
-            return $this -> default_language;
+            return in_array($lang, $this -> supported_languages, true) ? $lang : $this -> default_language;
         }
 
         /**
          * SET THE LANGUAGE BASED ON GIVEN PREFERENCE, OTHERWISE FALLBACK TO DEFAULT LANGUAGE.
          *
-         * @param string|null $preferred_language - THE DESIRED LANGUAGE CODE.
+         * @param string|null $preferred_lang - THE DESIRED LANGUAGE CODE.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
-        public function setLanguage(?string $preferred_language = null): void {
+        public function setLanguage(?string $preferred_lang = null): void {
             if (!in_array($this -> default_language, $this -> supported_languages, true)) {
                 $this -> supported_languages[] = $this -> default_language;
             }
 
-            if ($preferred_language && in_array($preferred_language, $this -> supported_languages, true)) {
-                $this -> current_language = $preferred_language;
+            if ($preferred_lang && in_array($preferred_lang, $this -> supported_languages, true)) {
+                $this -> current_language = $preferred_lang;
 
                 if ($this -> session_enabled) {
-                    $_SESSION[$this -> session_key] = $preferred_language;
-                    setcookie($this -> cookie_key, $preferred_language, time() + (86400 * 30), "/");
+                    $_SESSION[$this -> session_key] = $preferred_lang;
+                }
+
+                if ($this -> cookie_enabled) {
+                    setcookie($this -> cookie_key, $preferred_lang, time() + (86400 * 30), "/");
                 }
             } else {
                 $this -> current_language = $this -> default_language;
@@ -142,12 +155,12 @@
         /**
          * SWITCH THE LANGUAGE.
          *
-         * @param string $new_language - THE NEW LANGUAGE TO BE SET.
+         * @param string $new_lang - THE NEW LANGUAGE TO BE SET.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
-        public function switchLanguage(string $new_language): void {
-            $this -> setLanguage($new_language);
+        public function switchLanguage(string $new_lang): void {
+            $this -> setLanguage($new_lang);
         }
 
         /**
@@ -202,9 +215,9 @@
 
             $plural_suffix = '_other';
 
-            if(isset($this -> plural_rules[$this -> current_language]) && $count === 1){
+            if (isset($this -> plural_rules[$this -> current_language]) && $count === 1) {
                 $plural_suffix = $this -> plural_rules[$this -> current_language];
-            } elseif($count === 1){
+            } elseif($count === 1) {
                 $plural_suffix = '_1';
             }
 
