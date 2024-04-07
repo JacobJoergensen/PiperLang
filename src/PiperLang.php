@@ -378,7 +378,7 @@
             $formatted_number = $formatter -> format($number);
 
             if ($formatted_number === false) {
-                throw new RuntimeException('Number formatting failed.');
+                throw new RuntimeException('Number formatting failed: ' . intl_get_error_message());
             }
 
             return $formatted_number;
@@ -389,12 +389,13 @@
          *
          * @param float $amount - THE AMOUNT TO FORMAT.
          * @param string $currency - THE ISO 4217 CURRENCY CODE, SUCH AS 'usd' OR 'eur'.
+         * @param bool $show_symbol - OPTIONAL, DETERMINES WHETHER TO DISPLAY A PARTICULAR SYMBOL.
          *
          * @return string - THE FORMATTED CURRENCY AMOUNT ACCORDING TO THE CURRENT LANGUAGE.
          *
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
-        public function currencyFormat(float $amount, string $currency): string {
+        public function currencyFormat(float $amount, string $currency, bool $show_symbol = false): string {
             if (!is_numeric($amount)) {
                 throw new InvalidArgumentException('Not a valid amount for currency formatting.');
             }
@@ -412,7 +413,12 @@
             $formatted_currency = $formatter -> formatCurrency($amount, $currency);
 
             if ($formatted_currency === false) {
-                throw new RuntimeException('Currency formatting failed.');
+                throw new RuntimeException('Currency formatting failed: ' . intl_get_error_message());
+            }
+
+            if ($show_symbol) {
+                $symbol = $formatter -> getSymbol(NumberFormatter::CURRENCY_SYMBOL);
+                $formatted_currency = str_replace($currency, $symbol, $formatted_currency);
             }
 
             return $formatted_currency;
@@ -429,16 +435,17 @@
          * @throws RuntimeException - THROWN IF DATE FORMATTING FAILS.
          */
         public function dateFormat(DateTime $date, string $format = 'long'): string {
-            if (!in_array($format, ['short', 'medium', 'long', 'full'])) {
-                $format = 'long';
-            }
+            $format = strtolower($format);
 
-            $formatter = new IntlDateFormatter($this -> current_language, IntlDateFormatter::{$format}, IntlDateFormatter::NONE);
+            $formatter = match ($format) {
+                'short', 'medium', 'long', 'full' => new IntlDateFormatter($this -> current_language, IntlDateFormatter::{$format}, IntlDateFormatter::NONE),
+                default => new IntlDateFormatter($this -> current_language, IntlDateFormatter::LONG, IntlDateFormatter::NONE),
+            };
 
             $formatted_date = $formatter -> format($date);
 
             if ($formatted_date === false) {
-                throw new RuntimeException('Date formatting failed.');
+                throw new RuntimeException('Date formatting failed: ' . intl_get_error_message());
             }
 
             return $formatted_date;
