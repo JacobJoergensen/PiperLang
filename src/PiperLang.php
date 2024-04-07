@@ -73,16 +73,6 @@
          * PiperLang CONSTRUCTOR
          */
         public function __construct() {
-            //TODO: ADD PRIORITY SYSTEM SO THE DEVELOPER CAN CHOOSE WHICH TO PRIORITIZE BELOW
-            if ($this -> session_enabled && session_status() !== PHP_SESSION_ACTIVE) {
-                session_start();
-                $this -> current_language = isset($_SESSION[$this -> session_key]) && is_string($_SESSION[$this -> session_key]) ? $_SESSION[$this -> session_key] : null;
-            } elseif ($this -> cookie_enabled) {
-                $this -> current_language = isset($_COOKIE[$this -> cookie_key]) && is_string($_COOKIE[$this -> cookie_key]) ? $_COOKIE[$this -> cookie_key] : null;
-            } else {
-                $this -> current_language = $this -> default_language;
-            }
-
             $this -> http_accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
         }
 
@@ -139,16 +129,34 @@
 
             if ($preferred_lang && in_array($preferred_lang, $this -> supported_languages, true)) {
                 $this -> current_language = $preferred_lang;
-
-                if ($this -> session_enabled) {
-                    $_SESSION[$this -> session_key] = $preferred_lang;
-                }
-
-                if ($this -> cookie_enabled) {
-                    setcookie($this -> cookie_key, $preferred_lang, time() + (86400 * 30), "/");
-                }
             } else {
                 $this -> current_language = $this -> default_language;
+            }
+        }
+
+        /**
+         * SET THE LANGUAGE THROUGH SESSION.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function setLanguageSession(): void {
+            if ($this -> session_enabled && session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+
+                $lang = isset($_SESSION[$this -> session_key]) && is_string($_SESSION[$this -> session_key]) ? $_SESSION[$this -> session_key] : null;
+                $this -> setLanguage($lang);
+            }
+        }
+
+        /**
+         * SET LANGUAGE THROUGH COOKIE.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function setLanguageCookie(): void {
+            if ($this -> cookie_enabled) {
+                $lang = isset($_COOKIE[$this -> cookie_key]) && is_string($_COOKIE[$this -> cookie_key]) ? $_COOKIE[$this -> cookie_key] : null;
+                $this -> setLanguage($lang);
             }
         }
 
@@ -217,7 +225,7 @@
 
             if (isset($this -> plural_rules[$this -> current_language]) && $count === 1) {
                 $plural_suffix = $this -> plural_rules[$this -> current_language];
-            } elseif($count === 1) {
+            } elseif ($count === 1) {
                 $plural_suffix = '_1';
             }
 
