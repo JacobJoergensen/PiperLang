@@ -27,17 +27,18 @@ Key methods of `PiperLang` class include:
 ## Configuration
 You can change various settings in the `PiperLang` framework. Here's an example of how you can modify settings after the initializing:
 
-| Setting | Method  | Description | Default |
-| --- | --- | --- | --- |
-| Default Language | `$piperlang->default_language = 'es'` | Set the default language. | 'en' |
-| Supported Languages | `$piperlang->supported_languages = ['en', 'es', 'fr']` | Add languages that the application should support. | ['en'] |
-| Locale Path | `$piperlang->locale_path = '/path_to_your_locales/'` | Specify the path to your localization files. | '/locales/' |
-| Locale File Extension | `$piperlang->locale_file_extension = 'txt'` | Specify the extension of your localization files. | 'json' |
-| Variable Pattern | `$piperlang->variable_pattern = '/<<(.*?)>>/'` | Alter the variable pattern to something other than the default. | '/{{(.*?)}}/' |
-| Plural Rules | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']` | Define the plural rules for your supported languages. | [] |
-| Session Key | `$piperlang->session_key = 'user_lang'` | Change the session key for storing user language preference. | 'lang' |
-| Cookie Key | `$piperlang->cookie_key = 'user_lang'` | Alter the cookie key for storing user language preference. | 'site_language' |
-| Session Management | `$piperlang->session_enabled = false` | Enable or disable session management. | true |
+| Setting               | Method                                                               | Description                                                     | Default         |
+|-----------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|-----------------|
+| Default Language      | `$piperlang->default_language = 'es'`                                | Set the default language.                                       | 'en'            |
+| Supported Languages   | `$piperlang->supported_languages = ['en', 'es', 'fr']`               | Add languages that the application should support.              | ['en']          |
+| Locale Path           | `$piperlang->locale_path = '/path_to_your_locales/'`                 | Specify the path to your localization files.                    | '/locales/'     |
+| Locale File Extension | `$piperlang->locale_file_extension = 'txt'`                          | Specify the extension of your localization files.               | 'json'          |
+| Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                       | Alter the variable pattern to something other than the default. | '/{{(.*?)}}/'   |
+| Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']` | Define the plural rules for your supported languages.           | []              |
+| Session Enabled       | `$piperlang->session_enabled = false`                                | Enable or disable session.                                      | true            |
+| Session Key           | `$piperlang->session_key = 'user_lang'`                              | Change the session key for storing user language preference.    | 'lang'          |
+| Cookie Enabled        | `$piperlang->cookie_enabled = false`                                 | Enable or disable cookie.                                       | false           |
+| Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                               | Alter the cookie key for storing user language preference.      | 'site_language' |
 
 ### Setting a Language Preference
 ```$piperlang->setLanguage("fr");```
