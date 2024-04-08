@@ -12,7 +12,7 @@
 * Improved detectUserLanguage method
 * Improved format handling inside the dateFormat method
 * Improved format error messages
-* Updated docs
+* Updated docs in README.md
 * Fixed some style and typo things
 
 ## Version 1.0 Beta 1 (04-04-24)
