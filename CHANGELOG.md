@@ -3,7 +3,7 @@
 ## WIP - Next Version
 * Nothing to see yet!
 
-## Version 1.0 Beta 2 ()
+## Version 1.0 Beta 2 (08-04-24)
 * Added cookie enabled setting (closes #14)
 * Added show symbol option to currencyFormat method
 * Added setLanguageSession method
