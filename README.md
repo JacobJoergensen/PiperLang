@@ -59,7 +59,7 @@ In the provided language files (example `en.json`):
 The corresponding translation considering the plural forms will be used, here `count` in `item_count_other` will be replaced with the provided count.
 
 ### Formatting Date
-```$date = new DateTime("2010-07-05T06:30:00");```
+```$date = new DateTime("2010-07-05T06:30:00");``` <br>
 ```$formattedDate = $piperlang->dateFormat($date, 'long');```
 
 Remember to set the language before making a call to `dateFormat()`. The provided code will format the date into a 'long' style for the set language.
