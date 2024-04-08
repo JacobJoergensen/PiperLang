@@ -13,11 +13,15 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 Key methods of `PiperLang` class include:
 
 * `detectBrowserLanguage()` - Detects user's browser language.
-* `detectUserLanguage()` - Detects the user's preferred language based on their session or cookie.
+* `detectUserLanguage(string $source = 'session')` - Detects the user's preferred language based on their session or cookie.
 * `setLanguage(string $preferred_language = null)` - Sets the language based on the preference, otherwise fallback to default language.
+* `setLanguageSession()` - Sets the language using session.
+* `setLanguageCookie()` - Sets the language using cookie.
+* `switchLanguage(string $new_lang)` - Changes the currently set language to a new one.
+* `setLocalePath(string $path)` - Sets the path to the directory containing language files.
 * `translateWithPlural(string $key, int $count, array $variables = [])` : Translates the provided key considering the count for plural forms. Replaces variables in the translation string.
 * `numberFormat(float $number)` - Formats a number according to the current language setting.
-* `currencyFormat(float $amount, string $currency)` - Formats a currency amount according to the current language setting.
+* `currencyFormat(float $amount, string $currency, bool $show_symbol = false)` - Formats a currency amount according to the current language setting.
 * `dateFormat(DateTime $date, string $format = 'long')` - Formats a date according to the current language setting.
 * `getFormattingRules()` - Returns the formatting rules specific to the current language locale.
 
@@ -55,15 +59,16 @@ In the provided language files (example `en.json`):
 The corresponding translation considering the plural forms will be used, here `count` in `item_count_other` will be replaced with the provided count.
 
 ### Formatting Date
-```$date = new DateTime("2010-07-05T06:30:00"); $formattedDate = $piperlang->dateFormat($date, 'long');```
+```$date = new DateTime("2010-07-05T06:30:00");```
+```$formattedDate = $piperlang->dateFormat($date, 'long');```
 
 Remember to set the language before making a call to `dateFormat()`. The provided code will format the date into a 'long' style for the set language.
 
-### Number Formatting 
+### Number Formatting
 ```$formattedNumber = $piperlang->numberFormat(1234567.89);```
 
 ### Currency Formatting
-```$formattedCurrency = $piperlang->currencyFormat(1234567.89, "USD");```
+```$formattedCurrency = $piperlang->currencyFormat(1234567.89, "USD", true);```
 
 It's advisable to set the language before calling `numberFormat()` or `currencyFormat()` for the desired locale-dependent format.
 
