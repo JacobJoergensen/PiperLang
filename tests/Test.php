@@ -1,10 +1,13 @@
-<?php
-	namespace Tests;
+<?php declare(strict_types=1);
+    namespace Tests;
 
-	use PHPUnit\Framework\TestCase;
+    use PHPUnit\Framework\TestCase;
+    use PiperLang\PiperLang;
 
-	class Test extends TestCase {
-		public function testAddition(): void {
-			$this -> assertTrue(true);
-		}
-	}
+    final class Test extends TestCase {
+        private PiperLang $piper_lang;
+
+        protected function setUp(): void {
+            $this -> piper_lang = new PiperLang();
+        }
+    }
