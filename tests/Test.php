@@ -36,7 +36,7 @@
             $this -> piper_lang -> current_locale = 'es';
             $this -> assertEquals('es', $this -> piper_lang -> getLocale());
 
-            unset($this -> piper_lang -> current_locale);
+            $this -> piper_lang -> current_locale = null;
             $this -> assertNull($this -> piper_lang -> getLocale());
         }
     }
