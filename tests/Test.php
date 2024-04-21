@@ -9,6 +9,7 @@
 
         protected function setUp(): void {
             $this -> piper_lang = new PiperLang();
+            $this -> piper_lang -> current_locale = null;
             $this -> piper_lang -> supported_locales = ['en', 'es', 'de'];
         }
 
