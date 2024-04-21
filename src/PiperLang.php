@@ -44,7 +44,7 @@
         public string $locale_file_extension = 'json';
 
         /**
-         * @var array
+         * @var array<string, array>
          */
         protected array $loaded_locales = [];
 
@@ -132,9 +132,9 @@
         /**
          * GET CURRENT LOCALE
          *
-         * @return string - THE CURRENT LOCALE CODE.
+         * @return ?string - THE CURRENT LOCALE CODE.
          */
-        public function getLocale(): string {
+        public function getLocale(): ?string {
             return $this -> current_locale;
         }
 
