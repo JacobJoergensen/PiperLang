@@ -25,4 +25,17 @@
             $this -> piper_lang -> http_accept_locale = 'fr-FR,fr;q=0.9,it-IT;q=0.8,ja-JP;q=0.7';
             $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
         }
+
+        public function testGetLocale(): void {
+            $this -> assertNull($this -> piper_lang -> getLocale());
+
+            $this -> piper_lang -> current_locale = 'en';
+            $this -> assertEquals('en', $this -> piper_lang -> getLocale());
+
+            $this -> piper_lang -> current_locale = 'es';
+            $this -> assertEquals('es', $this -> piper_lang -> getLocale());
+
+            unset($this -> piper_lang -> current_locale);
+            $this -> assertNull($this -> piper_lang -> getLocale());
+        }
     }
