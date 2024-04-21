@@ -81,7 +81,7 @@
         /**
          * @var string
          */
-        protected string $http_accept_locale;
+        public string $http_accept_locale;
 
         /**
          * PiperLang CONSTRUCTOR
