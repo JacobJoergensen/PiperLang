@@ -44,7 +44,7 @@
         public string $locale_file_extension = 'json';
 
         /**
-         * @var array<string, array>
+         * @var array<string, array<string, string>>
          */
         protected array $loaded_locales = [];
 
