@@ -13,8 +13,9 @@
             $this -> piper_lang -> current_locale = null;
             $this -> piper_lang -> default_locale = 'en';
             $this -> piper_lang -> supported_locales = ['en', 'es', 'de'];
-            $this -> piper_lang -> session_key = 'current_locale';
+            $this -> piper_lang -> variable_pattern = '/{{(.*?)}}/';
             $this -> piper_lang -> session_enabled = true;
+            $this -> piper_lang -> session_key = 'current_locale';
         }
 
         public function testDetectBrowserLocale(): void {
