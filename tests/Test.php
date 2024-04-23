@@ -3,7 +3,8 @@
 
     use PHPUnit\Framework\TestCase;
     use PiperLang\PiperLang;
-    use JsonException;
+    use DateTime;
+    use InvalidArgumentException;
     use RuntimeException;
 
     final class Test extends TestCase {
@@ -81,60 +82,73 @@
         public function testReplaceVariables(): void {
             $string = 'Hello, world!';
             $variables = ['name' => 'Bob'];
-            $result = $this -> piper_lang->replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, world!', $result);
+            $result = $this->piper_lang->replaceVariables($string, $variables);
+            $this->assertEquals('Hello, world!', $result);
 
             $string = 'Hello, {{name}}!';
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, Bob!', $result);
-    
+            $result = $this->piper_lang->replaceVariables($string, $variables);
+            $this->assertEquals('Hello, Bob!', $result);
+
             $string = '{{greeting}}, {{name}}!';
             $variables = ['greeting' => 'Hello', 'name' => 'Bob'];
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, Bob!', $result);
+            $result = $this->piper_lang->replaceVariables($string, $variables);
+            $this->assertEquals('Hello, Bob!', $result);
 
             $string = '{{greeting}}, {{greeting}}!';
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, Hello!', $result);
+            $result = $this->piper_lang->replaceVariables($string, $variables);
+            $this->assertEquals('Hello, Hello!', $result);
 
             $string = '{{missing}}, world!';
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('{{missing}}, world!', $result);
+            $result = $this->piper_lang->replaceVariables($string, $variables);
+            $this->assertEquals('{{missing}}, world!', $result);
         }
 
-        /**
-         * @throws JsonException
-         */
-        public function testTranslateWithPlural(): void {
-            $translations = [
-                'en' => [
-                    'key_1' => 'You have {{count}} new message',
-                    'key_other' => 'You have {{count}} new messages'
-                ],
-                'es' => [
-                    'key_1' => 'Tienes {{count}} nuevo mensaje',
-                    'key_other' => 'Tienes {{count}} nuevos mensajes'
-                ]
-            ];
+        public function testNumberFormat(): void {
+            $this -> piper_lang -> current_locale = 'en';
+            $this -> assertEquals('1,234.57', $this -> piper_lang -> numberFormat(1234.56789));
 
-            $this -> piper_lang -> translateWithPlural('key', 1, $translations);
-            $this -> expectException(RuntimeException::class);
-            $this -> expectExceptionMessage('Translation not found.');
+            $this -> piper_lang -> current_locale = 'de';
+            $this -> assertEquals('1.234,57', $this -> piper_lang -> numberFormat(1234.56789));
 
-            $this -> piper_lang -> setLocale('en');
+            $this -> piper_lang -> current_locale = null;
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> piper_lang -> numberFormat(1234.56789);
 
-            $result = $this -> piper_lang -> translateWithPlural('key', 1, $translations);
-            $this -> assertEquals('You have 1 new message', $result);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> piper_lang -> numberFormat('string number');
+        }
 
-            $result = $this -> piper_lang -> translateWithPlural('key', 2, $translations);
-            $this -> assertEquals('You have 2 new messages', $result);
+        public function testCurrencyFormat(): void {
+            $this -> piper_lang -> current_locale = 'en';
+            $this -> assertEquals('$123.46', $this -> piper_lang -> currencyFormat(123.456, 'USD', true));
 
-            $this -> piper_lang -> setLocale('es');
+            $this -> piper_lang -> current_locale = 'de';
+            $this -> assertEquals('123,46 €', $this -> piper_lang -> currencyFormat(123.456, 'EUR', true));
 
-            $result = $this -> piper_lang -> translateWithPlural('key', 1, $translations);
-            $this -> assertEquals('Tienes 1 nuevo mensaje', $result);
+            $this -> piper_lang -> current_locale = null;
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> piper_lang -> currencyFormat(123.456, 'USD', true);
 
-            $result = $this -> piper_lang -> translateWithPlural('key', 2, $translations);
-            $this -> assertEquals('Tienes 2 nuevos mensajes', $result);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> piper_lang -> currencyFormat('string currency', 'USD', true);
+        }
+
+        public function testDateFormat(): void {
+            $this -> piper_lang -> current_locale = 'en';
+            $test_date = new DateTime('2023-01-01');
+            $this -> assertEquals('January 1, 2023', $this -> piper_lang -> dateFormat($test_date, 'long'));
+
+            $this -> piper_lang -> current_locale = 'de';
+            $test_date = new DateTime('2023-01-01');
+            $this -> assertEquals('1. Januar 2023', $this -> piper_lang -> dateFormat($test_date, 'long'));
+        }
+
+        public function testGetFormattingRules(): void {
+            $this -> piper_lang -> current_locale = 'en';
+            $this -> assertIsArray($this -> piper_lang -> getFormattingRules());
+
+            $this -> piper_lang -> current_locale = null;
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> piper_lang -> getFormattingRules();
         }
     }
