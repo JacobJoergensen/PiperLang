@@ -36,13 +36,13 @@ You can change various settings in the `PiperLang` framework. Here's an example 
 | Setting               | Method                                                               | Description                                                     | Default       |
 |-----------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|---------------|
 | Default Locale        | `$piperlang->default_locale = 'es'`                                  | Set the default locale.                                         | 'en'          |
-| Supported Locale      | `$piperlang->supported_locales = ['en', 'es', 'fr']`                 | Add locales that the application should support.                | ['en']        |
+| Supported Locales     | `$piperlang->supported_locales = ['en', 'es', 'fr']`                 | Add locales that the application should support.                | ['en']        |
 | Locale Path           | `$piperlang->locale_path = '/path_to_your_locales/'`                 | Specify the path to your localization files.                    | '/locales/'   |
 | Locale File Extension | `$piperlang->locale_file_extension = 'json'`                         | Specify the extension of your localization files.               | 'json'        |
 | Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                       | Alter the variable pattern to something other than the default. | '/{{(.*?)}}/' |
 | Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']` | Define the plural rules for your supported locales.             | []            |
 | Session Enabled       | `$piperlang->session_enabled = false`                                | Enable or disable session.                                      | true          |
-| Session Key           | `$piperlang->session_key = 'user_lang'`                              | Change the session key for storing user locale preference.      | 'lang'        |
+| Session Key           | `$piperlang->session_key = 'user_lang'`                              | Change the session key for storing user locale preference.      | 'locale'      |
 | Cookie Enabled        | `$piperlang->cookie_enabled = false`                                 | Enable or disable cookie.                                       | false         |
 | Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                               | Alter the cookie key for storing user locale preference.        | 'site_locale' |
 
