@@ -1,5 +1,5 @@
 <?php
-    namespace PiperLang\PiperLang;
+    namespace PiperLang;
 
     use DateTime;
     use IntlDateFormatter;
@@ -8,31 +8,45 @@
     use NumberFormatter;
     use RuntimeException;
 
+    /**
+     * PiperLang - IS A COMPACT AND EFFICIENT PHP FRAMEWORK DESIGNED TO
+     * PROVIDE LOCALIZATION CAPABILITIES FOR YOUR WEB APPLICATION.
+     *
+     * @package    PiperLang\PiperLang
+     * @author     Jacob Jørgensen
+     * @license    MIT
+     * @version    1.0.0-beta3
+     */
     class PiperLang {
         /**
          * @var string|null
          */
-        public ?string $current_language;
+        public ?string $current_locale;
 
         /**
          * @var string
          */
-        public string $default_language = 'en';
+        public string $default_locale = 'en';
 
         /**
          * @var array<string>
          */
-        public array $supported_languages = ['en'];
+        public array $supported_locales = ['en'];
 
         /**
          * @var string
          */
-        private string $locale_path = '/locales/';
+        public string $locale_path = '/locales/';
 
         /**
          * @var string
          */
         public string $locale_file_extension = 'json';
+
+        /**
+         * @var array<string, array<string, string>>
+         */
+        protected array $loaded_locales = [];
 
         /**
          * @var string|null
@@ -47,12 +61,12 @@
         /**
          * @var bool
          */
-        private bool $session_enabled = true;
+        public bool $session_enabled = true;
 
         /**
          * @var string
          */
-        public string $session_key = 'lang';
+        public string $session_key = 'locale';
 
         /**
          * @var bool
@@ -62,119 +76,124 @@
         /**
          * @var string
          */
-        public string $cookie_key = 'site_language';
+        public string $cookie_key = 'site_locale';
 
         /**
          * @var string
          */
-        private string $http_accept_language;
+        public string $http_accept_locale;
 
         /**
          * PiperLang CONSTRUCTOR
          */
         public function __construct() {
-            $this -> http_accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+            $this -> http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'] ?? '';
         }
 
         /**
-         * DETECT USER'S PREFERRED LANGUAGE BASED ON USER'S BROWSER LANGUAGE.
+         * DETECT USER'S PREFERRED LOCALE BASED ON USER'S BROWSER LOCALE.
          *
-         * @return string - THE DETECTED LANGUAGE CODE.
+         * @return string - THE DETECTED LOCALE CODE.
          */
-        public function detectBrowserLanguage(): string {
-            foreach (explode(',', $this -> http_accept_language) as $lang) {
-                $lang_parts = explode(';', $lang, 2);
-                $lang_code = strtolower(substr($lang_parts[0], 0, 2));
+        public function detectBrowserLocale(): string {
+            foreach (explode(',', $this -> http_accept_locale) as $locale) {
+                $locale_parts = explode(';', $locale, 2);
+                $locale_code = strtolower(substr($locale_parts[0], 0, 2));
 
-                if (in_array($lang_code, $this -> supported_languages, true)) {
-                    return $lang_code;
+                if (in_array($locale_code, $this -> supported_locales, true)) {
+                    return $locale_code;
                 }
             }
 
-            return $this -> default_language;
+            return $this -> default_locale;
         }
 
         /**
-         * DETECT USER'S PREFERRED LANGUAGE BASED ON USER'S SESSION OR COOKIE.
+         * DETECT USER'S PREFERRED LOCALE BASED ON USER'S SESSION OR COOKIE.
          *
-         * @param string $source - SOURCE FROM WHERE TO DETECT THE LANGUAGE. CAN BE 'session' OR 'cookie'.
+         * @param string $source - SOURCE FROM WHERE TO DETECT THE LOCALE. CAN BE 'session' OR 'cookie'.
          *
-         * @return string - THE DETECTED LANGUAGE CODE.
+         * @return string - THE DETECTED LOCALE CODE.
          *
          * @throws InvalidArgumentException - WHEN THE PROVIDED SOURCE IS INVALID OR DISABLED.
          */
-        public function detectUserLanguage(string $source = 'session'): string {
+        public function detectUserLocale(string $source = 'session'): string {
             if ($source === 'session' && $this -> session_enabled) {
-                $lang = $_SESSION[$this -> session_key] ?? '';
+                $locale = $_SESSION[$this -> session_key] ?? '';
             } elseif ($source === 'cookie' && $this -> cookie_enabled) {
-                $lang = $_COOKIE[$this -> cookie_key] ?? '';
+                $locale = $_COOKIE[$this -> cookie_key] ?? '';
             } else {
-                throw new InvalidArgumentException("Invalid or disabled source '$source' for detecting language.");
+                throw new InvalidArgumentException("Invalid or disabled source '$source' for detecting locale.");
             }
 
-            return in_array($lang, $this -> supported_languages, true) ? $lang : $this -> default_language;
+            return in_array($locale, $this -> supported_locales, true) ? $locale : $this -> default_locale;
         }
 
         /**
-         * SET THE LANGUAGE BASED ON GIVEN PREFERENCE, OTHERWISE FALLBACK TO DEFAULT LANGUAGE.
+         * GET CURRENT LOCALE
          *
-         * @param string|null $preferred_lang - THE DESIRED LANGUAGE CODE.
+         * @return ?string - THE CURRENT LOCALE CODE.
+         */
+        public function getLocale(): ?string {
+            return $this -> current_locale;
+        }
+
+        /**
+         * SET THE LOCALE BASED ON GIVEN PREFERENCE, OTHERWISE FALLBACK TO DEFAULT LOCALE.
+         *
+         * @param string|null $preferred_lang - THE DESIRED LOCALE CODE.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
-        public function setLanguage(?string $preferred_lang = null): void {
-            if (!in_array($this -> default_language, $this -> supported_languages, true)) {
-                $this -> supported_languages[] = $this -> default_language;
+        public function setLocale(?string $preferred_lang = null): void {
+            if (!in_array($this -> default_locale, $this -> supported_locales, true)) {
+                $this -> supported_locales[] = $this -> default_locale;
             }
 
-            if ($preferred_lang && in_array($preferred_lang, $this -> supported_languages, true)) {
-                $this -> current_language = $preferred_lang;
+            if ($preferred_lang && in_array($preferred_lang, $this -> supported_locales, true)) {
+                $this -> current_locale = $preferred_lang;
             } else {
-                $this -> current_language = $this -> default_language;
+                $this -> current_locale = $this -> default_locale;
             }
-        }
 
-        /**
-         * SET THE LANGUAGE THROUGH SESSION.
-         *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
-         */
-        public function setLanguageSession(): void {
-            if ($this -> session_enabled && session_status() !== PHP_SESSION_ACTIVE) {
-                session_start();
+            if ($this -> session_enabled) {
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    session_start();
+                }
 
-                $lang = isset($_SESSION[$this -> session_key]) && is_string($_SESSION[$this -> session_key]) ? $_SESSION[$this -> session_key] : null;
-                $this -> setLanguage($lang);
+                $_SESSION[$this -> session_key] = $this -> current_locale;
+
+                if ($_SESSION[$this -> session_key] !== $this -> current_locale) {
+                    throw new RuntimeException('Failed to set locale in session');
+                }
             }
-        }
 
-        /**
-         * SET LANGUAGE THROUGH COOKIE.
-         *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
-         */
-        public function setLanguageCookie(): void {
             if ($this -> cookie_enabled) {
-                $lang = isset($_COOKIE[$this -> cookie_key]) && is_string($_COOKIE[$this -> cookie_key]) ? $_COOKIE[$this -> cookie_key] : null;
-                $this -> setLanguage($lang);
+                if (headers_sent()) {
+                    throw new RuntimeException('Failed to set the cookie, headers were already sent');
+                }
+
+                if (!setcookie($this -> cookie_key, $this -> current_locale, time() + (86400 * 30), "/")) {
+                    throw new RuntimeException('Failed to set locale in cookie');
+                }
             }
         }
 
         /**
-         * SWITCH THE LANGUAGE.
+         * SWITCH THE LOCALE.
          *
-         * @param string $new_lang - THE NEW LANGUAGE TO BE SET.
+         * @param string $new_lang - THE NEW LOCALE TO BE SET.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
-        public function switchLanguage(string $new_lang): void {
-            $this -> setLanguage($new_lang);
+        public function switchLocale(string $new_lang): void {
+            $this -> setLocale($new_lang);
         }
 
         /**
-         * SET THE PATH TO THE DIRECTORY CONTAINING THE LANGUAGE FILES.
+         * SET THE PATH TO THE DIRECTORY CONTAINING THE LOCALE FILES.
          *
-         * @param string $path - THE DIRECTORY PATH TO THE LANGUAGE FILES.
+         * @param string $path - THE DIRECTORY PATH TO THE LOCALE FILES.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          *
@@ -209,22 +228,22 @@
         /**
          * LOAD A TRANSLATION WITH PLURAL CONSIDERATION.
          *
-         * @param string $key - THE KEY IN THE LANGUAGE FILE.
+         * @param string $key - THE KEY IN THE LOCALE FILE.
          * @param int $count - THE COUNT TO DETERMINE IF PLURAL FORM SHOULD BE USED.
          * @param array<string, string|int> $variables - VARIABLES TO REPLACE IN THE TRANSLATION STRING.
          *
          * @return string - THE TRANSLATED TEXT WITH REQUIRED PLURALIZATION.
          *
-         * @throws JsonException - THROWN IF THERE'S ANY PROBLEM IN LOADING AND PARSING THE LANGUAGE FILE.
+         * @throws JsonException - THROWN IF THERE'S ANY PROBLEM IN LOADING AND PARSING THE LOCALE FILE.
          */
         public function translateWithPlural(string $key, int $count, array $variables = []): string {
-            $lang = $this -> loadLanguage($this -> current_language ?? $this -> default_language);
-            $default_lang = $this -> loadLanguage($this -> default_language);
+            $locale = $this -> loadFile($this -> current_locale ?? $this -> default_locale);
+            $default_lang = $this -> loadFile($this -> default_locale);
 
             $plural_suffix = '_other';
 
-            if (isset($this -> plural_rules[$this -> current_language]) && $count === 1) {
-                $plural_suffix = $this -> plural_rules[$this -> current_language];
+            if (isset($this -> plural_rules[$this -> current_locale]) && $count === 1) {
+                $plural_suffix = $this -> plural_rules[$this -> current_locale];
             } elseif ($count === 1) {
                 $plural_suffix = '_1';
             }
@@ -233,7 +252,7 @@
 
             $missing_translation_message = 'Translation not found.';
 
-            $translation = $lang[$final_key] ?? $default_lang[$final_key] ?? $missing_translation_message;
+            $translation = $locale[$final_key] ?? $default_lang[$final_key] ?? $missing_translation_message;
 
             $variables['count'] = (string) $count;
 
@@ -245,61 +264,29 @@
         }
 
         /**
-         * LOAD THE LANGUAGE FILE FOR A GIVEN LANGUAGE CODE.
+         * LOADS A LOCALE FILE FROM THE DESIGNATED PATH, VALIDATES ITS CONTENT AND PROCESSES THE VARIABLES.
          *
-         * @param string $language - THE TARGET LANGUAGE CODE.
+         * @param string $locale - THE TARGET LOCALE CODE.
          *
-         * @return array<string, string>|null - THE LOADED LANGUAGE FILE CONTENT.
+         * @return array<string, string> - THE PROCESSED locale FILE CONTENT.
          *
-         * @throws JsonException - THROWN IF THE LANGUAGE FILE CONTAINS INVALID JSON.
-         */
-        public function loadLanguage(string $language): ?array {
-            try {
-                $locale_file = $this -> locale_path . $this -> default_language . $this -> locale_file_extension;
-
-                if (!file_exists($locale_file)) {
-                    throw new RuntimeException("Default language file does not exist: $locale_file");
-                }
-
-                $locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
-
-                if (strtolower($locale_file_extension) !== 'json') {
-                    throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
-                }
-
-                $default_lang = $this -> loadFile($this -> default_language);
-            } catch (RuntimeException $exception) {
-                throw new RuntimeException("Error loading default language file '$locale_file': {$exception -> getMessage()}");
-            }
-
-            if ($language === $this -> default_language) {
-                return $default_lang;
-            }
-
-            try {
-                $selected_lang = $this -> loadFile($language);
-            } catch (RuntimeException $exception) {
-                throw new RuntimeException("Error loading language file for '$language': {$exception -> getMessage()}");
-            }
-
-            return array_merge($default_lang, $selected_lang);
-        }
-
-        /**
-         * LOADS A LANGUAGE FILE FROM THE DESIGNATED PATH, VALIDATES ITS CONTENT AND PROCESSES THE VARIABLES.
-         *
-         * @param string $language - THE TARGET LANGUAGE CODE.
-         *
-         * @return array<string, string> - THE PROCESSED LANGUAGE FILE CONTENT.
-         *
-         * @throws JsonException - THROWN IF THE LANGUAGE FILE CONTAINS INVALID JSON.
+         * @throws JsonException - THROWN IF THE LOCALE FILE CONTAINS INVALID JSON.
          * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
          */
-        protected function loadFile(string $language): array {
-            $locale_file = $this -> locale_path . $language . $this -> locale_file_extension;
+        public function loadFile(string $locale): array {
+            $locale_file = $this -> locale_path . $locale . $this -> locale_file_extension;
 
             if (!file_exists($locale_file)) {
-                throw new RuntimeException("Language file does not exist: $locale_file");
+                if ($locale !== $this -> default_locale) {
+                    $locale = $this -> default_locale;
+                    $locale_file = $this -> locale_path . $locale . $this -> locale_file_extension;
+
+                    if (!file_exists($locale_file)) {
+                        throw new RuntimeException("Default locale file does not exist: $locale_file");
+                    }
+                } else  {
+                    throw new RuntimeException("Locale file does not exist: $locale_file");
+                }
             }
 
             $locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
@@ -311,55 +298,74 @@
             $locale_file_contents = file_get_contents($locale_file);
 
             if ($locale_file_contents === false) {
-                throw new RuntimeException("Unable to read language file: $locale_file");
+                throw new RuntimeException("Unable to read locale file: $locale_file");
             }
 
             if (empty($locale_file_contents)) {
-                throw new RuntimeException("Language file is empty: $locale_file");
+                throw new RuntimeException("Locale file is empty: $locale_file");
             }
 
             try {
-                $lang = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
+                $locale_nodes = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException $exception) {
-                throw new JsonException("Invalid JSON in language file: $locale_file", 0, $exception);
+                throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
             }
 
-            if (!is_array($lang) || !array_key_exists('variables', $lang)) {
-                throw new RuntimeException("Missing 'variables' data in language file: $locale_file");
+            if (!is_array($locale_nodes) || !array_key_exists('variables', $locale_nodes)) {
+                throw new RuntimeException("Missing 'variables' data in locale file: $locale_file");
             }
 
-            $variables = $lang['variables'] ?? [];
+            $variables = $locale_nodes['variables'] ?? [];
 
             /**
              * @phpstan-ignore-next-line
              */
             if (is_null($variables)) {
-                throw new RuntimeException("Language file $locale_file does not contain required 'variables' data");
+                throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
             }
 
             if (is_array($variables)) {
-                unset($lang['variables']);
+                unset($locale_nodes['variables']);
 
-                foreach ($lang as $key => $value) {
+                foreach ($locale_nodes as $key => $value) {
                     if (is_string($value)) {
                         try {
-                            $lang[$key] = $this -> replaceVariables($value, $variables);
+                            $locale_nodes[$key] = $this -> replaceVariables($value, $variables);
                         } catch (RuntimeException $exception) {
-                            throw new RuntimeException("Error replacing variable '$key' in language file: $locale_file", 0, $exception);
+                            throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
                         }
                     }
                 }
             }
 
-            return $lang;
+            $this -> loaded_locales[$locale] = $locale_nodes;
+
+            return $locale_nodes;
         }
 
         /**
-         * FORMATS A NUMBER ACCORDING TO THE CURRENT LANGUAGE SETTING.
+         * UNLOAD A LOADED LOCALE FILE FROM MEMORY.
+         *
+         * @param string $locale - THE LOCALE CODE TO UNLOAD.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         *
+         * @throws RuntimeException - IF THE LOCALE FILE IS ALREADY UNLOADED OR WAS NEVER LOADED.
+         */
+        public function unloadFile(string $locale): void {
+            if (!isset($this -> loaded_locales[$locale])) {
+                throw new RuntimeException("Locale file $locale is not currently loaded or has been already unloaded");
+            }
+
+            unset($this -> loaded_locales[$locale]);
+        }
+
+        /**
+         * FORMATS A NUMBER ACCORDING TO THE CURRENT LOCALE SETTING.
          *
          * @param float $number - THE NUMBER TO FORMAT.
          *
-         * @return string - THE FORMATTED NUMBER ACCORDING TO THE CURRENT LANGUAGE.
+         * @return string - THE FORMATTED NUMBER ACCORDING TO THE CURRENT LOCALE.
          *
          * @throws InvalidArgumentException - THROWN IF THE INPUT IS NOT A VALID NUMBER FOR FORMATTING.
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
@@ -369,11 +375,13 @@
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
-            if ($this -> current_language === null) {
-                throw new InvalidArgumentException('Current language not set.');
+            if ($this -> current_locale === null) {
+                throw new InvalidArgumentException('Current locale not set.');
             }
 
-            $formatter = new NumberFormatter($this -> current_language, NumberFormatter::DEFAULT_STYLE);
+            $formatter = new NumberFormatter($this -> current_locale, NumberFormatter::DEFAULT_STYLE);
+
+            $formatter -> setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 2);
 
             $formatted_number = $formatter -> format($number);
 
@@ -385,13 +393,13 @@
         }
 
         /**
-         * FORMATS A CURRENCY AMOUNT ACCORDING TO THE CURRENT LANGUAGE SETTING.
+         * FORMATS A CURRENCY AMOUNT ACCORDING TO THE CURRENT LOCALE SETTING.
          *
          * @param float $amount - THE AMOUNT TO FORMAT.
          * @param string $currency - THE ISO 4217 CURRENCY CODE, SUCH AS 'usd' OR 'eur'.
          * @param bool $show_symbol - OPTIONAL, DETERMINES WHETHER TO DISPLAY A PARTICULAR SYMBOL.
          *
-         * @return string - THE FORMATTED CURRENCY AMOUNT ACCORDING TO THE CURRENT LANGUAGE.
+         * @return string - THE FORMATTED CURRENCY AMOUNT ACCORDING TO THE CURRENT LOCALE.
          *
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
@@ -404,11 +412,11 @@
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
 
-            if ($this -> current_language === null) {
-                throw new InvalidArgumentException('Current language not set.');
+            if ($this -> current_locale === null) {
+                throw new InvalidArgumentException('Current locale not set.');
             }
 
-            $formatter = new NumberFormatter($this -> current_language, NumberFormatter::CURRENCY);
+            $formatter = new NumberFormatter($this -> current_locale, NumberFormatter::CURRENCY);
 
             $formatted_currency = $formatter -> formatCurrency($amount, $currency);
 
@@ -425,22 +433,26 @@
         }
 
         /**
-         * FORMATS A DATE ACCORDING TO THE CURRENT LANGUAGE SETTING.
+         * FORMATS A DATE ACCORDING TO THE CURRENT LOCALE SETTING.
          *
          * @param DateTime $date - THE DATE TO FORMAT.
          * @param string $format - OPTIONAL. THE DATE FORMAT. CAN BE 'short', 'medium', 'long', OR 'full'. DEFAULTS TO 'long'.
          *
-         * @return string - FORMATTED DATE ACCORDING TO THE CURRENT LANGUAGE.
+         * @return string - FORMATTED DATE ACCORDING TO THE CURRENT LOCALE.
          *
          * @throws RuntimeException - THROWN IF DATE FORMATTING FAILS.
          */
         public function dateFormat(DateTime $date, string $format = 'long'): string {
             $format = strtolower($format);
 
-            $formatter = match ($format) {
-                'short', 'medium', 'long', 'full' => new IntlDateFormatter($this -> current_language, IntlDateFormatter::{$format}, IntlDateFormatter::NONE),
-                default => new IntlDateFormatter($this -> current_language, IntlDateFormatter::LONG, IntlDateFormatter::NONE),
+            $format_style = match ($format) {
+                'short' => IntlDateFormatter::SHORT,
+                'medium' => IntlDateFormatter::MEDIUM,
+                'full' => IntlDateFormatter::FULL,
+                default => IntlDateFormatter::LONG,
             };
+
+            $formatter = new IntlDateFormatter($this -> current_locale, $format_style, IntlDateFormatter::NONE);
 
             $formatted_date = $formatter -> format($date);
 
@@ -452,16 +464,16 @@
         }
 
         /**
-         * RETURNS THE FORMATTING RULES SPECIFIC TO THE CURRENT LANGUAGE LOCALE.
+         * RETURNS THE FORMATTING RULES SPECIFIC TO THE CURRENT LOCALE LOCALE.
          *
          * @return array<string, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
          */
         public function getFormattingRules(): array {
-            if (empty($this -> current_language)) {
-                throw new InvalidArgumentException('Not a valid language code.');
+            if (empty($this -> current_locale)) {
+                throw new InvalidArgumentException('Not a valid locale code.');
             }
 
-            setlocale(LC_ALL, $this -> current_language);
+            setlocale(LC_ALL, $this -> current_locale);
 
             return localeconv();
         }
