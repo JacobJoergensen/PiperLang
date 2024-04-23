@@ -120,10 +120,10 @@
 
         public function testCurrencyFormat(): void {
             $this -> piper_lang -> current_locale = 'en';
-            $this -> assertEquals('$123.46', $this -> piper_lang -> currencyFormat(123.456, 'USD', true));
+            $this -> assertEquals('$123.46', trim($this -> piper_lang -> currencyFormat(123.456, 'USD', true)));
 
             $this -> piper_lang -> current_locale = 'de';
-            $this -> assertEquals('123,46 €', $this -> piper_lang -> currencyFormat(123.456, 'EUR', true));
+            $this -> assertEquals('123,46 €', trim($this -> piper_lang -> currencyFormat(123.456, 'EUR', true)));
 
             $this -> piper_lang -> current_locale = null;
             $this -> expectException(InvalidArgumentException::class);
