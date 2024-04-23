@@ -66,7 +66,7 @@
         /**
          * @var string
          */
-        public string $session_key = 'lang';
+        public string $session_key = 'locale';
 
         /**
          * @var bool
