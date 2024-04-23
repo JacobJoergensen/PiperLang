@@ -61,7 +61,7 @@
         /**
          * @var bool
          */
-        private bool $session_enabled = true;
+        public bool $session_enabled = true;
 
         /**
          * @var string
