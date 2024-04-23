@@ -46,9 +46,9 @@
         public function testSetLocale(): void {
             $_SESSION = [];
 
-            $this -> piper_lang -> setLocale('es_ES');
-            $this -> assertEquals('es_ES', $this -> piper_lang -> current_locale);
-            $this -> assertEquals('es_ES', $_SESSION['current_locale']);
+            $this -> piper_lang -> setLocale('es');
+            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('es', $_SESSION['current_locale']);
 
             $_SESSION = [];
 
