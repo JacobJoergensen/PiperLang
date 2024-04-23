@@ -36,7 +36,7 @@
         /**
          * @var string
          */
-        private string $locale_path = '/locales/';
+        public string $locale_path = '/locales/';
 
         /**
          * @var string
