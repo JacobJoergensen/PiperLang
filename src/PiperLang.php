@@ -443,22 +443,12 @@
         public function dateFormat(DateTime $date, string $format = 'long'): string {
             $format = strtolower($format);
 
-            switch ($format) {
-                case 'short':
-                    $format_style = IntlDateFormatter::SHORT;
-                    break;
-                case 'medium':
-                    $format_style = IntlDateFormatter::MEDIUM;
-                    break;
-                case 'long':
-                    $format_style = IntlDateFormatter::LONG;
-                    break;
-                case 'full':
-                    $format_style = IntlDateFormatter::FULL;
-                    break;
-                default:
-                    $format_style = IntlDateFormatter::LONG;
-            }
+            $format_style = match ($format) {
+                'short' => IntlDateFormatter::SHORT,
+                'medium' => IntlDateFormatter::MEDIUM,
+                'full' => IntlDateFormatter::FULL,
+                default => IntlDateFormatter::LONG,
+            };
 
             $formatter = new IntlDateFormatter($this -> current_locale, $format_style, IntlDateFormatter::NONE);
 
