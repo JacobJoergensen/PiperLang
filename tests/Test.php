@@ -3,6 +3,7 @@
 
     use PHPUnit\Framework\TestCase;
     use PiperLang\PiperLang;
+    use RuntimeException;
 
     final class Test extends TestCase {
         private PiperLang $piper_lang;
@@ -55,5 +56,23 @@
             $this -> piper_lang -> setLocale('fr_FR');
             $this -> assertEquals('en', $this -> piper_lang -> current_locale);
             $this -> assertEquals('en', $_SESSION['current_locale']);
+        }
+
+        public function testSwitchLocale(): void {
+            $_SESSION = [];
+
+            $this -> piper_lang -> switchLocale('es');
+            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('es', $_SESSION['current_locale']);
+        }
+
+        public function testSetLocalePath(): void {
+            $valid_path = __DIR__;
+            $this -> piper_lang -> setLocalePath($valid_path);
+            $this -> assertEquals($valid_path, $this -> piper_lang -> locale_path);
+
+            $invalid_path = '/path/to/non/existent/directory';
+            $this -> expectException(RuntimeException::class);
+            $this -> piper_lang -> setLocalePath($invalid_path);
         }
     }
