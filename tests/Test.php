@@ -10,7 +10,10 @@
         protected function setUp(): void {
             $this -> piper_lang = new PiperLang();
             $this -> piper_lang -> current_locale = null;
+            $this -> piper_lang -> default_locale = 'en_US';
             $this -> piper_lang -> supported_locales = ['en', 'es', 'de'];
+            $this -> piper_lang -> session_key = 'current_locale';
+            $this -> piper_lang -> session_enabled = true;
         }
 
         public function testDetectBrowserLocale(): void {
@@ -38,5 +41,19 @@
 
             $this -> piper_lang -> current_locale = null;
             $this -> assertNull($this -> piper_lang -> getLocale());
+        }
+
+        public function testSetLocale(): void {
+            $_SESSION = [];
+
+            $this -> piper_lang -> setLocale('es_ES');
+            $this -> assertEquals('es_ES', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('es_ES', $_SESSION['current_locale']);
+
+            $_SESSION = [];
+
+            $this -> piper_lang -> setLocale('fr_FR');
+            $this -> assertEquals('en_US', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('en_US', $_SESSION['current_locale']);
         }
     }
