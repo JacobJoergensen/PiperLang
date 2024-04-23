@@ -3,6 +3,7 @@
 
     use PHPUnit\Framework\TestCase;
     use PiperLang\PiperLang;
+    use JsonException;
     use RuntimeException;
 
     final class Test extends TestCase {
@@ -82,7 +83,7 @@
             $variables = ['name' => 'Bob'];
             $result = $this -> piper_lang->replaceVariables($string, $variables);
             $this -> assertEquals('Hello, world!', $result);
-    
+
             $string = 'Hello, {{name}}!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Bob!', $result);
@@ -91,13 +92,49 @@
             $variables = ['greeting' => 'Hello', 'name' => 'Bob'];
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Bob!', $result);
-    
+
             $string = '{{greeting}}, {{greeting}}!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Hello!', $result);
-    
+
             $string = '{{missing}}, world!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('{{missing}}, world!', $result);
+        }
+
+        /**
+         * @throws JsonException
+         */
+        public function testTranslateWithPlural(): void {
+            $translations = [
+                'en' => [
+                    'key_1' => 'You have {{count}} new message',
+                    'key_other' => 'You have {{count}} new messages'
+                ],
+                'es' => [
+                    'key_1' => 'Tienes {{count}} nuevo mensaje',
+                    'key_other' => 'Tienes {{count}} nuevos mensajes'
+                ]
+            ];
+
+            $this -> piper_lang -> translateWithPlural('key', 1, $translations);
+            $this -> expectException(RuntimeException::class);
+            $this -> expectExceptionMessage('Translation not found.');
+
+            $this -> piper_lang -> setLocale('en');
+
+            $result = $this -> piper_lang -> translateWithPlural('key', 1, $translations);
+            $this -> assertEquals('You have 1 new message', $result);
+
+            $result = $this -> piper_lang -> translateWithPlural('key', 2, $translations);
+            $this -> assertEquals('You have 2 new messages', $result);
+
+            $this -> piper_lang -> setLocale('es');
+
+            $result = $this -> piper_lang -> translateWithPlural('key', 1, $translations);
+            $this -> assertEquals('Tienes 1 nuevo mensaje', $result);
+
+            $result = $this -> piper_lang -> translateWithPlural('key', 2, $translations);
+            $this -> assertEquals('Tienes 2 nuevos mensajes', $result);
         }
     }
