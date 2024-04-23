@@ -381,6 +381,8 @@
 
             $formatter = new NumberFormatter($this -> current_locale, NumberFormatter::DEFAULT_STYLE);
 
+            $formatter -> setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
             $formatted_number = $formatter -> format($number);
 
             if ($formatted_number === false) {
