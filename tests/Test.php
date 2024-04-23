@@ -53,7 +53,7 @@
             $_SESSION = [];
 
             $this -> piper_lang -> setLocale('fr_FR');
-            $this -> assertEquals('en_US', $this -> piper_lang -> current_locale);
-            $this -> assertEquals('en_US', $_SESSION['current_locale']);
+            $this -> assertEquals('en', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('en', $_SESSION['current_locale']);
         }
     }
