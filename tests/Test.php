@@ -10,7 +10,7 @@
         protected function setUp(): void {
             $this -> piper_lang = new PiperLang();
             $this -> piper_lang -> current_locale = null;
-            $this -> piper_lang -> default_locale = 'en_US';
+            $this -> piper_lang -> default_locale = 'en';
             $this -> piper_lang -> supported_locales = ['en', 'es', 'de'];
             $this -> piper_lang -> session_key = 'current_locale';
             $this -> piper_lang -> session_enabled = true;
