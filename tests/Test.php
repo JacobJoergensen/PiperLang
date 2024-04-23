@@ -82,22 +82,22 @@
             $variables = ['name' => 'Bob'];
             $result = $this -> piper_lang->replaceVariables($string, $variables);
             $this -> assertEquals('Hello, world!', $result);
-
-            $string = 'Hello, {name}!';
+    
+            $string = 'Hello, {{name}}!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Bob!', $result);
-
-            $string = '{greeting}, {name}!';
+    
+            $string = '{{greeting}}, {{name}}!';
             $variables = ['greeting' => 'Hello', 'name' => 'Bob'];
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Bob!', $result);
-
-            $string = '{greeting}, {greeting}!';
+    
+            $string = '{{greeting}}, {{greeting}}!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, Hello!', $result);
-
-            $string = '{missing}, world!';
+    
+            $string = '{{missing}}, world!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('{missing}, world!', $result);
+            $this -> assertEquals('{{missing}}, world!', $result);
         }
     }
