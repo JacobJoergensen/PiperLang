@@ -15,9 +15,16 @@
      * @package    PiperLang\PiperLang
      * @author     Jacob Jørgensen
      * @license    MIT
-     * @version    1.0.0-beta3
+     * @version    1.0.0-beta4
      */
     class PiperLang {
+        /**
+         * Hook container
+         *
+         * @var array
+         */
+        protected array $hooks = [];
+
         /**
          * @var string|null
          */
@@ -88,6 +95,41 @@
          */
         public function __construct() {
             $this -> http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'] ?? '';
+        }
+
+        /**
+         * ADD A HOOK ACTION.
+         *
+         * @param string $hook_name - THE NAME OF THE HOOK.
+         * @param callable $fn - THE CALLABLE FUNCTION OR METHOD.
+         * @param int $priority - EXECUTION PRIORITY, LOWER NUMBERS HAVE HIGHER PRIORITY.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function addHook(string $hook_name, callable $fn, int $priority = 10): void {
+            $this -> hooks[$hook_name][$priority][] = $fn;
+        }
+
+        /**
+         * RUN ALL HOOKS FOR THE PROVIDED hook_name .
+         *
+         * @param string $hook_name - THE NAME OF THE HOOK.
+         * @param array $args PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function runHooks(string $hook_name, array $args = []): void {
+            if (!isset($this -> hooks[$hook_name])) {
+                return;
+            }
+
+            ksort($this -> hooks[$hook_name]);
+
+            foreach($this -> hooks[$hook_name] as $hooks) {
+                foreach($hooks as $hook) {
+                    call_user_func_array($hook, $args);
+                }
+            }
         }
 
         /**
