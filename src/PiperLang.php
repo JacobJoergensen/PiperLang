@@ -8,20 +8,16 @@
     use NumberFormatter;
     use RuntimeException;
 
-    /**
-     * PiperLang - IS A COMPACT AND EFFICIENT PHP FRAMEWORK DESIGNED TO
-     * PROVIDE LOCALIZATION CAPABILITIES FOR YOUR WEB APPLICATION.
-     *
-     * @package    PiperLang\PiperLang
-     * @author     Jacob Jørgensen
-     * @license    MIT
-     * @version    1.0.0-beta4
-     */
     class PiperLang {
         /**
          * @var array<string, array<int, array<int, callable>>>
          */
         protected array $hooks = [];
+
+        /**
+         * @var bool
+         */
+        public bool $debug = false;
 
         /**
          * @var string|null
@@ -158,11 +154,13 @@
          * @throws InvalidArgumentException - WHEN THE PROVIDED SOURCE IS INVALID OR DISABLED.
          */
         public function detectUserLocale(string $source = 'session'): string {
+            $locale = $this -> default_locale;
+
             if ($source === 'session' && $this -> session_enabled) {
                 $locale = $_SESSION[$this -> session_key] ?? '';
             } elseif ($source === 'cookie' && $this -> cookie_enabled) {
                 $locale = $_COOKIE[$this -> cookie_key] ?? '';
-            } else {
+            } elseif ($this -> debug) {
                 throw new InvalidArgumentException("Invalid or disabled source '$source' for detecting locale.");
             }
 
@@ -203,31 +201,22 @@
 
                 $_SESSION[$this -> session_key] = $this -> current_locale;
 
-                if ($_SESSION[$this -> session_key] !== $this -> current_locale) {
+                if ($_SESSION[$this -> session_key] !== $this -> current_locale && $this -> debug) {
                     throw new RuntimeException('Failed to set locale in session');
                 }
             }
 
             if ($this -> cookie_enabled) {
-                if (headers_sent()) {
+                if (headers_sent() && $this -> debug) {
                     throw new RuntimeException('Failed to set the cookie, headers were already sent');
                 }
 
                 if (!setcookie($this -> cookie_key, $this -> current_locale, time() + (86400 * 30), "/")) {
-                    throw new RuntimeException('Failed to set locale in cookie');
+                    if ($this -> debug) {
+                        throw new RuntimeException('Failed to set locale in cookie');
+                    }
                 }
             }
-        }
-
-        /**
-         * SWITCH THE LOCALE.
-         *
-         * @param string $new_lang - THE NEW LOCALE TO BE SET.
-         *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
-         */
-        public function switchLocale(string $new_lang): void {
-            $this -> setLocale($new_lang);
         }
 
         /**
@@ -240,11 +229,22 @@
          * @throws RuntimeException - IF THE DIRECTORY PATH IS NOT VALID.
          */
         public function setLocalePath(string $path): void {
-            if (!is_dir($path)) {
+            if (!is_dir($path) && $this -> debug) {
                 throw new RuntimeException('Locale path must be a valid directory path.');
             }
 
             $this -> locale_path = $path;
+        }
+
+        /**
+         * SWITCH THE LOCALE.
+         *
+         * @param string $new_lang - THE NEW LOCALE TO BE SET.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function switchLocale(string $new_lang): void {
+            $this -> setLocale($new_lang);
         }
 
         /**
@@ -321,37 +321,39 @@
                     $locale = $this -> default_locale;
                     $locale_file = $this -> locale_path . $locale . $this -> locale_file_extension;
 
-                    if (!file_exists($locale_file)) {
+                    if (!file_exists($locale_file) && $this -> debug) {
                         throw new RuntimeException("Default locale file does not exist: $locale_file");
                     }
-                } else  {
+                } elseif ($this -> debug) {
                     throw new RuntimeException("Locale file does not exist: $locale_file");
                 }
             }
 
             $locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
 
-            if (strtolower($locale_file_extension) !== 'json') {
+            if (strtolower($locale_file_extension) !== 'json' && $this -> debug) {
                 throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
             }
 
             $locale_file_contents = file_get_contents($locale_file);
 
-            if ($locale_file_contents === false) {
+            if ($locale_file_contents === false && $this -> debug) {
                 throw new RuntimeException("Unable to read locale file: $locale_file");
             }
 
-            if (empty($locale_file_contents)) {
+            if (empty($locale_file_contents) && $this -> debug) {
                 throw new RuntimeException("Locale file is empty: $locale_file");
             }
 
             try {
                 $locale_nodes = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException $exception) {
-                throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
+                if ($this -> debug) {
+                    throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
+                }
             }
 
-            if (!is_array($locale_nodes) || !array_key_exists('variables', $locale_nodes)) {
+            if (!is_array($locale_nodes) || (!array_key_exists('variables', $locale_nodes) && $this -> debug)) {
                 throw new RuntimeException("Missing 'variables' data in locale file: $locale_file");
             }
 
@@ -360,7 +362,7 @@
             /**
              * @phpstan-ignore-next-line
              */
-            if (is_null($variables)) {
+            if (is_null($variables) && $this -> debug) {
                 throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
             }
 
@@ -372,7 +374,9 @@
                         try {
                             $locale_nodes[$key] = $this -> replaceVariables($value, $variables);
                         } catch (RuntimeException $exception) {
-                            throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
+                            if ($this -> debug) {
+                                throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
+                            }
                         }
                     }
                 }
@@ -393,7 +397,7 @@
          * @throws RuntimeException - IF THE LOCALE FILE IS ALREADY UNLOADED OR WAS NEVER LOADED.
          */
         public function unloadFile(string $locale): void {
-            if (!isset($this -> loaded_locales[$locale])) {
+            if (!isset($this -> loaded_locales[$locale]) && $this -> debug) {
                 throw new RuntimeException("Locale file $locale is not currently loaded or has been already unloaded");
             }
 
@@ -411,11 +415,11 @@
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
         public function formatNumber(float $number): string {
-            if (!is_numeric($number)) {
+            if (!is_numeric($number) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
-            if ($this -> current_locale === null) {
+            if ($this -> current_locale === null && $this -> debug) {
                 throw new InvalidArgumentException('Current locale not set.');
             }
 
@@ -425,7 +429,7 @@
 
             $formatted_number = $formatter -> format($number);
 
-            if ($formatted_number === false) {
+            if ($formatted_number === false && $this -> debug) {
                 throw new RuntimeException('Number formatting failed: ' . intl_get_error_message());
             }
 
@@ -444,15 +448,15 @@
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
         public function formatCurrency(float $amount, string $currency, bool $show_symbol = false): string {
-            if (!is_numeric($amount)) {
+            if (!is_numeric($amount) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid amount for currency formatting.');
             }
 
-            if (!preg_match("/^[A-Z]{3}$/", $currency)) {
+            if (!preg_match("/^[A-Z]{3}$/", $currency) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
 
-            if ($this -> current_locale === null) {
+            if ($this -> current_locale === null && $this -> debug) {
                 throw new InvalidArgumentException('Current locale not set.');
             }
 
@@ -460,7 +464,7 @@
 
             $formatted_currency = $formatter -> formatCurrency($amount, $currency);
 
-            if ($formatted_currency === false) {
+            if ($formatted_currency === false && $this -> debug) {
                 throw new RuntimeException('Currency formatting failed: ' . intl_get_error_message());
             }
 
@@ -496,7 +500,7 @@
 
             $formatted_date = $formatter -> format($date);
 
-            if ($formatted_date === false) {
+            if ($formatted_date === false && $this -> debug) {
                 throw new RuntimeException('Date formatting failed: ' . intl_get_error_message());
             }
 
@@ -509,7 +513,7 @@
          * @return array<string, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
          */
         public function getFormattingRules(): array {
-            if (empty($this -> current_locale)) {
+            if (empty($this -> current_locale) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid locale code.');
             }
 
