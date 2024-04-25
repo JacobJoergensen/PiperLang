@@ -112,7 +112,7 @@
          * RUN ALL HOOKS FOR THE PROVIDED hook_name .
          *
          * @param string $hook_name - THE NAME OF THE HOOK.
-         * @param array $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
+         * @param mixed[] $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
