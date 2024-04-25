@@ -463,7 +463,7 @@
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
 
-            if ($this -> current_locale === null && $this -> debug) {
+            if ($this -> current_locale === null) {
                 throw new InvalidArgumentException('Current locale not set.');
             }
 
@@ -471,7 +471,7 @@
 
             $formatted_currency = $formatter -> formatCurrency($amount, $currency);
 
-            if ($formatted_currency === false && $this -> debug) {
+            if ($formatted_currency === false) {
                 throw new RuntimeException('Currency formatting failed: ' . intl_get_error_message());
             }
 
