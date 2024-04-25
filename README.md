@@ -33,8 +33,6 @@ Thank you for using PiperLang!
 
 This project is licensed under the terms of the [MIT License](LICENSE), allowing you to use, modify, and distribute the software freely. For details, please see the [LICENSE](LICENSE) file.
 
-<br>
-
 ## Contributing
 
 We welcome contributions to PiperLang! Whether you want to report a bug, request a feature, or submit a pull request with code changes, your input is highly valued.
@@ -50,8 +48,6 @@ We welcome contributions to PiperLang! Whether you want to report a bug, request
 7. **Push Changes**: Push your changes to your forked repository on GitHub.
 8. **Submit a Pull Request**: Submit a pull request from your forked repository to the main PiperLang repository.
 
-<br>
-
 ## Issues and Pull Requests
 
 For bug reports and feature requests, please use the Issues tab.
@@ -64,8 +60,6 @@ For direct code contributions, please open a Pull Request.
 * **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
 
 Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
-
-<br>
 
 ## Changelog
 
