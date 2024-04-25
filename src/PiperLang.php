@@ -507,8 +507,10 @@
 
             $formatted_date = $formatter -> format($date);
 
-            if ($formatted_date === false && $this -> debug) {
-                throw new RuntimeException('Date formatting failed: ' . intl_get_error_message());
+            if ($formatted_date === false) {
+                if ($this -> debug) {
+                    throw new RuntimeException('Date formatting failed: ' . intl_get_error_message());
+                }
             }
 
             return $formatted_date;
