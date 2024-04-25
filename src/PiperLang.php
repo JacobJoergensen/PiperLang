@@ -8,6 +8,15 @@
     use NumberFormatter;
     use RuntimeException;
 
+    /**
+     * PiperLang - IS A COMPACT AND EFFICIENT PHP FRAMEWORK DESIGNED TO
+     * PROVIDE LOCALIZATION CAPABILITIES FOR YOUR WEB APPLICATION.
+     *
+     * @package    PiperLang\PiperLang
+     * @author     Jacob Jørgensen
+     * @license    MIT
+     * @version    1.0.0-beta4
+     */
     class PiperLang {
         /**
          * @var array<string, array<int, array<int, callable>>>
