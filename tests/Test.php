@@ -103,41 +103,41 @@
             $this->assertEquals('{{missing}}, world!', $result);
         }
 
-        public function testNumberFormat(): void {
+        public function testFormatNumber(): void {
             $this -> piper_lang -> current_locale = 'en';
-            $this -> assertEquals('1,234.57', $this -> piper_lang -> numberFormat(1234.56789));
+            $this -> assertEquals('1,234.57', $this -> piper_lang -> formatNumber(1234.56789));
 
             $this -> piper_lang -> current_locale = 'de';
-            $this -> assertEquals('1.234,57', $this -> piper_lang -> numberFormat(1234.56789));
+            $this -> assertEquals('1.234,57', $this -> piper_lang -> formatNumber(1234.56789));
 
             $this -> piper_lang -> current_locale = null;
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> numberFormat(1234.56789);
+            $this -> piper_lang -> formatNumber(1234.56789);
 
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> numberFormat('string number');
+            $this -> piper_lang -> formatNumber('string number');
         }
 
-        public function testCurrencyFormat(): void {
+        public function testFormatCurrency(): void {
             $this -> piper_lang -> current_locale = 'en';
-            $this -> assertEquals('$123.46', $this -> piper_lang -> currencyFormat(123.456, 'USD', true));
+            $this -> assertEquals('$123.46', $this -> piper_lang -> formatCurrency(123.456, 'USD', true));
 
             $this -> piper_lang -> current_locale = null;
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> currencyFormat(123.456, 'USD', true);
+            $this -> piper_lang -> formatCurrency(123.456, 'USD', true);
 
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> currencyFormat('string currency', 'USD', true);
+            $this -> piper_lang -> formatCurrency('string currency', 'USD', true);
         }
 
-        public function testDateFormat(): void {
+        public function testFormatDate(): void {
             $this -> piper_lang -> current_locale = 'en';
             $test_date = new DateTime('2023-01-01');
-            $this -> assertEquals('January 1, 2023', $this -> piper_lang -> dateFormat($test_date, 'long'));
+            $this -> assertEquals('January 1, 2023', $this -> piper_lang -> formatDate($test_date, 'long'));
 
             $this -> piper_lang -> current_locale = 'de';
             $test_date = new DateTime('2023-01-01');
-            $this -> assertEquals('1. Januar 2023', $this -> piper_lang -> dateFormat($test_date, 'long'));
+            $this -> assertEquals('1. Januar 2023', $this -> piper_lang -> formatDate($test_date, 'long'));
         }
 
         public function testGetFormattingRules(): void {
