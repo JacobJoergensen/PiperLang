@@ -19,7 +19,7 @@
      */
     class PiperLang {
         /**
-         * @var array
+         * @var array<string, array<int, callable>>
          */
         protected array $hooks = [];
 
