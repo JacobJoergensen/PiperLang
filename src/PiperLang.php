@@ -422,7 +422,7 @@
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
         public function formatNumber(float $number): string {
-            if (!is_numeric($number) && $this -> debug) {
+            if (!is_numeric($number)) {
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
@@ -436,7 +436,7 @@
 
             $formatted_number = $formatter -> format($number);
 
-            if ($formatted_number === false && $this -> debug) {
+            if ($formatted_number === false) {
                 throw new RuntimeException('Number formatting failed: ' . intl_get_error_message());
             }
 
@@ -455,7 +455,7 @@
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
         public function formatCurrency(float $amount, string $currency, bool $show_symbol = false): string {
-            if (!is_numeric($amount) && $this -> debug) {
+            if (!is_numeric($amount)) {
                 throw new InvalidArgumentException('Not a valid amount for currency formatting.');
             }
 
