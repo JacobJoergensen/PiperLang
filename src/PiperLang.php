@@ -357,9 +357,7 @@
             try {
                 $locale_nodes = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException $exception) {
-                if ($this -> debug) {
-                    throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
-                }
+                throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
             }
 
             if (!is_array($locale_nodes) || (!array_key_exists('variables', $locale_nodes) && $this -> debug)) {
