@@ -9,85 +9,40 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 
 <br>
 
-## Key Classes and Methods
-Key methods of `PiperLang` class include:
+## Features
+* <strong>Localization Support:</strong> PiperLang provides robust support for localization, allowing developers to easily translate their web applications into different languages.
+* <strong>Automatic Locale Detection:</strong> The framework can automatically detect the user's preferred locale based on their browser settings or session/cookie preferences.
+* <strong>Flexible Locale Management:</strong> Developers can set, switch, and manage locales dynamically, either based on user preferences or default settings.
+* <strong>Translation with Pluralization:</strong> PiperLang facilitates translation with pluralization, ensuring accurate representation of phrases based on count variations.
+* <strong>Variable Replacement in Translations:</strong> Developers can easily replace placeholders in translated strings with provided variables, enhancing flexibility in localization.
+* <strong>Locale File Management:</strong> The framework handles loading and processing of locale files, ensuring proper validation of content and support for JSON format.
+* <strong>Number and Currency Formatting:</strong> PiperLang offers utilities for formatting numbers and currency amounts according to the current locale, improving user experience in diverse regions.
+* <strong>Date Formatting:</strong> Developers can format dates according to the current locale, with options for different date formats such as short, medium, long, and full.
+* <strong>Customizable Hooks:</strong> The framework allows developers to define and execute custom hook actions at various stages, providing extensibility for integrating additional functionalities.
+* <strong>Debugging Support:</strong> PiperLang includes debugging features to help developers identify and resolve issues related to locale management, file loading, and formatting.
 
-* `detectBrowserLocale()` - Detects user's browser locale.
-* `detectUserLocale(string $source = 'session')` - Detects the user's preferred locale based on their session or cookie.
-* `getLocale()` - Gets the current locale.
-* `setLocale(string $preferred_lang = null)` - Sets the locale based on the preference, otherwise fallback to default locale.
-* `switchLocale(string $new_lang)` - Changes the currently set locale to a new one.
-* `setLocalePath(string $path)` - Sets the path to the directory containing locale files.
-* `replaceVariables(string $string, array $variables)` - Replaces variables in the given string with provided ones.
-* `translateWithPlural(string $key, int $count, array $variables = [])` : Translates the provided key considering the count for plural forms. Replaces variables in the translation string.
-* `loadFile(string $locale)` - Loads a locale file, validates its content and processes the variables.
-* `unloadFile(string $locale)` - Unloads a loaded locale file from memory.
-* `numberFormat(float $number)` - Formats a number according to the current locale setting.
-* `currencyFormat(float $amount, string $currency, bool $show_symbol = false)` - Formats a currency amount according to the current locale setting.
-* `dateFormat(DateTime $date, string $format = 'long')` - Formats a date according to the current locale setting.
-* `getFormattingRules()` - Returns the formatting rules specific to the current locale.
+## Installing
+TODO
 
-## Initializing
-```$piperlang = new \PiperLang\PiperLang();```
+## License
+Thank you for using PiperLang!
 
-## Configuration
-You can change various settings in the `PiperLang` framework. Here's an example of how you can modify settings after the initializing:
+This project is licensed under the terms of the [MIT License](LICENSE), allowing you to use, modify, and distribute the software freely. For details, please see the [LICENSE](LICENSE) file.
 
-| Setting               | Method                                                               | Description                                                     | Default       |
-|-----------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|---------------|
-| Default Locale        | `$piperlang->default_locale = 'es'`                                  | Set the default locale.                                         | 'en'          |
-| Supported Locales     | `$piperlang->supported_locales = ['en', 'es', 'fr']`                 | Add locales that the application should support.                | ['en']        |
-| Locale Path           | `$piperlang->locale_path = '/path_to_your_locales/'`                 | Specify the path to your localization files.                    | '/locales/'   |
-| Locale File Extension | `$piperlang->locale_file_extension = 'json'`                         | Specify the extension of your localization files.               | 'json'        |
-| Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                       | Alter the variable pattern to something other than the default. | '/{{(.*?)}}/' |
-| Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']` | Define the plural rules for your supported locales.             | []            |
-| Session Enabled       | `$piperlang->session_enabled = false`                                | Enable or disable session.                                      | true          |
-| Session Key           | `$piperlang->session_key = 'user_lang'`                              | Change the session key for storing user locale preference.      | 'locale'      |
-| Cookie Enabled        | `$piperlang->cookie_enabled = false`                                 | Enable or disable cookie.                                       | false         |
-| Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                               | Alter the cookie key for storing user locale preference.        | 'site_locale' |
+## Contributing
 
-### Setting a Locale
-```$piperlang->setLocale("fr");```
+We welcome contributions to PiperLang! Whether you want to report a bug, request a feature, or submit a pull request with code changes, your input is highly valued.
 
-It's important to note that the locale chosen should be one amongst the supported locales. The default supported locale is English ("en").
+### How to Contribute
 
-### Translating Text with Replacement and Plural Forms
-```$translation = $piperlang->translateWithPlural("item_count", 5, ["items"=>"books"]);```
-
-In the provided locale files (example `en.json`):
-
-    {"item_count_1": "{{count}} item", "item_count_other": "{{count}} items"}
-
-The corresponding translation considering the plural forms will be used, here `count` in `item_count_other` will be replaced with the provided count.
-
-### Formatting Date
-```$date = new DateTime("2010-07-05T06:30:00");``` <br>
-```$formattedDate = $piperlang->dateFormat($date, 'long');```
-
-Remember to set the locale before making a call to `dateFormat()`. The provided code will format the date into a 'long' style for the set locale.
-
-### Number Formatting
-```$formattedNumber = $piperlang->numberFormat(1234567.89);```
-
-### Currency Formatting
-```$formattedCurrency = $piperlang->currencyFormat(1234567.89, "USD", true);```
-
-It's advisable to set the locale before calling `numberFormat()` or `currencyFormat()` for the desired locale-dependent format.
-
-### Getting Formatting Rules
-```$formattingRules = $piperlang->getFormattingRules();```
-
-This fetches currency, number formatting data, as well as other locale-specific information.
-
-## Getting Started (EXAMPLE)
-```use PiperLang\PiperLang;``` <br>
-```$piperLang = new PiperLang();``` <br>
-```$piperLang->setLocale('fr'); // set locale to French``` <br>
-```$greetingText = $piperLang->translateWithPlural('hello', 1); // hello in French``` <br>
-```echo $greetingText;``` <br>
-```$formattedDate = $piperLang->dateFormat(new DateTime()); // today's date in French format``` <br>
-```echo $formattedDate;```
-
+1. **Fork the Repository**: Start by forking the [PiperLang repository](https://github.com/JacobJoergensen/PiperLang/) on GitHub.
+2. **Clone the Repository**: Clone the forked repository to your local machine using Git.
+3. **Create a Branch**: Create a new branch for your contribution and switch to it.
+4. **Make Changes**: Implement your changes, keeping in mind any relevant guidelines and coding standards.
+5. **Test Your Changes**: Test your changes thoroughly to ensure they work as expected.
+6. **Commit Your Changes**: Commit your changes with clear and descriptive commit messages.
+7. **Push Changes**: Push your changes to your forked repository on GitHub.
+8. **Submit a Pull Request**: Submit a pull request from your forked repository to the main PiperLang repository.
 
 ## Issues and Pull Requests
 
@@ -101,5 +56,9 @@ For direct code contributions, please open a Pull Request.
 * **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
 
 Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
+
+## Changelog
+
+For a detailed list of changes, see the [Changelog](CHANGELOG.md) file.
 
 <br>
