@@ -21,12 +21,8 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 * <strong>Customizable Hooks:</strong> The framework allows developers to define and execute custom hook actions at various stages, providing extensibility for integrating additional functionalities.
 * <strong>Debugging Support:</strong> PiperLang includes debugging features to help developers identify and resolve issues related to locale management, file loading, and formatting.
 
-<br>
-
 ## Installing
 TODO
-
-<br>
 
 ## License
 Thank you for using PiperLang!
@@ -35,18 +31,7 @@ This project is licensed under the terms of the [MIT License](LICENSE), allowing
 
 ## Contributing
 
-We welcome contributions to PiperLang! Whether you want to report a bug, request a feature, or submit a pull request with code changes, your input is highly valued.
-
-### How to Contribute
-
-1. **Fork the Repository**: Start by forking the [PiperLang repository](https://github.com/JacobJoergensen/PiperLang/) on GitHub.
-2. **Clone the Repository**: Clone the forked repository to your local machine using Git.
-3. **Create a Branch**: Create a new branch for your contribution and switch to it.
-4. **Make Changes**: Implement your changes, keeping in mind any relevant guidelines and coding standards.
-5. **Test Your Changes**: Test your changes thoroughly to ensure they work as expected.
-6. **Commit Your Changes**: Commit your changes with clear and descriptive commit messages.
-7. **Push Changes**: Push your changes to your forked repository on GitHub.
-8. **Submit a Pull Request**: Submit a pull request from your forked repository to the main PiperLang repository.
+We welcome contributions to PiperLang! Whether you want to report a bug, request a feature, or submit a pull request with code changes, your input is highly valued. Please see the [CONTRIBUTING](CONTRIBUTING.md)
 
 ## Issues and Pull Requests
 
