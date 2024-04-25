@@ -7,6 +7,7 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 >
 > :information_source: **PHP Version:** The development cycle of PiperLang operates on PHP 8.3. For optimal compatibility and performance, we recommend using this version when working with PiperLang.
 
+<br>
 ## Features
 * <strong>Localization Support:</strong> PiperLang provides robust support for localization, allowing developers to easily translate their web applications into different languages.
 * <strong>Automatic Locale Detection:</strong> The framework can automatically detect the user's preferred locale based on their browser settings or session/cookie preferences.
