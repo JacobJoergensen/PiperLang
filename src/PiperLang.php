@@ -350,7 +350,7 @@
                 throw new RuntimeException("Unable to read locale file: $locale_file");
             }
 
-            if (empty($locale_file_contents) && $this -> debug) {
+            if (empty($locale_file_contents)) {
                 throw new RuntimeException("Locale file is empty: $locale_file");
             }
 
@@ -426,7 +426,7 @@
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
 
-            if ($this -> current_locale === null && $this -> debug) {
+            if ($this -> current_locale === null) {
                 throw new InvalidArgumentException('Current locale not set.');
             }
 
