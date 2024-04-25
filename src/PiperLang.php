@@ -410,7 +410,7 @@
          * @throws InvalidArgumentException - THROWN IF THE INPUT IS NOT A VALID NUMBER FOR FORMATTING.
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
-        public function numberFormat(float $number): string {
+        public function formatNumber(float $number): string {
             if (!is_numeric($number)) {
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
@@ -443,7 +443,7 @@
          *
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
-        public function currencyFormat(float $amount, string $currency, bool $show_symbol = false): string {
+        public function formatCurrency(float $amount, string $currency, bool $show_symbol = false): string {
             if (!is_numeric($amount)) {
                 throw new InvalidArgumentException('Not a valid amount for currency formatting.');
             }
@@ -482,7 +482,7 @@
          *
          * @throws RuntimeException - THROWN IF DATE FORMATTING FAILS.
          */
-        public function dateFormat(DateTime $date, string $format = 'long'): string {
+        public function formatDate(DateTime $date, string $format = 'long'): string {
             $format = strtolower($format);
 
             $format_style = match ($format) {
