@@ -8,6 +8,7 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 > :information_source: **PHP Version:** The development cycle of PiperLang operates on PHP 8.3. For optimal compatibility and performance, we recommend using this version when working with PiperLang.
 
 <br>
+
 ## Features
 * <strong>Localization Support:</strong> PiperLang provides robust support for localization, allowing developers to easily translate their web applications into different languages.
 * <strong>Automatic Locale Detection:</strong> The framework can automatically detect the user's preferred locale based on their browser settings or session/cookie preferences.
@@ -20,13 +21,19 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 * <strong>Customizable Hooks:</strong> The framework allows developers to define and execute custom hook actions at various stages, providing extensibility for integrating additional functionalities.
 * <strong>Debugging Support:</strong> PiperLang includes debugging features to help developers identify and resolve issues related to locale management, file loading, and formatting.
 
+<br>
+
 ## Installing
 TODO
+
+<br>
 
 ## License
 Thank you for using PiperLang!
 
 This project is licensed under the terms of the [MIT License](LICENSE), allowing you to use, modify, and distribute the software freely. For details, please see the [LICENSE](LICENSE) file.
+
+<br>
 
 ## Contributing
 
@@ -43,6 +50,8 @@ We welcome contributions to PiperLang! Whether you want to report a bug, request
 7. **Push Changes**: Push your changes to your forked repository on GitHub.
 8. **Submit a Pull Request**: Submit a pull request from your forked repository to the main PiperLang repository.
 
+<br>
+
 ## Issues and Pull Requests
 
 For bug reports and feature requests, please use the Issues tab.
@@ -55,6 +64,8 @@ For direct code contributions, please open a Pull Request.
 * **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
 
 Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
+
+<br>
 
 ## Changelog
 
