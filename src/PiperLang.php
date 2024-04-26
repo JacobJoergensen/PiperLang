@@ -329,7 +329,7 @@
 				if ($locale !== $this -> default_locale) {
 					$locale = $this -> default_locale;
 					$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
-
+	
 					if (!file_exists($locale_file) && $this -> debug) {
 						throw new RuntimeException("Default locale file does not exist: $locale_file");
 					}
