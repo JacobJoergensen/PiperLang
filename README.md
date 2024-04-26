@@ -1,5 +1,20 @@
 # PiperLang (BETA STAGE - WORK IN PROGRESS)
-PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale.
+<p align="center">PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale.</p>
+
+<p align="center">
+      Craft your web app with precision, localize with ease.
+      <br>
+      <a href=""><strong>Explore PiperLang docs »</strong></a>
+      <br>
+      <br>
+      <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=-&labels=type: bug&template=bug_report.yml">Report bug</a>
+      ·
+      <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=&labels=type: feature&template=feature_request.yml">Request feature</a>
+      ·
+      <a href="https://github.com/JacobJoergensen/PiperLang/LICENSE">License</a>
+      ·
+      <a href="https://github.com/JacobJoergensen/PiperLang/CHANGELOG.md">Changelog</a>
+</p>
 
 <br>
 
@@ -21,33 +36,53 @@ PiperLang is a compact and efficient PHP framework designed to provide localizat
 * <strong>Customizable Hooks:</strong> The framework allows developers to define and execute custom hook actions at various stages, providing extensibility for integrating additional functionalities.
 * <strong>Debugging Support:</strong> PiperLang includes debugging features to help developers identify and resolve issues related to locale management, file loading, and formatting.
 
-## Installing
-TODO
+## Quick Start
+#### 1. Download PiperLang
+- You can download the PiperLang framework from its GitHub repository or via Composer. If you're using Composer, you can simply run:
+```composer require piperlang/piperlang```
 
-## License
-Thank you for using PiperLang!
+#### 2. Initialize PiperLang
+- Once downloaded, include the framework in your PHP file where you intend to use localization:
+```php
+require_once 'path/to/vendor/autoload.php'; // If you've installed via Composer
+// or
+require_once 'path/to/PiperLang.php'; // If you've downloaded the framework directly
+```
 
-This project is licensed under the terms of the [MIT License](LICENSE), allowing you to use, modify, and distribute the software freely. For details, please see the [LICENSE](LICENSE) file.
+- Then call the core class by doing: ```use PiperLang\PiperLang;```
+- After that we can create a new instance of PiperLang like so: ```$piper = new PiperLang();```
+
+#### 3. Simple Example
+- Now we can start playing around with PiperLang, this is a super simple example of it.
+
+```
+$piper->supported_locales = ['en', 'da']; // Modifying supported locales
+$piper->locale_path = '/app/assets/locales/'; // Modifying the path for the locale files
+$piper->debug = true; // Set the debug mode to true
+
+$piper->setLocale($piper->detectBrowserLocale()); // Set locale based on the browser locale
+
+echo "Current Locale: " . $piper->getLocale() . "\n"; // To see the current locale
+
+$localeNodes = $piper->loadFile($piper->detectBrowserLocale()); // Load the locale file based on the browser locale
+
+if (isset($localeNodes['welcome'])) {
+    echo "Welcome Message: " . $localeNodes['welcome'] . "\n";
+} else {
+    echo "No translation found for 'welcome' key in " . $piper->current_locale . " locale.\n";
+}
+```
+
+## Status
+![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
 
 ## Contributing
 
 We welcome contributions to PiperLang! Whether you want to report a bug, request a feature, or submit a pull request with code changes, your input is highly valued. Please see the [CONTRIBUTING](CONTRIBUTING.md)
 
-## Issues and Pull Requests
+## License
+Thank you for using PiperLang!
 
-For bug reports and feature requests, please use the Issues tab.
-
-* **Report bug**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
-* **Request feature**: [Click here](https://github.com/JacobJoergensen/PiperLang/issues/)
-
-For direct code contributions, please open a Pull Request.
-
-* **Open a new Pull Request**: [Click here](https://github.com/JacobJoergensen/PiperLang/compare)
-
-Remember, your input plays a big role in making the framework better for everyone. We greatly appreciate your help and suggestions!
-
-## Changelog
-
-For a detailed list of changes, see the [Changelog](CHANGELOG.md) file.
+This project is licensed under the terms of the [MIT License](LICENSE), allowing you to use, modify, and distribute the software freely. For details, please see the [LICENSE](LICENSE) file.
 
 <br>
