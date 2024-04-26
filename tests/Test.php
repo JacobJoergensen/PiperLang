@@ -54,21 +54,21 @@
                 $this -> assertArrayHasKey($key, $info);
             }
 
-            $this->assertIsBool($info['Debug Status']);
-            $this->assertIsArray($info['Hooks List']);
-            $this->assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
-            $this->assertIsString($info['Default Locale']);
-            $this->assertIsArray($info['Supported Locales']);
-            $this->assertIsString($info['Path to Locales']);
-            $this->assertIsString($info['Locale File Extension']);
-            $this->assertIsArray($info['Loaded Locales']);
-            $this->assertIsString($info['Variable Pattern']);
-            $this->assertIsArray($info['Plural Rules']);
-            $this->assertIsString($info['HTTP Accept Locale']);
-            $this->assertIsBool($info['Session Enabled']);
-            $this->assertIsString($info['Session Key']);
-            $this->assertIsBool($info['Cookie Enabled']);
-            $this->assertIsString($info['Cookie Key']);
+            $this -> assertIsBool($info['Debug Status']);
+            $this -> assertIsArray($info['Hooks List']);
+            $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
+            $this -> assertIsString($info['Default Locale']);
+            $this -> assertIsArray($info['Supported Locales']);
+            $this -> assertIsString($info['Path to Locales']);
+            $this -> assertIsString($info['Locale File Extension']);
+            $this -> assertIsArray($info['Loaded Locales']);
+            $this -> assertIsString($info['Variable Pattern']);
+            $this -> assertIsArray($info['Plural Rules']);
+            $this -> assertIsString($info['HTTP Accept Locale']);
+            $this -> assertIsBool($info['Session Enabled']);
+            $this -> assertIsString($info['Session Key']);
+            $this -> assertIsBool($info['Cookie Enabled']);
+            $this -> assertIsString($info['Cookie Key']);
         }
 
         public function testAddHook(): void {
