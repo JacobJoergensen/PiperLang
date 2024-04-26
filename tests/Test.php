@@ -124,6 +124,7 @@
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
 
             $this -> piper_lang -> default_locale = 'non_existant_locale';
+            $this -> piper_lang -> debug = true;
             $this -> expectException(JsonException::class);
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
         }  
