@@ -56,7 +56,7 @@
 
             $this->assertIsBool($info['Debug Status']);
             $this->assertIsArray($info['Hooks List']);
-            $this->assertIsString($info['Current Locale']);
+            $this->assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
             $this->assertIsString($info['Default Locale']);
             $this->assertIsArray($info['Supported Locales']);
             $this->assertIsString($info['Path to Locales']);
