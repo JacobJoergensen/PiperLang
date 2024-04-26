@@ -64,7 +64,7 @@
             $this->assertIsArray($info['Loaded Locales']);
             $this->assertIsString($info['Variable Pattern']);
             $this->assertIsArray($info['Plural Rules']);
-            $this->assertIsBool($info['HTTP Accept Locale']);
+            $this->assertIsString($info['HTTP Accept Locale']);
             $this->assertIsBool($info['Session Enabled']);
             $this->assertIsString($info['Session Key']);
             $this->assertIsBool($info['Cookie Enabled']);
