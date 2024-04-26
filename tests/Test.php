@@ -49,6 +49,12 @@
         public function testRunHooks(): void {
             $hook_name = 'some_hook_name';
 
+            $some_hook_function = function($arg1, $arg2) {
+                echo $arg1 . $arg2;
+            };
+
+            $this -> piper_lang -> addHook($hook_name, $some_hook_function, 10);
+
             ob_start();
 
             $this -> piper_lang -> runHooks($hook_name, ['Hello ', 'world!']);
