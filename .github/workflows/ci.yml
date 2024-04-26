@@ -54,10 +54,16 @@ jobs:
         run: |
           vendor/bin/phpstan analyse --level max
 
-      - name: Run Unit Tests
+      - name: Run Unit Tests and Build Coverage
         run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover=coverage.xml
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: src/
+
+      - name: Upload Coverage Reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
