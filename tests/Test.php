@@ -38,9 +38,9 @@
         }
 
         public function testGetInfo(): void {
-            $instance = $this -> piper_lang;
+            $info = $this -> piper_lang -> getInfo();
 
-            $this -> assertIsArray($instance);
+            $this -> assertIsArray($info);
 
             $expected_keys = [
                 'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
@@ -51,24 +51,24 @@
             ];
 
             foreach ($expected_keys as $key) {
-                $this -> assertArrayHasKey($key, $instance);
+                $this -> assertArrayHasKey($key, $info);
             }
 
-            $this->assertIsBool($instance['Debug Status']);
-            $this->assertIsArray($instance['Hooks List']);
-            $this->assertIsString($instance['Current Locale']);
-            $this->assertIsString($instance['Default Locale']);
-            $this->assertIsArray($instance['Supported Locales']);
-            $this->assertIsString($instance['Path to Locales']);
-            $this->assertIsString($instance['Locale File Extension']);
-            $this->assertIsArray($instance['Loaded Locales']);
-            $this->assertIsString($instance['Variable Pattern']);
-            $this->assertIsArray($instance['Plural Rules']);
-            $this->assertIsBool($instance['HTTP Accept Locale']);
-            $this->assertIsBool($instance['Session Enabled']);
-            $this->assertIsString($instance['Session Key']);
-            $this->assertIsBool($instance['Cookie Enabled']);
-            $this->assertIsString($instance['Cookie Key']);
+            $this->assertIsBool($info['Debug Status']);
+            $this->assertIsArray($info['Hooks List']);
+            $this->assertIsString($info['Current Locale']);
+            $this->assertIsString($info['Default Locale']);
+            $this->assertIsArray($info['Supported Locales']);
+            $this->assertIsString($info['Path to Locales']);
+            $this->assertIsString($info['Locale File Extension']);
+            $this->assertIsArray($info['Loaded Locales']);
+            $this->assertIsString($info['Variable Pattern']);
+            $this->assertIsArray($info['Plural Rules']);
+            $this->assertIsBool($info['HTTP Accept Locale']);
+            $this->assertIsBool($info['Session Enabled']);
+            $this->assertIsString($info['Session Key']);
+            $this->assertIsBool($info['Cookie Enabled']);
+            $this->assertIsString($info['Cookie Key']);
         }
 
         public function testAddHook(): void {
