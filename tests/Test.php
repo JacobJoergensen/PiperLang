@@ -106,7 +106,7 @@
         }
 
         public function testUnloadFile(): void {
-            $locale = 'en';
+            $locale = $this -> piper_lang -> default_locale;
 
             $this -> piper_lang -> loadFile($locale);
             $this-> assertArrayHasKey($locale, $this-> piper_lang -> loaded_locales);
