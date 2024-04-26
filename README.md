@@ -16,7 +16,7 @@
       <a href="https://github.com/JacobJoergensen/PiperLang/CHANGELOG.md">Changelog</a>
 </p>
 
-<br>
+<hr>
 
 > :warning: **Beta Stage Warning:** PiperLang is currently in a Beta stage. It is a work in progress and should not be used in production applications at the moment. Unexpected bugs and errors may happen, and features may change without prior announcements. We encourage you to participate in our testing and development phases by reporting any encountered issues.
 >
