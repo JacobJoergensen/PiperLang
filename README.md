@@ -82,7 +82,7 @@
 - <a href="https://github.com/JacobJoergensen/PiperLang/tree/main/examples"> See more examples by clicking here!</a>
 
 ## Status
-![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
+![tests](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/JacobJoergensen/PiperLang/graph/badge.svg?token=K6OZ3AVDPC)](https://codecov.io/gh/JacobJoergensen/PiperLang)
 
 ## Contributing
