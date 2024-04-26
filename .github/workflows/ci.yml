@@ -60,7 +60,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: Build
           path: src/
 
       - name: Upload Coverage Reports to Codecov
