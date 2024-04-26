@@ -105,6 +105,20 @@
             $this->assertEquals('{{missing}}, world!', $result);
         }
 
+        public function testLoadFile(): void {
+            $locale = $this -> piper_lang -> default_locale;
+
+            $this -> piper_lang -> locale_path = 'locales/';
+            $this -> piper_lang -> locale_file_extension = 'json';
+
+            $this -> assertIsArray($this -> piper_lang -> loadFile($locale));
+
+            $locale = 'non_existant_locale';
+            $this -> piper_lang -> default_locale = 'default_locale';
+            $this -> expectException(RuntimeException::class);
+            $this -> piper_lang -> loadFile($locale);
+        }  
+
         public function testUnloadFile(): void {
             $locale = $this -> piper_lang -> default_locale;
 
