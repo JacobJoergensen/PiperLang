@@ -22,6 +22,52 @@
             $this -> piper_lang -> session_key = 'current_locale';
         }
 
+        public function testAddHook(): void {
+            $hook_name = 'some_hook_name';
+
+            $some_hook_function = function($arg1, $arg2) {
+                echo $arg1 . $arg2;
+            };
+
+            $this -> piper_lang -> addHook($hook_name, $some_hook_function);
+
+            $this -> assertIsCallable(
+                $this -> piper_lang -> hooks[$hook_name][10][0], "The hook function is missing or not callable"
+            );
+
+            $different_priority_hook_function = function($arg1) {
+                echo strtoupper($arg1);
+            };
+
+            $this -> piper_lang -> addHook($hook_name, $different_priority_hook_function, 1);
+
+            $this -> assertIsCallable(
+                $this -> piper_lang -> hooks[$hook_name][1][0], "The priority hook function is missing or not callable"
+            );
+        }
+
+        public function testRunHooks(): void {
+            $hook_name = 'some_hook_name';
+
+            ob_start();
+
+            $this -> piper_lang -> runHooks($hook_name, ['Hello ', 'world!']);
+            $output = ob_get_clean();
+            $this -> assertEquals('Hello world!', $output, "The hooks didn't produce expected output");
+
+            ob_start();
+
+            $this -> piper_lang -> runHooks($hook_name, ['Hello ']);
+            $output = ob_get_clean();
+            $this -> assertEquals('HELLO Hello ', $output, "The hooks with different priorities didn't run in the correct order");
+
+            ob_start();
+
+            $this -> piper_lang -> runHooks('non_existent_hook');
+            $output = ob_get_clean();
+            $this -> assertEmpty($output, "Running a non-existent hook produced output.");
+        }
+
         public function testDetectBrowserLocale(): void {
             $this -> piper_lang -> http_accept_locale = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
             $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
