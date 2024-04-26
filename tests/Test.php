@@ -61,9 +61,15 @@
             $output = ob_get_clean();
             $this -> assertEquals('Hello world!', $output, "The hooks didn't produce expected output");
 
+            $different_priority_hook_function = function($arg1) {
+                echo strtoupper($arg1);
+            };
+
+            $this -> piper_lang -> addHook($hook_name, $different_priority_hook_function, 1);
+
             ob_start();
 
-            $this -> piper_lang -> runHooks($hook_name, ['Hello ']);
+            $this -> piper_lang -> runHooks($hook_name, ['Hello ', '']);
             $output = ob_get_clean();
             $this -> assertEquals('HELLO Hello ', $output, "The hooks with different priorities didn't run in the correct order");
 
