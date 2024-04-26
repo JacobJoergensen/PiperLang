@@ -3,8 +3,10 @@
 
     use PHPUnit\Framework\TestCase;
     use PiperLang\PiperLang;
+
     use DateTime;
     use InvalidArgumentException;
+    use JsonException;
     use RuntimeException;
 
     final class Test extends TestCase {
