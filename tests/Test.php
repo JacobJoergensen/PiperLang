@@ -105,6 +105,27 @@
             $this->assertEquals('{{missing}}, world!', $result);
         }
 
+        public function testTranslateWithPlural(): void {
+            $key = 'message';
+            $count = 1;
+            $variables = ['name' => 'John'];
+
+            $this -> piper_lang -> current_locale = 'en';
+            $this -> piper_lang -> default_locale = 'en';
+
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
+
+            $count = 2;
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
+
+            $this -> piper_lang -> current_locale = 'non_existant_locale';
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
+
+            $this -> piper_lang -> default_locale = 'non_existant_locale';
+            $this -> expectException(JsonException::class);
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
+        }  
+
         public function testLoadFile(): void {
             $locale = $this -> piper_lang -> default_locale;
 
