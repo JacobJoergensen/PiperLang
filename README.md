@@ -44,11 +44,11 @@
 
 #### 2. Initialize PiperLang
 - Once downloaded, include the framework in your PHP file where you intend to use localization:
-```php
-require_once 'path/to/vendor/autoload.php'; // If you've installed via Composer
-// or
-require_once 'path/to/PiperLang.php'; // If you've downloaded the framework directly
-```
+  ```php
+  require_once 'path/to/vendor/autoload.php'; // If you've installed via Composer
+  // or
+  require_once 'path/to/PiperLang.php'; // If you've downloaded the framework directly
+  ```
 
 - Then call the core class by doing:
   ```php
