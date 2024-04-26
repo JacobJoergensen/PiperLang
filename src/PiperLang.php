@@ -101,6 +101,31 @@
         }
 
         /**
+         * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
+         *
+         * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
+         */
+        public function getInfo(): array {
+            return [
+                'Debug Status' => $this -> debug,
+                'Hooks List' => $this -> hooks,
+                'Current Locale' => $this -> current_locale,
+                'Default Locale' => $this -> default_locale,
+                'Supported Locales' => $this -> supported_locales,
+                'Path to Locales' => $this -> locale_path,
+                'Locale File Extension' => $this -> locale_file_extension,
+                'Loaded Locales' => $this -> loaded_locales,
+                'Variable Pattern' => $this -> variable_pattern,
+                'Plural Rules' => $this -> plural_rules,
+                'HTTP Accept Locale' => $this -> http_accept_locale,
+                'Session Enabled' => $this -> session_enabled,
+                'Session Key' => $this -> session_key,
+                'Cookie Enabled' => $this -> cookie_enabled,
+                'Cookie Key' => $this -> cookie_key
+            ];
+        }
+
+        /**
          * ADD A HOOK ACTION.
          *
          * @param string $hook_name - THE NAME OF THE HOOK.
