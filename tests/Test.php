@@ -104,6 +104,20 @@
             $this->assertEquals('{{missing}}, world!', $result);
         }
 
+        public function testUnloadFile(): void {
+            $locale = 'en';
+
+            $this -> piper_lang -> loadFile($locale);
+            $this-> assertArrayHasKey($locale, $this-> piper_lang -> loaded_locales);
+
+            $this -> piper_lang -> unloadFile($locale);
+            $this-> assertArrayNotHasKey($locale, $this-> piper_lang -> loaded_locales);
+
+            $this -> piper_lang -> debug = true;
+            $this -> expectException(RuntimeException::class);
+            $this -> piper_lang -> unloadFile($locale);
+        }
+
         public function testFormatNumber(): void {
             $this -> piper_lang -> current_locale = 'en';
             $this -> assertEquals('1,234.57', $this -> piper_lang -> formatNumber(1234.56789));
