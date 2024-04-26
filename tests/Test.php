@@ -22,6 +22,21 @@
             $this -> piper_lang -> session_key = 'current_locale';
         }
 
+        public function testConstructor(): void {
+            $original = $_SERVER['HTTP_ACCEPT_locale'] ?? null;
+            $_SERVER['HTTP_ACCEPT_locale'] = 'en-US,en;q=0.9';
+
+            $piper_lang = new PiperLang();
+
+            $this -> assertEquals('en-US,en;q=0.9', $piper_lang -> http_accept_locale, "The constructor didn't initialize http_accept_locale correctly");
+
+            if ($original !== null) {
+                $_SERVER['HTTP_ACCEPT_locale'] = $original;
+            } else {
+                unset($_SERVER['HTTP_ACCEPT_locale']);
+            }
+        }
+
         public function testAddHook(): void {
             $hook_name = 'some_hook_name';
 
