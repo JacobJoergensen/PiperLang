@@ -80,6 +80,29 @@
             $this -> assertEmpty($output, "Running a non-existent hook produced output.");
         }
 
+        public function testDetectUserLocale(): void {
+            $this -> piper_lang -> default_locale = 'en';
+            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
+
+            $result = $this -> piper_lang -> detectUserLocale();
+            $this -> assertEquals('en', $result, "Expected default locale when no session or cookie is set");
+
+            $this -> piper_lang -> session_enabled = true;
+            $_SESSION[$this -> piper_lang -> session_key] = 'fr';
+            $result = $this -> piper_lang -> detectUserLocale();
+            $this -> assertEquals('fr', $result, "Expected locale from session when session is set");
+
+            $this -> piper_lang -> cookie_enabled = true;
+            unset($_SESSION[$this -> piper_lang -> session_key]);
+            $_COOKIE[$this -> piper_lang -> cookie_key] = 'de';
+            $result = $this -> piper_lang -> detectUserLocale('cookie');
+            $this -> assertEquals('de', $result, "Expected locale from cookie when cookie is set");
+
+            $_COOKIE[$this -> piper_lang -> cookie_key] = 'es';
+            $result = $this -> piper_lang -> detectUserLocale('cookie');
+            $this -> assertEquals('en', $result, "Expected default locale when unsupported locale is set in cookie");
+        }
+
         public function testDetectBrowserLocale(): void {
             $this -> piper_lang -> http_accept_locale = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
             $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
