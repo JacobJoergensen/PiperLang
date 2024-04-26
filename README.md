@@ -61,23 +61,23 @@
 
 #### 3. Simple Example
 - Now we can start playing around with PiperLang, this is a super simple example of it.
+  ```php
+  $piper->supported_locales = ['en', 'da']; // Modifying supported locales
+  $piper->locale_path = '/app/assets/locales/'; // Modifying the path for the locale files
+  $piper->debug = true; // Set the debug mode to true
 
-```php
-$piper->supported_locales = ['en', 'da']; // Modifying supported locales
-$piper->locale_path = '/app/assets/locales/'; // Modifying the path for the locale files
-$piper->debug = true; // Set the debug mode to true
+  $piper->setLocale($piper->detectBrowserLocale()); // Set locale based on the browser locale
 
-$piper->setLocale($piper->detectBrowserLocale()); // Set locale based on the browser locale
+  echo "Current Locale: " . $piper->getLocale() . "\n"; // To see the current locale
 
-echo "Current Locale: " . $piper->getLocale() . "\n"; // To see the current locale
+  $localeNodes = $piper->loadFile($piper->detectBrowserLocale()); // Load the locale file based on the browser locale
 
-$localeNodes = $piper->loadFile($piper->detectBrowserLocale()); // Load the locale file based on the browser locale
-
-if (isset($localeNodes['welcome'])) {
-    echo "Welcome Message: " . $localeNodes['welcome'] . "\n";
-} else {
-    echo "No translation found for 'welcome' key in " . $piper->current_locale . " locale.\n";
-}
+  if (isset($localeNodes['welcome'])) {
+      echo "Welcome Message: " . $localeNodes['welcome'] . "\n";
+  } else {
+      echo "No translation found for 'welcome' key in " . $piper->current_locale . " locale.\n";
+  }
+  ```
 ```
 
 ## Status
