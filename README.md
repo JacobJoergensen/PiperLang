@@ -78,7 +78,6 @@
       echo "No translation found for 'welcome' key in " . $piper->current_locale . " locale.\n";
   }
   ```
-```
 
 ## Status
 ![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
