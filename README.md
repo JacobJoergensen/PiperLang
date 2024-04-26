@@ -40,7 +40,7 @@
 ## Quick Start
 #### 1. Download PiperLang
 - You can download the PiperLang framework from its GitHub repository or via Composer. If you're using Composer, you can simply run:
-```composer require piperlang/piperlang```
+  ```composer require piperlang/piperlang```
 
 #### 2. Initialize PiperLang
 - Once downloaded, include the framework in your PHP file where you intend to use localization:
@@ -50,13 +50,19 @@ require_once 'path/to/vendor/autoload.php'; // If you've installed via Composer
 require_once 'path/to/PiperLang.php'; // If you've downloaded the framework directly
 ```
 
-- Then call the core class by doing: ```use PiperLang\PiperLang;```
-- After that we can create a new instance of PiperLang like so: ```$piper = new PiperLang();```
+- Then call the core class by doing:
+  ```php
+  use PiperLang\PiperLang;
+  ```
+- After that we can create a new instance of PiperLang like so:
+  ```php
+  $piper = new PiperLang();
+  ```
 
 #### 3. Simple Example
 - Now we can start playing around with PiperLang, this is a super simple example of it.
 
-```
+```php
 $piper->supported_locales = ['en', 'da']; // Modifying supported locales
 $piper->locale_path = '/app/assets/locales/'; // Modifying the path for the locale files
 $piper->debug = true; // Set the debug mode to true
