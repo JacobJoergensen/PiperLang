@@ -6,7 +6,6 @@
 
     use DateTime;
     use InvalidArgumentException;
-    use JsonException;
     use RuntimeException;
 
     final class Test extends TestCase {
@@ -125,7 +124,7 @@
 
             $this -> piper_lang -> default_locale = 'non_existant_locale';
             $this -> piper_lang -> debug = true;
-            $this -> expectException(JsonException::class);
+            $this -> expectException(RuntimeException::class);
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
         }  
 
