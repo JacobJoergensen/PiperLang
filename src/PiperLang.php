@@ -15,9 +15,19 @@
      * @package    PiperLang\PiperLang
      * @author     Jacob Jørgensen
      * @license    MIT
-     * @version    1.0.0-beta3
+     * @version    1.0.0-beta4
      */
     class PiperLang {
+        /**
+         * @var array<string, array<int, array<int, callable>>>
+         */
+        public array $hooks = [];
+
+        /**
+         * @var bool
+         */
+        public bool $debug = false;
+
         /**
          * @var string|null
          */
@@ -46,7 +56,7 @@
         /**
          * @var array<string, array<string, string>>
          */
-        protected array $loaded_locales = [];
+        public array $loaded_locales = [];
 
         /**
          * @var string|null
@@ -91,6 +101,66 @@
         }
 
         /**
+         * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
+         *
+         * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
+         */
+        public function getInfo(): array {
+            return [
+                'Debug Status' => $this -> debug,
+                'Hooks List' => $this -> hooks,
+                'Current Locale' => $this -> current_locale,
+                'Default Locale' => $this -> default_locale,
+                'Supported Locales' => $this -> supported_locales,
+                'Path to Locales' => $this -> locale_path,
+                'Locale File Extension' => $this -> locale_file_extension,
+                'Loaded Locales' => $this -> loaded_locales,
+                'Variable Pattern' => $this -> variable_pattern,
+                'Plural Rules' => $this -> plural_rules,
+                'HTTP Accept Locale' => $this -> http_accept_locale,
+                'Session Enabled' => $this -> session_enabled,
+                'Session Key' => $this -> session_key,
+                'Cookie Enabled' => $this -> cookie_enabled,
+                'Cookie Key' => $this -> cookie_key
+            ];
+        }
+
+        /**
+         * ADD A HOOK ACTION.
+         *
+         * @param string $hook_name - THE NAME OF THE HOOK.
+         * @param callable $fn - THE CALLABLE FUNCTION OR METHOD.
+         * @param int $priority - EXECUTION PRIORITY, LOWER NUMBERS HAVE HIGHER PRIORITY.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function addHook(string $hook_name, callable $fn, int $priority = 10): void {
+            $this -> hooks[$hook_name][$priority][] = $fn;
+        }
+
+        /**
+         * RUN ALL HOOKS FOR THE PROVIDED hook_name .
+         *
+         * @param string $hook_name - THE NAME OF THE HOOK.
+         * @param mixed[] $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function runHooks(string $hook_name, array $args = []): void {
+            if (!isset($this -> hooks[$hook_name])) {
+                return;
+            }
+
+            ksort($this -> hooks[$hook_name]);
+
+            foreach($this -> hooks[$hook_name] as $hooks) {
+                foreach($hooks as $hook) {
+                    call_user_func_array($hook, $args);
+                }
+            }
+        }
+
+        /**
          * DETECT USER'S PREFERRED LOCALE BASED ON USER'S BROWSER LOCALE.
          *
          * @return string - THE DETECTED LOCALE CODE.
@@ -118,11 +188,13 @@
          * @throws InvalidArgumentException - WHEN THE PROVIDED SOURCE IS INVALID OR DISABLED.
          */
         public function detectUserLocale(string $source = 'session'): string {
+            $locale = $this -> default_locale;
+
             if ($source === 'session' && $this -> session_enabled) {
                 $locale = $_SESSION[$this -> session_key] ?? '';
             } elseif ($source === 'cookie' && $this -> cookie_enabled) {
                 $locale = $_COOKIE[$this -> cookie_key] ?? '';
-            } else {
+            } elseif ($this -> debug) {
                 throw new InvalidArgumentException("Invalid or disabled source '$source' for detecting locale.");
             }
 
@@ -163,31 +235,22 @@
 
                 $_SESSION[$this -> session_key] = $this -> current_locale;
 
-                if ($_SESSION[$this -> session_key] !== $this -> current_locale) {
+                if ($_SESSION[$this -> session_key] !== $this -> current_locale && $this -> debug) {
                     throw new RuntimeException('Failed to set locale in session');
                 }
             }
 
             if ($this -> cookie_enabled) {
-                if (headers_sent()) {
+                if (headers_sent() && $this -> debug) {
                     throw new RuntimeException('Failed to set the cookie, headers were already sent');
                 }
 
                 if (!setcookie($this -> cookie_key, $this -> current_locale, time() + (86400 * 30), "/")) {
-                    throw new RuntimeException('Failed to set locale in cookie');
+                    if ($this -> debug) {
+                        throw new RuntimeException('Failed to set locale in cookie');
+                    }
                 }
             }
-        }
-
-        /**
-         * SWITCH THE LOCALE.
-         *
-         * @param string $new_lang - THE NEW LOCALE TO BE SET.
-         *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
-         */
-        public function switchLocale(string $new_lang): void {
-            $this -> setLocale($new_lang);
         }
 
         /**
@@ -200,11 +263,22 @@
          * @throws RuntimeException - IF THE DIRECTORY PATH IS NOT VALID.
          */
         public function setLocalePath(string $path): void {
-            if (!is_dir($path)) {
+            if (!is_dir($path) && $this -> debug) {
                 throw new RuntimeException('Locale path must be a valid directory path.');
             }
 
             $this -> locale_path = $path;
+        }
+
+        /**
+         * SWITCH THE LOCALE.
+         *
+         * @param string $new_lang - THE NEW LOCALE TO BE SET.
+         *
+         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         */
+        public function switchLocale(string $new_lang): void {
+            $this -> setLocale($new_lang);
         }
 
         /**
@@ -274,12 +348,12 @@
          * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
          */
         public function loadFile(string $locale): array {
-            $locale_file = $this -> locale_path . $locale . $this -> locale_file_extension;
+            $locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
 
             if (!file_exists($locale_file)) {
                 if ($locale !== $this -> default_locale) {
                     $locale = $this -> default_locale;
-                    $locale_file = $this -> locale_path . $locale . $this -> locale_file_extension;
+                    $locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
 
                     if (!file_exists($locale_file)) {
                         throw new RuntimeException("Default locale file does not exist: $locale_file");
@@ -353,7 +427,7 @@
          * @throws RuntimeException - IF THE LOCALE FILE IS ALREADY UNLOADED OR WAS NEVER LOADED.
          */
         public function unloadFile(string $locale): void {
-            if (!isset($this -> loaded_locales[$locale])) {
+            if (!isset($this -> loaded_locales[$locale]) && $this -> debug) {
                 throw new RuntimeException("Locale file $locale is not currently loaded or has been already unloaded");
             }
 
@@ -370,7 +444,7 @@
          * @throws InvalidArgumentException - THROWN IF THE INPUT IS NOT A VALID NUMBER FOR FORMATTING.
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
-        public function numberFormat(float $number): string {
+        public function formatNumber(float $number): string {
             if (!is_numeric($number)) {
                 throw new InvalidArgumentException('Not a valid number for formatting.');
             }
@@ -403,12 +477,12 @@
          *
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
-        public function currencyFormat(float $amount, string $currency, bool $show_symbol = false): string {
+        public function formatCurrency(float $amount, string $currency, bool $show_symbol = false): string {
             if (!is_numeric($amount)) {
                 throw new InvalidArgumentException('Not a valid amount for currency formatting.');
             }
 
-            if (!preg_match("/^[A-Z]{3}$/", $currency)) {
+            if (!preg_match("/^[A-Z]{3}$/", $currency) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
 
@@ -442,7 +516,7 @@
          *
          * @throws RuntimeException - THROWN IF DATE FORMATTING FAILS.
          */
-        public function dateFormat(DateTime $date, string $format = 'long'): string {
+        public function formatDate(DateTime $date, string $format = 'long'): string {
             $format = strtolower($format);
 
             $format_style = match ($format) {
@@ -469,7 +543,7 @@
          * @return array<string, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
          */
         public function getFormattingRules(): array {
-            if (empty($this -> current_locale)) {
+            if (empty($this -> current_locale) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid locale code.');
             }
 

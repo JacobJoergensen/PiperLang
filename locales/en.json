@@ -1,0 +1,14 @@
+{
+  "language_name": "English",
+
+  "variables": {
+    "name": "PiperLang",
+    "desc": "IS A COMPACT AND EFFICIENT PHP FRAMEWORK DESIGNED TO PROVIDE LOCALIZATION CAPABILITIES FOR YOUR WEB APPLICATION.",
+    "link": "<a href='https://github.com/JacobJoergensen/PiperLang/' target='_blank'>https://github.com/JacobJoergensen/PiperLang/</a>"
+  },
+
+  "default": {
+    "hello_world": "Hello World",
+    "did_someone_say_language": "Did someone say language?"
+  }
+}

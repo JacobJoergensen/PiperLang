@@ -6,7 +6,7 @@ PiperLang is committed to providing security updates for the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.0.x   | :white_check_mark: |
+| 1.0.x   | :white_check_mark: |
 
 Please ensure you are using a supported version to receive security updates.
 
