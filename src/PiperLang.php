@@ -56,7 +56,7 @@
         /**
          * @var array<string, array<string, string>>
          */
-        protected array $loaded_locales = [];
+        public array $loaded_locales = [];
 
         /**
          * @var string|null
