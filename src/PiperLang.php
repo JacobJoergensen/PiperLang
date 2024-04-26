@@ -21,7 +21,7 @@
         /**
          * @var array<string, array<int, array<int, callable>>>
          */
-        protected array $hooks = [];
+        public array $hooks = [];
 
         /**
          * @var bool
