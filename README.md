@@ -83,6 +83,7 @@
 
 ## Status
 ![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/JacobJoergensen/PiperLang/graph/badge.svg?token=K6OZ3AVDPC)](https://codecov.io/gh/JacobJoergensen/PiperLang)
 
 ## Contributing
 
