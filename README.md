@@ -2,7 +2,7 @@
 <p align="center">PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale.</p>
 
 <p align="center">
-      Craft your web app with precision, localize with ease.
+      <strong>Craft your web app with precision, localize with ease.</strong>
       <br>
       <a href=""><strong>Explore PiperLang docs »</strong></a>
       <br>
