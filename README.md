@@ -79,6 +79,8 @@
   }
   ```
 
+- <a href="https://github.com/JacobJoergensen/PiperLang/tree/main/examples"> See more examples by clicking here!</a>
+
 ## Status
 ![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
 
