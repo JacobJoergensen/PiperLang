@@ -37,6 +37,40 @@
             }
         }
 
+        public function testGetInfo(): void {
+            $instance = $this -> piper_lang;
+
+            $this -> assertIsArray($instance);
+
+            $expected_keys = [
+                'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
+                'Supported Locales', 'Path to Locales', 'Locale File Extension',
+                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
+                'HTTP Accept Locale', 'Session Enabled', 'Session Key',
+                'Cookie Enabled', 'Cookie Key'
+            ];
+
+            foreach ($expected_keys as $key) {
+                $this -> assertArrayHasKey($key, $instance);
+            }
+
+            $this->assertIsBool($instance['Debug Status']);
+            $this->assertIsArray($instance['Hooks List']);
+            $this->assertIsString($instance['Current Locale']);
+            $this->assertIsString($instance['Default Locale']);
+            $this->assertIsArray($instance['Supported Locales']);
+            $this->assertIsString($instance['Path to Locales']);
+            $this->assertIsString($instance['Locale File Extension']);
+            $this->assertIsArray($instance['Loaded Locales']);
+            $this->assertIsString($instance['Variable Pattern']);
+            $this->assertIsArray($instance['Plural Rules']);
+            $this->assertIsBool($instance['HTTP Accept Locale']);
+            $this->assertIsBool($instance['Session Enabled']);
+            $this->assertIsString($instance['Session Key']);
+            $this->assertIsBool($instance['Cookie Enabled']);
+            $this->assertIsString($instance['Cookie Key']);
+        }
+
         public function testAddHook(): void {
             $hook_name = 'some_hook_name';
 
