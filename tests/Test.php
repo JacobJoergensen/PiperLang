@@ -61,22 +61,23 @@
             $this -> assertEquals('en', $_SESSION['current_locale']);
         }
 
-        public function testSwitchLocale(): void {
-            $_SESSION = [];
-
-            $this -> piper_lang -> switchLocale('es');
-            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
-            $this -> assertEquals('es', $_SESSION['current_locale']);
-        }
-
         public function testSetLocalePath(): void {
             $valid_path = __DIR__;
             $this -> piper_lang -> setLocalePath($valid_path);
             $this -> assertEquals($valid_path, $this -> piper_lang -> locale_path);
 
             $invalid_path = '/path/to/non/existent/directory';
+            $this -> piper_lang -> debug = true;
             $this -> expectException(RuntimeException::class);
             $this -> piper_lang -> setLocalePath($invalid_path);
+        }
+
+        public function testSwitchLocale(): void {
+            $_SESSION = [];
+
+            $this -> piper_lang -> switchLocale('es');
+            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
+            $this -> assertEquals('es', $_SESSION['current_locale']);
         }
 
         public function testReplaceVariables(): void {
@@ -145,6 +146,7 @@
             $this -> assertIsArray($this -> piper_lang -> getFormattingRules());
 
             $this -> piper_lang -> current_locale = null;
+            $this -> piper_lang -> debug = true;
             $this -> expectException(InvalidArgumentException::class);
             $this -> piper_lang -> getFormattingRules();
         }
