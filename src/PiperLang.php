@@ -312,87 +312,87 @@
             return $this -> replaceVariables($translation, $variables);
         }
 
-		/**
-		 * LOADS A LOCALE FILE FROM THE DESIGNATED PATH, VALIDATES ITS CONTENT AND PROCESSES THE VARIABLES.
-		 *
-		 * @param string $locale - THE TARGET LOCALE CODE.
-		 *
-		 * @return array<string, string> - THE PROCESSED locale FILE CONTENT.
-		 *
-		 * @throws JsonException - THROWN IF THE LOCALE FILE CONTAINS INVALID JSON.
-		 * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
-		 */
-		public function loadFile(string $locale): array {
-			$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
+	/**
+	 * LOADS A LOCALE FILE FROM THE DESIGNATED PATH, VALIDATES ITS CONTENT AND PROCESSES THE VARIABLES.
+	 *
+	 * @param string $locale - THE TARGET LOCALE CODE.
+	 *
+	 * @return array<string, string> - THE PROCESSED locale FILE CONTENT.
+	 *
+	 * @throws JsonException - THROWN IF THE LOCALE FILE CONTAINS INVALID JSON.
+	 * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
+	 */
+	public function loadFile(string $locale): array {
+		$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
 
-			if (!file_exists($locale_file)) {
-				if ($locale !== $this -> default_locale) {
-					$locale = $this -> default_locale;
-					$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
-	
-					if (!file_exists($locale_file) && $this -> debug) {
-						throw new RuntimeException("Default locale file does not exist: $locale_file");
-					}
-				} elseif ($this -> debug) {
-					throw new RuntimeException("Locale file does not exist: $locale_file");
+		if (!file_exists($locale_file)) {
+			if ($locale !== $this -> default_locale) {
+				$locale = $this -> default_locale;
+				$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
+
+				if (!file_exists($locale_file) && $this -> debug) {
+					throw new RuntimeException("Default locale file does not exist: $locale_file");
 				}
+			} elseif ($this -> debug) {
+				throw new RuntimeException("Locale file does not exist: $locale_file");
 			}
+		}
 
-			$locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
+		$locale_file_extension = pathinfo($locale_file, PATHINFO_EXTENSION);
 
-			if (strtolower($locale_file_extension) !== 'json' && $this -> debug) {
-				throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
-			}
+		if (strtolower($locale_file_extension) !== 'json' && $this -> debug) {
+			throw new RuntimeException("Unsupported file format. Only JSON file format is supported for locale files.");
+		}
 
-			$locale_file_contents = file_get_contents($locale_file);
+		$locale_file_contents = file_get_contents($locale_file);
 
-			if ($locale_file_contents === false && $this -> debug) {
-				throw new RuntimeException("Unable to read locale file: $locale_file");
-			}
+		if ($locale_file_contents === false && $this -> debug) {
+			throw new RuntimeException("Unable to read locale file: $locale_file");
+		}
 
-			if (empty($locale_file_contents)) {
-				throw new RuntimeException("Locale file is empty: $locale_file");
-			}
+		if (empty($locale_file_contents)) {
+			throw new RuntimeException("Locale file is empty: $locale_file");
+		}
 
-			try {
-				$locale_nodes = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
-			} catch (JsonException $exception) {
-				throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
-			}
+		try {
+			$locale_nodes = json_decode($locale_file_contents, true, 512, JSON_THROW_ON_ERROR);
+		} catch (JsonException $exception) {
+			throw new JsonException("Invalid JSON in locale file: $locale_file", 0, $exception);
+		}
 
-			if (!is_array($locale_nodes) || (!array_key_exists('variables', $locale_nodes) && $this -> debug)) {
-				throw new RuntimeException("Missing 'variables' data in locale file: $locale_file");
-			}
+		if (!is_array($locale_nodes) || (!array_key_exists('variables', $locale_nodes) && $this -> debug)) {
+			throw new RuntimeException("Missing 'variables' data in locale file: $locale_file");
+		}
 
-			$variables = $locale_nodes['variables'] ?? [];
+		$variables = $locale_nodes['variables'] ?? [];
 
-			/**
-			 * @phpstan-ignore-next-line
-			 */
-			if (is_null($variables) && $this -> debug) {
-				throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
-			}
+		/**
+		 * @phpstan-ignore-next-line
+		 */
+		if (is_null($variables) && $this -> debug) {
+			throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
+		}
 
-			if (is_array($variables)) {
-				unset($locale_nodes['variables']);
+		if (is_array($variables)) {
+			unset($locale_nodes['variables']);
 
-				foreach ($locale_nodes as $key => $value) {
-					if (is_string($value)) {
-						try {
-							$locale_nodes[$key] = $this -> replaceVariables($value, $variables);
-						} catch (RuntimeException $exception) {
-							if ($this -> debug) {
-								throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
-							}
+			foreach ($locale_nodes as $key => $value) {
+				if (is_string($value)) {
+					try {
+						$locale_nodes[$key] = $this -> replaceVariables($value, $variables);
+					} catch (RuntimeException $exception) {
+						if ($this -> debug) {
+							throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
 						}
 					}
 				}
 			}
-
-			$this -> loaded_locales[$locale] = $locale_nodes;
-
-			return $locale_nodes;
 		}
+
+		$this -> loaded_locales[$locale] = $locale_nodes;
+
+		return $locale_nodes;
+	}
 
         /**
          * UNLOAD A LOADED LOCALE FILE FROM MEMORY.
