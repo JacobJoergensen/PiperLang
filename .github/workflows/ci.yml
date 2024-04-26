@@ -33,7 +33,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, intl
           ini-values: post_max_size=256M, max_execution_time=180
-          coverage: none
+          coverage: xdebug3
           tools: phpstan, phpunit
 
       - name: Print PHP Version
