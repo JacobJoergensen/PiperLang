@@ -6,6 +6,7 @@
 ## Version 1.0.0 Beta 4 (26-04-24)
 * Added a way to modify the core code without having to change the core code, look at Modifier.php
 * Added hook system to allow for better custom functionality working with PiperLang without changing the core code
+* Added getInfo method to get PiperLang info based on your current setup, to help you debug and see information about your setup
 * Added debug mode (default: set to false) , when true it will show a lot more exceptions that can help debugging.
 * Added missing tests
 * Added some examples
