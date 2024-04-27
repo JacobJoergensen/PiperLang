@@ -367,13 +367,11 @@
             $this -> expectException(RuntimeException::class);
             $this -> expectExceptionMessage('Failed to set locale in session');
             $this -> piper_lang -> setLocale('fr');
-            $this -> expectException(null);
 
             $this -> piper_lang -> locale_file_extension = 'txt';
             $this -> expectException(RuntimeException::class);
             $this -> expectExceptionMessage("Unsupported file format. Only JSON file format is supported for locale files.");
             $this -> piper_lang -> loadFile('en');
-            $this -> expectException(null);
 
             try {
                 $this -> expectException(RuntimeException::class);
