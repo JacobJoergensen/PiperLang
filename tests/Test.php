@@ -297,8 +297,9 @@
             $this -> expectException(InvalidArgumentException::class);
             $this -> piper_lang -> formatNumber(1234.56789);
 
+            $this -> piper_lang -> current_locale = 'en';
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> formatNumber('string number');
+            $this -> piper_lang -> formatNumber(NAN);
         }
 
         public function testFormatCurrency(): void {
