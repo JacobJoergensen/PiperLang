@@ -191,6 +191,17 @@
             $this -> piper_lang -> setLocale('fr_FR');
             $this -> assertEquals('en', $this -> piper_lang -> current_locale);
             $this -> assertEquals('en', $_SESSION['current_locale']);
+
+            $this -> piper_lang -> default_locale = 'de';
+            $this -> piper_lang -> setLocale();
+            $this -> assertContains('de-DE', $this -> piper_lang -> supported_locales);
+
+            $_SESSION = [];
+
+            $this -> piper_lang -> debug = true;
+            $_SESSION[$this -> piper_lang -> session_key] = 'fr';
+            $this -> expectException(RuntimeException::class);
+            $this -> piper_lang -> setLocale('de_DE');
         }
 
         public function testSetLocalePath(): void {
