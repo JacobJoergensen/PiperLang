@@ -244,12 +244,13 @@
             $this -> piper_lang -> current_locale = 'en';
             $this -> piper_lang -> default_locale = 'en';
 
-            $original_plural_rules = $this -> piper_lang -> plural_rules;
             $this -> piper_lang -> plural_rules['en'] = '_1';
 
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
 
-            $this -> piper_lang -> plural_rules = $original_plural_rules;
+            unset($this -> piper_lang -> plural_rules['en']);
+
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
 
             $count = 2;
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
