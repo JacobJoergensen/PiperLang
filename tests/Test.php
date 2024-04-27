@@ -188,7 +188,7 @@
 
             $_SESSION = [];
 
-            $this -> piper_lang -> setLocale('fr_FR');
+            $this -> piper_lang -> setLocale('fr');
             $this -> assertEquals('en', $this -> piper_lang -> current_locale);
             $this -> assertEquals('en', $_SESSION['current_locale']);
 
@@ -201,7 +201,7 @@
             $this -> piper_lang -> debug = true;
             $_SESSION[$this -> piper_lang -> session_key] = 'fr';
             $this -> expectException(RuntimeException::class);
-            $this -> piper_lang -> setLocale('de_DE');
+            $this -> piper_lang -> setLocale('de');
         }
 
         public function testSetLocalePath(): void {
