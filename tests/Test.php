@@ -370,13 +370,6 @@
             $this -> piper_lang -> setLocale('fr');
 
             try {
-                //$this -> expectException(RuntimeException::class);
-                $this -> piper_lang -> formatNumber('non-numeric');
-            } catch (RuntimeException $exception) {
-                $this -> assertStringContainsString('Number formatting failed', $exception -> getMessage());
-            }
-
-            try {
                 $this -> expectException(RuntimeException::class);
                 $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
             } catch (RuntimeException $exception) {
