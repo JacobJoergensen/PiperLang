@@ -194,7 +194,7 @@
 
             $this -> piper_lang -> default_locale = 'de';
             $this -> piper_lang -> setLocale();
-            $this -> assertContains('de-DE', $this -> piper_lang -> supported_locales);
+            $this -> assertContains('de', $this -> piper_lang -> supported_locales);
 
             $_SESSION = [];
 
