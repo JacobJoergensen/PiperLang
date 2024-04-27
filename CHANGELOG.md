@@ -4,6 +4,7 @@
 * Nothing to see yet!
 
 ## Version 1.0.0 Beta 5 (??-??-??)
+* Added Docker support for setting up local development environment
 * Added phpunit coverage that also support codecov
 * Added build artifacts, so you can download a build through github actions
 * Added even more phpunit tests
