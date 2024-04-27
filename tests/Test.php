@@ -368,19 +368,5 @@
             $this -> expectException(RuntimeException::class);
             $this -> expectExceptionMessage('Failed to set locale in session');
             $this -> piper_lang -> setLocale('fr');
-
-            try {
-                $this -> expectException(RuntimeException::class);
-                $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
-            } catch (RuntimeException $exception) {
-                $this -> assertStringContainsString('Currency formatting failed', $exception -> getMessage());
-            }
-
-            try {
-                $this -> expectException(RuntimeException::class);
-                $this -> piper_lang -> formatDate(new DateTime('non-parseable'));
-            } catch (RuntimeException $exception) {
-                $this -> assertStringContainsString('Date formatting failed', $exception -> getMessage());
-            }
         }
     }
