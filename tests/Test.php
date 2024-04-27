@@ -244,7 +244,12 @@
             $this -> piper_lang -> current_locale = 'en';
             $this -> piper_lang -> default_locale = 'en';
 
+            $original_plural_rules = $this -> piper_lang -> plural_rules;
+            $this -> piper_lang -> plural_rules['en'] = '_1';
+
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
+
+            $this -> piper_lang -> plural_rules = $original_plural_rules;
 
             $count = 2;
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
@@ -256,7 +261,7 @@
             $this -> piper_lang -> debug = true;
             $this -> expectException(RuntimeException::class);
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-        }  
+        }
 
         public function testLoadFile(): void {
             $locale = $this -> piper_lang -> default_locale;
