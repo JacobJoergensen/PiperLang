@@ -332,4 +332,68 @@
             $this -> expectException(InvalidArgumentException::class);
             $this -> piper_lang -> getFormattingRules();
         }
+
+        public function testInvalidArgumentCases(): void {
+            $this -> piper_lang -> default_locale = 'en';
+            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
+            $this -> piper_lang -> debug = true;
+
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Invalid or disabled source 'invalidSource' for detecting locale.");
+            $this -> piper_lang -> detectUserLocale('invalidSource');
+            $this -> expectException(null);
+
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Not a valid number for formatting.");
+            $this -> piper_lang -> formatNumber('non-numeric');
+
+            $this -> expectException(null);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Not a valid amount for currency formatting.");
+            $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
+
+            $this -> expectException(null);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage('Not a valid ISO 4217 currency code.');
+            $this -> piper_lang -> formatCurrency(123.456, 'INVALID', true);
+        }
+
+        public function testRuntimeExceptionCases(): void {
+            $this -> piper_lang -> default_locale = 'en';
+            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
+            $this -> piper_lang -> debug = true;
+
+            $_SESSION[$this -> piper_lang -> session_key] = 'unexpectedValue';
+            $this -> expectException(RuntimeException::class);
+            $this -> expectExceptionMessage('Failed to set locale in session');
+            $this -> piper_lang -> setLocale('fr');
+            $this -> expectException(null);
+
+            $this -> piper_lang -> locale_file_extension = 'txt';
+            $this -> expectException(RuntimeException::class);
+            $this -> expectExceptionMessage("Unsupported file format. Only JSON file format is supported for locale files.");
+            $this -> piper_lang -> loadFile('en');
+            $this -> expectException(null);
+
+            try {
+                $this -> expectException(RuntimeException::class);
+                $this -> piper_lang -> formatNumber('non-numeric');
+            } catch (RuntimeException $exception) {
+                $this -> assertStringContainsString('Number formatting failed', $exception -> getMessage());
+            }
+
+            try {
+                $this -> expectException(RuntimeException::class);
+                $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
+            } catch (RuntimeException $exception) {
+                $this -> assertStringContainsString('Currency formatting failed', $exception -> getMessage());
+            }
+
+            try {
+                $this -> expectException(RuntimeException::class);
+                $this -> piper_lang -> formatDate(new DateTime('non-parseable'));
+            } catch (RuntimeException $exception) {
+                $this -> assertStringContainsString('Date formatting failed', $exception -> getMessage());
+            }
+        }
     }
