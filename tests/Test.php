@@ -215,25 +215,31 @@
         public function testReplaceVariables(): void {
             $string = 'Hello, world!';
             $variables = ['name' => 'Bob'];
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, world!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, world!', $result);
 
             $string = 'Hello, {{name}}!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Bob!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Bob!', $result);
 
             $string = '{{greeting}}, {{name}}!';
             $variables = ['greeting' => 'Hello', 'name' => 'Bob'];
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Bob!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Bob!', $result);
 
             $string = '{{greeting}}, {{greeting}}!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Hello!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Hello!', $result);
 
             $string = '{{missing}}, world!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('{{missing}}, world!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('{{missing}}, world!', $result);
+
+            $this -> piper_lang -> variable_pattern = null;
+            $string = 'Hello, {{name}}!';
+            $variables = ['name' => 'Bob'];
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, {{name}}!', $result);
         }
 
         public function testTranslateWithPlural(): void {
