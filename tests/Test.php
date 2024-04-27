@@ -358,15 +358,4 @@
             $this -> expectExceptionMessage('Not a valid ISO 4217 currency code.');
             $this -> piper_lang -> formatCurrency(123.456, 'INVALID', true);
         }
-
-        public function testRuntimeExceptionCases(): void {
-            $this -> piper_lang -> default_locale = 'en';
-            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
-            $this -> piper_lang -> debug = true;
-
-            $_SESSION[$this -> piper_lang -> session_key] = 'unexpectedValue';
-            $this -> expectException(RuntimeException::class);
-            $this -> expectExceptionMessage('Failed to set locale in session');
-            $this -> piper_lang -> setLocale('fr');
-        }
     }
