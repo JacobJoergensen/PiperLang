@@ -12,7 +12,7 @@
 - [Modifier](#modifier)
 - [Hook](#hook)
 - [Docker](#docker)
-- <a href="https://github.com/JacobJoergensen/PiperLang/CHANGELOG.md">Changelog</a>
+- <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/CHANGELOG.md">Changelog</a>
 
 
 ## Installing
