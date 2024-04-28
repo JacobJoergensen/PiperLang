@@ -11,7 +11,7 @@
       ·
       <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=&labels=type: feature&template=feature_request.yml">Request feature</a>
       ·
-      <a href="https://github.com/JacobJoergensen/PiperLang/LICENSE">License</a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/LICENSE">License</a>
       ·
       <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/CHANGELOG.md">Changelog</a>
 </p>
