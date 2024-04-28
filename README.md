@@ -4,7 +4,7 @@
 <p align="center">
       <strong>Craft your web app with precision, localize with ease.</strong>
       <br>
-      <a href=""><strong>Explore PiperLang docs »</strong></a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/docs/index.md"><strong>Explore PiperLang docs »</strong></a>
       <br>
       <br>
       <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=-&labels=type: bug&template=bug_report.yml">Report bug</a>
