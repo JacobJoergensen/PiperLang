@@ -37,6 +37,40 @@
             }
         }
 
+        public function testGetInfo(): void {
+            $info = $this -> piper_lang -> getInfo();
+
+            $this -> assertIsArray($info);
+
+            $expected_keys = [
+                'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
+                'Supported Locales', 'Path to Locales', 'Locale File Extension',
+                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
+                'HTTP Accept Locale', 'Session Enabled', 'Session Key',
+                'Cookie Enabled', 'Cookie Key'
+            ];
+
+            foreach ($expected_keys as $key) {
+                $this -> assertArrayHasKey($key, $info);
+            }
+
+            $this -> assertIsBool($info['Debug Status']);
+            $this -> assertIsArray($info['Hooks List']);
+            $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
+            $this -> assertIsString($info['Default Locale']);
+            $this -> assertIsArray($info['Supported Locales']);
+            $this -> assertIsString($info['Path to Locales']);
+            $this -> assertIsString($info['Locale File Extension']);
+            $this -> assertIsArray($info['Loaded Locales']);
+            $this -> assertIsString($info['Variable Pattern']);
+            $this -> assertIsArray($info['Plural Rules']);
+            $this -> assertIsString($info['HTTP Accept Locale']);
+            $this -> assertIsBool($info['Session Enabled']);
+            $this -> assertIsString($info['Session Key']);
+            $this -> assertIsBool($info['Cookie Enabled']);
+            $this -> assertIsString($info['Cookie Key']);
+        }
+
         public function testAddHook(): void {
             $hook_name = 'some_hook_name';
 
@@ -154,9 +188,13 @@
 
             $_SESSION = [];
 
-            $this -> piper_lang -> setLocale('fr_FR');
+            $this -> piper_lang -> setLocale('fr');
             $this -> assertEquals('en', $this -> piper_lang -> current_locale);
             $this -> assertEquals('en', $_SESSION['current_locale']);
+
+            $this -> piper_lang -> default_locale = 'de';
+            $this -> piper_lang -> setLocale();
+            $this -> assertContains('de', $this -> piper_lang -> supported_locales);
         }
 
         public function testSetLocalePath(): void {
@@ -181,25 +219,31 @@
         public function testReplaceVariables(): void {
             $string = 'Hello, world!';
             $variables = ['name' => 'Bob'];
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, world!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, world!', $result);
 
             $string = 'Hello, {{name}}!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Bob!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Bob!', $result);
 
             $string = '{{greeting}}, {{name}}!';
             $variables = ['greeting' => 'Hello', 'name' => 'Bob'];
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Bob!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Bob!', $result);
 
             $string = '{{greeting}}, {{greeting}}!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('Hello, Hello!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, Hello!', $result);
 
             $string = '{{missing}}, world!';
-            $result = $this->piper_lang->replaceVariables($string, $variables);
-            $this->assertEquals('{{missing}}, world!', $result);
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('{{missing}}, world!', $result);
+
+            $this -> piper_lang -> variable_pattern = null;
+            $string = 'Hello, {{name}}!';
+            $variables = ['name' => 'Bob'];
+            $result = $this -> piper_lang -> replaceVariables($string, $variables);
+            $this -> assertEquals('Hello, {{name}}!', $result);
         }
 
         public function testTranslateWithPlural(): void {
@@ -209,6 +253,12 @@
 
             $this -> piper_lang -> current_locale = 'en';
             $this -> piper_lang -> default_locale = 'en';
+
+            $this -> piper_lang -> plural_rules['en'] = '_1';
+
+            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
+
+            unset($this -> piper_lang -> plural_rules['en']);
 
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
 
@@ -222,7 +272,7 @@
             $this -> piper_lang -> debug = true;
             $this -> expectException(RuntimeException::class);
             $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-        }  
+        }
 
         public function testLoadFile(): void {
             $locale = $this -> piper_lang -> default_locale;
@@ -263,8 +313,9 @@
             $this -> expectException(InvalidArgumentException::class);
             $this -> piper_lang -> formatNumber(1234.56789);
 
+            $this -> piper_lang -> current_locale = 'en';
             $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> formatNumber('string number');
+            $this -> piper_lang -> formatNumber(NAN);
         }
 
         public function testFormatCurrency(): void {
@@ -297,5 +348,30 @@
             $this -> piper_lang -> debug = true;
             $this -> expectException(InvalidArgumentException::class);
             $this -> piper_lang -> getFormattingRules();
+        }
+
+        public function testInvalidArgumentCases(): void {
+            $this -> piper_lang -> default_locale = 'en';
+            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
+            $this -> piper_lang -> debug = true;
+
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Invalid or disabled source 'invalidSource' for detecting locale.");
+            $this -> piper_lang -> detectUserLocale('invalidSource');
+            $this -> expectException(null);
+
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Not a valid number for formatting.");
+            $this -> piper_lang -> formatNumber('non-numeric');
+
+            $this -> expectException(null);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage("Not a valid amount for currency formatting.");
+            $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
+
+            $this -> expectException(null);
+            $this -> expectException(InvalidArgumentException::class);
+            $this -> expectExceptionMessage('Not a valid ISO 4217 currency code.');
+            $this -> piper_lang -> formatCurrency(123.456, 'INVALID', true);
         }
     }

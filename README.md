@@ -4,16 +4,16 @@
 <p align="center">
       <strong>Craft your web app with precision, localize with ease.</strong>
       <br>
-      <a href=""><strong>Explore PiperLang docs »</strong></a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/docs/index.md"><strong>Explore PiperLang docs »</strong></a>
       <br>
       <br>
       <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=-&labels=type: bug&template=bug_report.yml">Report bug</a>
       ·
       <a href="https://github.com/JacobJoergensen/PiperLang/issues/new?assignees=&labels=type: feature&template=feature_request.yml">Request feature</a>
       ·
-      <a href="https://github.com/JacobJoergensen/PiperLang/LICENSE">License</a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/LICENSE">License</a>
       ·
-      <a href="https://github.com/JacobJoergensen/PiperLang/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
 <hr>
@@ -82,7 +82,7 @@
 - <a href="https://github.com/JacobJoergensen/PiperLang/tree/main/examples"> See more examples by clicking here!</a>
 
 ## Status
-![CI](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
+![ci](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/JacobJoergensen/PiperLang/graph/badge.svg?token=K6OZ3AVDPC)](https://codecov.io/gh/JacobJoergensen/PiperLang)
 
 ## Contributing

@@ -3,6 +3,14 @@
 ## WIP - Next Version
 * Nothing to see yet!
 
+## Version 1.0.0 Beta 5 (??-??-??)
+* Added Docker support for setting up local development environment
+* Added better documentation of PiperLang
+* Added phpunit coverage that also support codecov
+* Added build artifacts, so you can download a build through github actions
+* Added even more phpunit tests
+* Improved readme.md
+
 ## Version 1.0.0 Beta 4 (26-04-24)
 * Added a way to modify the core code without having to change the core code, look at Modifier.php
 * Added hook system to allow for better custom functionality working with PiperLang without changing the core code
