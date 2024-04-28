@@ -3,7 +3,7 @@
 ## WIP - Next Version
 * Nothing to see yet!
 
-## Version 1.0.0 Beta 5 (??-??-??)
+## Version 1.0.0 Beta 5 (28-04-24)
 * Added Docker support for setting up local development environment
 * Added better documentation of PiperLang
 * Added phpunit coverage that also support codecov
