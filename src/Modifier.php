@@ -8,7 +8,7 @@
      * @package    PiperLang\PiperLang
      * @author     Jacob Jørgensen
      * @license    MIT
-     * @version    1.0.0-beta4
+     * @version    1.0.0-beta5
      */
     class Modifier extends PiperLang {
         /**
