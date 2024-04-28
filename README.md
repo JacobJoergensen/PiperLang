@@ -13,7 +13,7 @@
       ·
       <a href="https://github.com/JacobJoergensen/PiperLang/LICENSE">License</a>
       ·
-      <a href="https://github.com/JacobJoergensen/PiperLang/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
 <hr>
