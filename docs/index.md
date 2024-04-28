@@ -5,7 +5,7 @@
 ## Quick Navigation
 
 - [Installing](#Installing)
-- [Quick start](#Quick Start)
+- [Quick start](#Quick-Start)
 - [Configuration](#Configuration)
 - [Methods](#methods)
 - [Formatting](#formatting)
