@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup PHP
         id: setup-php
-        uses: shivammathur/setup-php@2.30.3
+        uses: shivammathur/setup-php@2.30.4
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, intl
@@ -64,6 +64,6 @@ jobs:
           path: src/
 
       - name: Upload Coverage Reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
