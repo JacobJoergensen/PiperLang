@@ -273,12 +273,14 @@
         /**
          * SWITCH THE LOCALE.
          *
-         * @param string $new_lang - THE NEW LOCALE TO BE SET.
+         * @param string $new_locale - THE NEW LOCALE TO BE SET.
          *
          * @return void - THIS METHOD DOES NOT RETURN A VALUE.
          */
-        public function switchLocale(string $new_lang): void {
-            $this -> setLocale($new_lang);
+        public function switchLocale(string $new_locale): void {
+            $new_locale = htmlspecialchars($new_locale, ENT_QUOTES, 'UTF-8');
+
+            $this -> setLocale($new_locale);
         }
 
         /**

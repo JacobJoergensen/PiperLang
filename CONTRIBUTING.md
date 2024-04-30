@@ -4,7 +4,7 @@ Thank you for considering contributing to PiperLang! It's people like you that m
 
 ## What is PiperLang?
 
-PiperLang is a compact and efficient PHP framework designed to provide localization capacities for web applications. It features cookie and session-based language detection, dynamic pluralization, variable substitution in translations, and number, currency, and date formatting in accordance with the set language. PiperLang is based on PHP 8.3 and is currently in a Beta stage. It is a work in progress and should not be used in production applications at the moment.
+PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale. PiperLang is based on PHP 8.3!
 
 ## How Can I Contribute?
 
@@ -51,12 +51,12 @@ Here are a few must-dos for submitting a pull request:
 
 ### PHP Styleguide
 
+- Class names should follow the PascalCase convention.
+- Method names should follow lower camelCase convention.
+- Variable names should follow the snake_case convention.
 - Ensure any added code does not generate new PHPStan warnings.
+- Ensure tests from phpunit does not fail.
 - Document new code based on the PHPDoc standard.
-
-## Code of Conduct
-
-Contributors are expected to uphold the project's [Code of Conduct](CODE_OF_CONDUCT.md). Please read and follow it.
 
 ---
 
