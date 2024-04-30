@@ -1,7 +1,7 @@
 {
 	"name": "piperlang/piperlang",
 	"type": "library",
-	"description": "PiperLang is a PHP language framework.",
+	"description": "PiperLang is a compact and efficient PHP framework designed to provide localization capabilities for your web application.",
 	"keywords": ["piperlang", "php", "framework", "locale", "lang", "language", "web"],
 	"homepage": "https://github.com/JacobJoergensen/PiperLang",
 	"license": "MIT",
