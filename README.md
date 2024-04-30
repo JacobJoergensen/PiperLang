@@ -1,4 +1,4 @@
-<h1 align="center">PiperLang (BETA STAGE - WORK IN PROGRESS)</h1>
+<h1 align="center">PiperLang</h1>
 <p align="center">PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale.</p>
 <hr>
 <p align="center">
@@ -19,8 +19,6 @@
 <hr>
 <br>
 
-> :warning: **Beta Stage Warning:** PiperLang is currently in a Beta stage. It is a work in progress and should not be used in production applications at the moment. Unexpected bugs and errors may happen, and features may change without prior announcements. We encourage you to participate in our testing and development phases by reporting any encountered issues.
->
 > :information_source: **PHP Version:** The development cycle of PiperLang operates on PHP 8.3. For optimal compatibility and performance, we recommend using this version when working with PiperLang.
 
 <br>
