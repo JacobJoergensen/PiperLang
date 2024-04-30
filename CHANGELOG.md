@@ -5,6 +5,7 @@
 
 ## Version 1.0.0 (??-??-??)
 * Added packagist support
+* Added better protecting against XSS when it comes to the ```switchLocale``` method
 * Improved composer.json for better composer support
 * Improved .md files to be up to date
 
