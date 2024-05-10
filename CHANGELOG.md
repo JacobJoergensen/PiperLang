@@ -3,7 +3,7 @@
 ## WIP - Next Version
 * Nothing to see yet!
 
-## Version 1.0.0 (??-??-??)
+## Version 1.0.0 (30-04-24)
 * Added packagist support
 * Added better protecting against XSS when it comes to the ```switchLocale``` method
 * Improved composer.json for better composer support
