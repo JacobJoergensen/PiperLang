@@ -91,14 +91,7 @@
         /**
          * @var string
          */
-        public string $http_accept_locale;
-
-        /**
-         * PiperLang CONSTRUCTOR
-         */
-        public function __construct() {
-            $this -> http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'] ?? '';
-        }
+        public string $http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'];
 
         /**
          * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
