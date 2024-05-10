@@ -94,6 +94,11 @@
         public string $http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'];
 
         /**
+         * PiperLang CONSTRUCTOR
+         */
+        public function __construct() {}
+
+        /**
          * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
          *
          * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
