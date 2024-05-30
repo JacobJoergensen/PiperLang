@@ -89,11 +89,6 @@
         public string $cookie_key = 'site_locale';
 
         /**
-         * @var string
-         */
-        public string $http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'];
-
-        /**
          * PiperLang CONSTRUCTOR
          */
         public function __construct() {}
@@ -115,7 +110,7 @@
                 'Loaded Locales' => $this -> loaded_locales,
                 'Variable Pattern' => $this -> variable_pattern,
                 'Plural Rules' => $this -> plural_rules,
-                'HTTP Accept Locale' => $this -> http_accept_locale,
+                'HTTP Accept Locale' => $this -> getHttpAcceptLocale(),
                 'Session Enabled' => $this -> session_enabled,
                 'Session Key' => $this -> session_key,
                 'Cookie Enabled' => $this -> cookie_enabled,
@@ -159,12 +154,21 @@
         }
 
         /**
+         * GET THE http_accept_locale VALUE.
+         *
+         * @return string
+         */
+        public function getHttpAcceptLocale(): string {
+            return $this -> $_SERVER['HTTP_ACCEPT_locale'] ?? '';
+        }
+
+        /**
          * DETECT USER'S PREFERRED LOCALE BASED ON USER'S BROWSER LOCALE.
          *
          * @return string - THE DETECTED LOCALE CODE.
          */
         public function detectBrowserLocale(): string {
-            foreach (explode(',', $this -> http_accept_locale) as $locale) {
+            foreach (explode(',', $this -> getHttpAcceptLocale()) as $locale) {
                 $locale_parts = explode(';', $locale, 2);
                 $locale_code = strtolower(substr($locale_parts[0], 0, 2));
 
