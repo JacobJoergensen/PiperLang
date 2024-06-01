@@ -129,12 +129,12 @@
         }
 
         /**
-         * RETRIEVE THE http_accept_locale VALUE.
+         * RETRIEVE THE http_accept_language VALUE.
          *
-         * @return string - THE http_accept_lovale VALUE OR AN EMPTY STRING IF NOT SET.
+         * @return string - THE http_accept_language VALUE OR AN EMPTY STRING IF NOT SET.
          */
-        public function getHttpAcceptLocale(): string {
-            return $this -> $_SERVER['HTTP_ACCEPT_locale'] ?? '';
+        public function getHttpAcceptLanguage(): string {
+            return $this -> $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
         }
 
         /**
@@ -154,7 +154,7 @@
                 'Loaded Locales' => $this -> loaded_locales,
                 'Variable Pattern' => $this -> variable_pattern,
                 'Plural Rules' => $this -> plural_rules,
-                'HTTP Accept Locale' => $this -> getHttpAcceptLocale(),
+                'HTTP Accept Locale' => $this -> getHttpAcceptLanguage(),
                 'Session Enabled' => $this -> session_enabled,
                 'Session Key' => $this -> session_key,
                 'Cookie Enabled' => $this -> cookie_enabled,
@@ -168,7 +168,7 @@
          * @return string - THE DETECTED LOCALE CODE.
          */
         public function detectBrowserLocale(): string {
-            foreach (explode(',', $this -> getHttpAcceptLocale()) as $locale) {
+            foreach (explode(',', $this -> getHttpAcceptLanguage()) as $locale) {
                 $locale_parts = explode(';', $locale, 2);
                 $locale_code = strtolower(substr($locale_parts[0], 0, 2));
 
