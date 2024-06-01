@@ -134,7 +134,7 @@
          * @return string - THE http_accept_language VALUE OR AN EMPTY STRING IF NOT SET.
          */
         public function getHttpAcceptLanguage(): string {
-            return $this -> $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+            return is_string($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
         }
 
         /**
