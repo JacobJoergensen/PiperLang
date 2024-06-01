@@ -15,7 +15,7 @@
      * @package    PiperLang\PiperLang
      * @author     Jacob Jørgensen
      * @license    MIT
-     * @version    1.0.0
+     * @version    1.1.0
      */
     class PiperLang {
         /**
@@ -89,41 +89,9 @@
         public string $cookie_key = 'site_locale';
 
         /**
-         * @var string
-         */
-        public string $http_accept_locale;
-
-        /**
          * PiperLang CONSTRUCTOR
          */
-        public function __construct() {
-            $this -> http_accept_locale = $_SERVER['HTTP_ACCEPT_locale'] ?? '';
-        }
-
-        /**
-         * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
-         *
-         * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
-         */
-        public function getInfo(): array {
-            return [
-                'Debug Status' => $this -> debug,
-                'Hooks List' => $this -> hooks,
-                'Current Locale' => $this -> current_locale,
-                'Default Locale' => $this -> default_locale,
-                'Supported Locales' => $this -> supported_locales,
-                'Path to Locales' => $this -> locale_path,
-                'Locale File Extension' => $this -> locale_file_extension,
-                'Loaded Locales' => $this -> loaded_locales,
-                'Variable Pattern' => $this -> variable_pattern,
-                'Plural Rules' => $this -> plural_rules,
-                'HTTP Accept Locale' => $this -> http_accept_locale,
-                'Session Enabled' => $this -> session_enabled,
-                'Session Key' => $this -> session_key,
-                'Cookie Enabled' => $this -> cookie_enabled,
-                'Cookie Key' => $this -> cookie_key
-            ];
-        }
+        public function __construct() {}
 
         /**
          * ADD A HOOK ACTION.
@@ -161,12 +129,46 @@
         }
 
         /**
+         * RETRIEVE THE http_accept_language VALUE.
+         *
+         * @return string - THE http_accept_language VALUE OR AN EMPTY STRING IF NOT SET.
+         */
+        public function getHttpAcceptLanguage(): string {
+            return is_string($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
+        }
+
+        /**
+         * GET THE PiperLang INFO BASED ON YOUR CURRENT SETUP.
+         *
+         * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
+         */
+        public function getInfo(): array {
+            return [
+                'Debug Status' => $this -> debug,
+                'Hooks List' => $this -> hooks,
+                'Current Locale' => $this -> current_locale,
+                'Default Locale' => $this -> default_locale,
+                'Supported Locales' => $this -> supported_locales,
+                'Path to Locales' => $this -> locale_path,
+                'Locale File Extension' => $this -> locale_file_extension,
+                'Loaded Locales' => $this -> loaded_locales,
+                'Variable Pattern' => $this -> variable_pattern,
+                'Plural Rules' => $this -> plural_rules,
+                'HTTP Accept Locale' => $this -> getHttpAcceptLanguage(),
+                'Session Enabled' => $this -> session_enabled,
+                'Session Key' => $this -> session_key,
+                'Cookie Enabled' => $this -> cookie_enabled,
+                'Cookie Key' => $this -> cookie_key
+            ];
+        }
+
+        /**
          * DETECT USER'S PREFERRED LOCALE BASED ON USER'S BROWSER LOCALE.
          *
          * @return string - THE DETECTED LOCALE CODE.
          */
         public function detectBrowserLocale(): string {
-            foreach (explode(',', $this -> http_accept_locale) as $locale) {
+            foreach (explode(',', $this -> getHttpAcceptLanguage()) as $locale) {
                 $locale_parts = explode(';', $locale, 2);
                 $locale_code = strtolower(substr($locale_parts[0], 0, 2));
 
@@ -191,6 +193,10 @@
             $locale = $this -> default_locale;
 
             if ($source === 'session' && $this -> session_enabled) {
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    session_start();
+                }
+
                 $locale = $_SESSION[$this -> session_key] ?? '';
             } elseif ($source === 'cookie' && $this -> cookie_enabled) {
                 $locale = $_COOKIE[$this -> cookie_key] ?? '';

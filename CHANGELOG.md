@@ -3,6 +3,11 @@
 ## WIP - Next Version
 * Nothing to see yet!
 
+## Version 1.1.0 (??-??-??)
+* Added session has been started check to ```detectUserLocale``` method
+* Improved ```http_accept_language``` handling to give more freedom (**Breaking Change)**
+* Updated tests to match the updated source code
+
 ## Version 1.0.0 (30-04-24)
 * Added packagist support
 * Added better protecting against XSS when it comes to the ```switchLocale``` method

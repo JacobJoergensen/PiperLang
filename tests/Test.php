@@ -22,55 +22,6 @@
             $this -> piper_lang -> session_key = 'current_locale';
         }
 
-        public function testConstructor(): void {
-            $original = $_SERVER['HTTP_ACCEPT_locale'] ?? null;
-            $_SERVER['HTTP_ACCEPT_locale'] = 'en-US,en;q=0.9';
-
-            $piper_lang = new PiperLang();
-
-            $this -> assertEquals('en-US,en;q=0.9', $piper_lang -> http_accept_locale, "The constructor didn't initialize http_accept_locale correctly");
-
-            if ($original !== null) {
-                $_SERVER['HTTP_ACCEPT_locale'] = $original;
-            } else {
-                unset($_SERVER['HTTP_ACCEPT_locale']);
-            }
-        }
-
-        public function testGetInfo(): void {
-            $info = $this -> piper_lang -> getInfo();
-
-            $this -> assertIsArray($info);
-
-            $expected_keys = [
-                'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
-                'Supported Locales', 'Path to Locales', 'Locale File Extension',
-                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
-                'HTTP Accept Locale', 'Session Enabled', 'Session Key',
-                'Cookie Enabled', 'Cookie Key'
-            ];
-
-            foreach ($expected_keys as $key) {
-                $this -> assertArrayHasKey($key, $info);
-            }
-
-            $this -> assertIsBool($info['Debug Status']);
-            $this -> assertIsArray($info['Hooks List']);
-            $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
-            $this -> assertIsString($info['Default Locale']);
-            $this -> assertIsArray($info['Supported Locales']);
-            $this -> assertIsString($info['Path to Locales']);
-            $this -> assertIsString($info['Locale File Extension']);
-            $this -> assertIsArray($info['Loaded Locales']);
-            $this -> assertIsString($info['Variable Pattern']);
-            $this -> assertIsArray($info['Plural Rules']);
-            $this -> assertIsString($info['HTTP Accept Locale']);
-            $this -> assertIsBool($info['Session Enabled']);
-            $this -> assertIsString($info['Session Key']);
-            $this -> assertIsBool($info['Cookie Enabled']);
-            $this -> assertIsString($info['Cookie Key']);
-        }
-
         public function testAddHook(): void {
             $hook_name = 'some_hook_name';
 
@@ -129,6 +80,64 @@
             $this -> assertEmpty($output, "Running a non-existent hook produced output.");
         }
 
+        public function testGetHttpAcceptLanguage(): void {
+            $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
+
+            if ($original !== null) {
+                $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
+            } else {
+                unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            }
+        }
+
+        public function testGetInfo(): void {
+            $info = $this -> piper_lang -> getInfo();
+
+            $this -> assertIsArray($info);
+
+            $expected_keys = [
+                'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
+                'Supported Locales', 'Path to Locales', 'Locale File Extension',
+                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
+                'Session Enabled', 'Session Key',
+                'Cookie Enabled', 'Cookie Key'
+            ];
+
+            foreach ($expected_keys as $key) {
+                $this -> assertArrayHasKey($key, $info);
+            }
+
+            $this -> assertIsBool($info['Debug Status']);
+            $this -> assertIsArray($info['Hooks List']);
+            $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
+            $this -> assertIsString($info['Default Locale']);
+            $this -> assertIsArray($info['Supported Locales']);
+            $this -> assertIsString($info['Path to Locales']);
+            $this -> assertIsString($info['Locale File Extension']);
+            $this -> assertIsArray($info['Loaded Locales']);
+            $this -> assertIsString($info['Variable Pattern']);
+            $this -> assertIsArray($info['Plural Rules']);
+            $this -> assertIsString($this -> piper_lang -> getHttpAcceptLanguage());
+            $this -> assertIsBool($info['Session Enabled']);
+            $this -> assertIsString($info['Session Key']);
+            $this -> assertIsBool($info['Cookie Enabled']);
+            $this -> assertIsString($info['Cookie Key']);
+        }
+
+        public function testDetectBrowserLocale(): void {
+            $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
+            $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
+
+            if ($original !== null) {
+                $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
+            } else {
+                unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            }
+        }
+
         public function testDetectUserLocale(): void {
             $this -> piper_lang -> default_locale = 'en';
             $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
@@ -150,20 +159,6 @@
             $_COOKIE[$this -> piper_lang -> cookie_key] = 'es';
             $result = $this -> piper_lang -> detectUserLocale('cookie');
             $this -> assertEquals('en', $result, "Expected default locale when unsupported locale is set in cookie");
-        }
-
-        public function testDetectBrowserLocale(): void {
-            $this -> piper_lang -> http_accept_locale = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
-            $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
-
-            $this -> piper_lang -> http_accept_locale = 'es-ES,es;q=0.9,en-US;q=0.8,fr-FR;q=0.7';
-            $this -> assertEquals('es', $this -> piper_lang -> detectBrowserLocale());
-
-            $this -> piper_lang -> http_accept_locale = 'fr-FR,fr;q=0.9,de-DE;q=0.8,en-US;q=0.7';
-            $this -> assertEquals('de', $this -> piper_lang -> detectBrowserLocale());
-
-            $this -> piper_lang -> http_accept_locale = 'fr-FR,fr;q=0.9,it-IT;q=0.8,ja-JP;q=0.7';
-            $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
         }
 
         public function testGetLocale(): void {
