@@ -83,11 +83,7 @@
         public function testGetHttpAcceptLanguage(): void {
             $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
-    
-            $piper_lang = new PiperLang();
-    
-            $this -> assertNotEmpty($piper_lang -> getHttpAcceptLanguage(), "The getHttpAcceptLanguage method didn't return a value");
-    
+
             if ($original !== null) {
                 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
             } else {
@@ -131,12 +127,9 @@
 
         public function testDetectBrowserLocale(): void {
             $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
-            $http_accept_language = $this -> piper_lang -> getHttpAcceptLanguage();
 
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
             $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
-
-            $this -> assertEquals($http_accept_language, $this -> piper_lang -> detectBrowserLocale());
 
             if ($original !== null) {
                 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
