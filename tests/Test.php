@@ -86,7 +86,7 @@
     
             $piper_lang = new PiperLang();
     
-            $this -> assertEquals('en-US,en;q=0.9', $piper_lang -> getHttpAcceptLanguage(), "The getHttpAcceptLanguage method didn't return the correct value");
+            $this -> assertEquals($piper_lang -> getHttpAcceptLanguage(), "The getHttpAcceptLanguage method didn't return the correct value");
     
             if ($original !== null) {
                 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
