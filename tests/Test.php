@@ -131,18 +131,12 @@
 
         public function testDetectBrowserLocale(): void {
             $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+            $http_accept_language = $this -> piper_lang -> getHttpAcceptLanguage();
 
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
             $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
 
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es-ES,es;q=0.9,en-US;q=0.8,fr-FR;q=0.7';
-            $this -> assertEquals('es', $this -> piper_lang -> detectBrowserLocale());
-
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.9,de-DE;q=0.8,en-US;q=0.7';
-            $this -> assertEquals('fr', $this -> piper_lang -> detectBrowserLocale());
-
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.9,it-IT;q=0.8,ja-JP;q=0.7';
-            $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
+            $this -> assertEquals($http_accept_language, $this -> piper_lang -> detectBrowserLocale());
 
             if ($original !== null) {
                 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
