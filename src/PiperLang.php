@@ -356,7 +356,11 @@
          * @throws RuntimeException - THROWN IF THERE ARE ISSUES IN READING THE FILE OR MISSING 'variables' DATA.
          */
         public function loadFile(string $locale): array {
-            $locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
+			if (isset($_SERVER['DOCUMENT_ROOT']) && is_string($_SERVER['DOCUMENT_ROOT'])) {
+				$locale_file = $_SERVER['DOCUMENT_ROOT'] . $this -> locale_path . $locale . '.' . $this -> locale_file_extension;
+			} else {
+				throw new RuntimeException('DOCUMENT_ROOT is not set or is not a valid string.');
+			}
 
             if (!file_exists($locale_file)) {
                 if ($locale !== $this -> default_locale) {
@@ -399,26 +403,23 @@
 
             $variables = $locale_nodes['variables'] ?? [];
 
-            /**
-             * @phpstan-ignore-next-line
-             */
-            if (is_null($variables)) {
-                throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
-            }
+			if (!is_array($variables)) {
+				throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
+			}
 
-            if (is_array($variables)) {
-                unset($locale_nodes['variables']);
+			$variables = array_map(function ($value) {
+				return is_scalar($value) ? (string) $value : '';
+			}, $variables);
 
-                foreach ($locale_nodes as $key => $value) {
-                    if (is_string($value)) {
-                        try {
-                            $locale_nodes[$key] = $this -> replaceVariables($value, $variables);
-                        } catch (RuntimeException $exception) {
-                            throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
-                        }
-                    }
-                }
-            }
+			foreach ($locale_nodes as $key => $value) {
+				if (is_string($value)) {
+					try {
+						$locale_nodes[$key] = $this -> replaceVariables($value, $variables);
+					} catch (RuntimeException $exception) {
+						throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
+					}
+				}
+			}
 
             $this -> loaded_locales[$locale] = $locale_nodes;
 
@@ -453,10 +454,6 @@
          * @throws RuntimeException - THROWN IF NUMBER FORMATTING FAILS.
          */
         public function formatNumber(float $number): string {
-            if (!is_numeric($number)) {
-                throw new InvalidArgumentException('Not a valid number for formatting.');
-            }
-
             if ($this -> current_locale === null) {
                 throw new InvalidArgumentException('Current locale not set.');
             }
@@ -486,10 +483,6 @@
          * @throws RuntimeException - THROWN IF CURRENCY FORMATTING FAILS.
          */
         public function formatCurrency(float $amount, string $currency, bool $show_symbol = false): string {
-            if (!is_numeric($amount)) {
-                throw new InvalidArgumentException('Not a valid amount for currency formatting.');
-            }
-
             if (!preg_match("/^[A-Z]{3}$/", $currency) && $this -> debug) {
                 throw new InvalidArgumentException('Not a valid ISO 4217 currency code.');
             }
