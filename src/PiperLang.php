@@ -213,7 +213,7 @@
          * @return ?string - THE CURRENT LOCALE CODE.
          */
         public function getLocale(): ?string {
-            return $this -> current_locale;
+            return $this -> current_locale ?? $this -> default_locale;
         }
 
         /**
