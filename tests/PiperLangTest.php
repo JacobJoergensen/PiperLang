@@ -181,9 +181,10 @@
             $this -> assertEquals('en', $result, "Expected default locale when unsupported locale is set in cookie");
 
             // TEST: THROW EXCEPTION FOR INVALID SOURCE IN detectUserLocale.
+            $this -> piper_lang -> debug = true;
             $this -> expectException(InvalidArgumentException::class);
             $this -> expectExceptionMessage("Invalid or disabled source 'invalidSource' for detecting locale.");
-            $this -> piper_lang -> detectUserLocale('invalidSource');	
+            $this -> piper_lang -> detectUserLocale('invalidSource');
         }
 
         public function testGetLocale(): void {
