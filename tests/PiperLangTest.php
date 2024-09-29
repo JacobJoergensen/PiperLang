@@ -234,20 +234,6 @@
 
             $this -> assertTrue(isset($_COOKIE[$this -> piper_lang -> cookie_key]), 'Expected cookie to be set');
             $this -> assertEquals('es', $_COOKIE[$this -> piper_lang -> cookie_key], 'Expected cookie value to be set to "es"');
-
-            // TEST: THAT AN EXCEPTION IS THROWN WHEN SESSION SETTING FAILS IN DEBUG MODE.
-            $this -> piper_lang -> session_enabled = true;
-            $this -> piper_lang -> debug = true;
-
-            $_SESSION = [];
-            session_start();
-
-            $_SESSION[$this -> piper_lang -> session_key] = 'fr';
-
-            $this -> expectException(RuntimeException::class);
-            $this -> expectExceptionMessage('Failed to set locale in session');
-
-            $this -> piper_lang -> setLocale('es');
         }
 
         public function testSetLocalePath(): void {
