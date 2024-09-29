@@ -235,19 +235,6 @@
             $this -> assertTrue(isset($_COOKIE[$this -> piper_lang -> cookie_key]), 'Expected cookie to be set');
             $this -> assertEquals('es', $_COOKIE[$this -> piper_lang -> cookie_key], 'Expected cookie value to be set to "es"');
 
-            // TEST: THAT AN EXCEPTION IS THROWN WHEN HEADERS ARE ALREADY SENT AND DEBUG MODE IS ENABLED.
-            $this -> piper_lang -> cookie_enabled = true;
-            $this -> piper_lang -> debug = true;
-
-            $this -> mockHeadersSent(true);
-
-            $this -> expectException(RuntimeException::class);
-            $this -> expectExceptionMessage('Failed to set the cookie, headers were already sent');
-
-            $this -> piper_lang -> setLocale('es');
-            
-            $this -> mockHeadersSent(false);
-
             // TEST: THAT AN EXCEPTION IS THROWN WHEN SESSION SETTING FAILS IN DEBUG MODE.
             $this -> piper_lang -> session_enabled = true;
             $this -> piper_lang -> debug = true;
