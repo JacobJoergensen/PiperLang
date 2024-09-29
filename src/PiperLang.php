@@ -154,7 +154,7 @@
                 'Loaded Locales' => $this -> loaded_locales ?? [],
                 'Variable Pattern' => $this -> variable_pattern ?? '/{{(.*?)}}/',
                 'Plural Rules' => $this -> plural_rules ?? [],
-                'HTTP Accept Locale' => $this -> getHttpAcceptLanguage() ?? '',
+                'HTTP Accept Locale' => $this -> getHttpAcceptLanguage(),
                 'Session Enabled' => $this -> session_enabled ?? true,
                 'Session Key' => $this -> session_key ?? 'locale',
                 'Cookie Enabled' => $this -> cookie_enabled ?? false,
