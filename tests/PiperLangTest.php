@@ -239,16 +239,14 @@
             $this -> piper_lang -> cookie_enabled = true;
             $this -> piper_lang -> debug = true;
 
-            ob_start();
-            $headers_sent = headers_sent();
-            ob_end_clean();
+            $this -> mockHeadersSent(true);
 
-            if ($headers_sent) {
-                $this -> expectException(RuntimeException::class);
-                $this -> expectExceptionMessage('Failed to set the cookie, headers were already sent');
-            }
+            $this -> expectException(RuntimeException::class);
+            $this -> expectExceptionMessage('Failed to set the cookie, headers were already sent');
 
             $this -> piper_lang -> setLocale('es');
+            
+            $this -> mockHeadersSent(false);
 
             // TEST: THAT AN EXCEPTION IS THROWN WHEN SESSION SETTING FAILS IN DEBUG MODE.
             $this -> piper_lang -> session_enabled = true;
@@ -261,6 +259,7 @@
 
             $this -> expectException(RuntimeException::class);
             $this -> expectExceptionMessage('Failed to set locale in session');
+
             $this -> piper_lang -> setLocale('es');
         }
 
