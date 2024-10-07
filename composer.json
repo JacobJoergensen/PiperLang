@@ -25,8 +25,8 @@
 		"ext-intl": "*"
 	},
 	"require-dev": {
-		"phpstan/phpstan": "^1.12.5",
-		"phpunit/phpunit": "^11.3"
+		"phpstan/phpstan": "^1.12.6",
+		"phpunit/phpunit": "^11.4"
 	},
 	"autoload": {
 		"psr-4": {
