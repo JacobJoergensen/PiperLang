@@ -17,7 +17,6 @@
         public function testModifierInheritsProperties(): void {
             $modifier = new Modifier();
 
-            $this -> assertIsArray($modifier -> hooks);
             $this -> assertIsBool($modifier -> debug);
             $this -> assertEquals('en', $modifier -> default_locale);
             $this -> assertEquals('/locales/', $modifier -> locale_path);

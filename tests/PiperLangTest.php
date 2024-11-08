@@ -30,69 +30,6 @@
             $this -> assertInstanceOf(PiperLang::class, $this -> piper_lang);
         }
 
-        public function testAddHook(): void {
-            // TEST: ADD HOOK WITH DEFAULT PRIORITY AND ENSURE IT'S CALLABLE.
-            $hook_name = 'some_hook_name';
-
-            $some_hook_function = function($arg1, $arg2) {
-                echo $arg1 . $arg2;
-            };
-
-            $this -> piper_lang -> addHook($hook_name, $some_hook_function);
-
-            $this -> assertIsCallable(
-                $this -> piper_lang -> hooks[$hook_name][10][0], "The hook function is missing or not callable"
-            );
-
-            // TEST: ADD HOOK WITH A DIFFERENT PRIORITY AND ENSURE IT'S CALLABLE.
-            $different_priority_hook_function = function($arg1) {
-                echo strtoupper($arg1);
-            };
-
-            $this -> piper_lang -> addHook($hook_name, $different_priority_hook_function, 1);
-
-            $this -> assertIsCallable(
-                $this -> piper_lang -> hooks[$hook_name][1][0], "The priority hook function is missing or not callable"
-            );
-        }
-
-        public function testRunHooks(): void {
-            // TEST: RUNNING HOOKS IN CORRECT ORDER (BY PRIORITY).
-            $hook_name = 'some_hook_name';
-
-            $some_hook_function = function($arg1, $arg2) {
-                echo $arg1 . $arg2;
-            };
-
-            $this -> piper_lang -> addHook($hook_name, $some_hook_function, 10);
-
-            ob_start();
-
-            $this -> piper_lang -> runHooks($hook_name, ['Hello ', 'world!']);
-            $output = ob_get_clean();
-            $this -> assertEquals('Hello world!', $output, "The hooks didn't produce expected output");
-
-            // TEST: RUNNING HOOKS WITH DIFFERENT PRIORITY.
-            $different_priority_hook_function = function($arg1) {
-                echo strtoupper($arg1);
-            };
-
-            $this -> piper_lang -> addHook($hook_name, $different_priority_hook_function, 1);
-
-            ob_start();
-
-            $this -> piper_lang -> runHooks($hook_name, ['Hello ', '']);
-            $output = ob_get_clean();
-            $this -> assertEquals('HELLO Hello ', $output, "The hooks with different priorities didn't run in the correct order");
-
-            // TEST: RUNNING NON-EXISTENT HOOKS SHOULD NOT PRODUCE OUTPUT.
-            ob_start();
-
-            $this -> piper_lang -> runHooks('non_existent_hook');
-            $output = ob_get_clean();
-            $this -> assertEmpty($output, "Running a non-existent hook produced output.");
-        }
-
         public function testGetHttpAcceptLanguage(): void {
             // TEST: SIMULATE AND TEST THE HTTP_ACCEPT_LANGUAGE DETECTION.
             $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
@@ -111,7 +48,7 @@
             $this -> assertIsArray($info);
 
             $expected_keys = [
-                'Debug Status', 'Hooks List', 'Current Locale', 'Default Locale',
+                'Debug Status', 'Current Locale', 'Default Locale',
                 'Supported Locales', 'Path to Locales', 'Locale File Extension',
                 'Loaded Locales', 'Variable Pattern', 'Plural Rules',
                 'Session Enabled', 'Session Key',
@@ -125,7 +62,6 @@
 
             // TEST: ENSURE THAT ALL VALUES ARE OF THE EXPECTED TYPE.
             $this -> assertIsBool($info['Debug Status']);
-            $this -> assertIsArray($info['Hooks List']);
             $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
             $this -> assertIsString($info['Default Locale']);
             $this -> assertIsArray($info['Supported Locales']);
