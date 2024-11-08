@@ -20,6 +20,8 @@
     class PiperLang {
         /**
          * @var array<string, array<int, array<int, callable>>>
+		 *
+		 * @deprecated(since = 1.3.0, forRemoval = true)
          */
         public array $hooks = [];
 
@@ -151,6 +153,8 @@
          * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
          */
         public function getInfo(): array {
+			trigger_error('The "Hooks List" entry is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
+
             return [
                 'Debug Status' => $this -> debug ?? false,
                 'Hooks List' => $this -> hooks ?? [],

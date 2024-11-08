@@ -40,15 +40,11 @@ This command will automatically download and install the latest version of Piper
 PiperLang is also available on Packagist, the main Composer repository for PHP packages. You can install PiperLang via Composer as shown above, and it will fetch the package from Packagist.
 
 #### Initializing
-Once PiperLang is installed, you can start using it in your PHP projects by including the necessary files or by using Composer's autoloading feature to autoload PiperLang classes.
+Once PiperLang is installed, you can start using it in your PHP projects by including the necessary files or by using Composer's autoload feature to autoload PiperLang classes.
 
-1) Include Autoloader: If you're using Composer autoloading, include Composer's autoloader in your PHP script:
+1) Include Autoloader: If you're using Composer autoload, include Composer's autoloader in your PHP script:
 ```php
 require_once __DIR__ . '/vendor/autoload.php';
-```
-If  you're not using Composer autoloading, include the PiperLang autoloader directly:
-```php
-require_once '/path/to/piperlang/autoload.php';
 ```
 
 2) Instantiate PiperLang: Create an instance of the PiperLang class to start using PiperLang in your project:
@@ -96,45 +92,45 @@ if (isset($localeNodes['welcome'])) {
 ## Configuration
 You can change various settings in the `PiperLang` framework. Here's an example of how you can modify settings after the initializing:
 
-| Setting               | Method                                                                         | Description                                                           | Default       |
-|-----------------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------|---------------|
-| Debug Mode            | `$piperlang->debug = true`                                                     | Enables or disables debug mode.                                       | false         |
-| Current Locale        | `$piperlang->current_locale = 'en'`                                            | Sets the current locale.                                              | null          |
-| Default Locale        | `$piperlang->default_locale = 'es'`                                            | Sets the default locale.                                              | 'en'          |
-| Supported Locales     | `$piperlang->supported_locales = ['en', 'es', 'fr']`                           | Adds locales that the application should support.                     | ['en']        |
-| Locale Path           | `$piperlang->locale_path = '/path_to_your_locales/'`                           | Specifies the path to your localization files.                        | '/locales/'   |
-| Locale File Extension | `$piperlang->locale_file_extension = 'json'`                                   | Specifies the extension of your localization files.                   | 'json'        |
-| Loaded Locales        | `$piperlang->loaded_locales = ['en' => ['greeting' => 'Hello']];`              | Adds/edits existing loaded locales.                                   | []            |
-| Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                                 | Alters the variable pattern to something other than the default.      | '/{{(.*?)}}/' |
-| Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']`           | Defines the plural rules for your supported locales.                  | []            |
-| Session Enabled       | `$piperlang->session_enabled = false`                                          | Enables or disables the session.                                      | true          |
-| Session Key           | `$piperlang->session_key = 'user_lang'`                                        | Changes the session key for storing the user's locale preference.     | 'locale'      |
-| Cookie Enabled        | `$piperlang->cookie_enabled = false`                                           | Enables or disables the cookie.                                       | false         |
-| Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                                         | Alters the cookie key for storing the user's locale preference.       | 'site_locale' |
-| HTTP Accept Locale    | `$piperlang->http_accept_locale = 'en'`                                        | Sets the HTTP accept language header.                                 | null          |
-| Hooks                 | `$piperlang->hooks = ['onLocaleChange' => [['priority' => 1, 'fn' => func]]];` | Adds/edits hooks for events. The array inside supports priority & fn. | []            |
+| Setting               | Method                                                                         | Description                                                       | Default       |
+|-----------------------|--------------------------------------------------------------------------------|-------------------------------------------------------------------|---------------|
+| Debug Mode            | `$piperlang->debug = true`                                                     | Enables or disables debug mode.                                   | false         |
+| Current Locale        | `$piperlang->current_locale = 'en'`                                            | Sets the current locale.                                          | null          |
+| Default Locale        | `$piperlang->default_locale = 'es'`                                            | Sets the default locale.                                          | 'en'          |
+| Supported Locales     | `$piperlang->supported_locales = ['en', 'es', 'fr']`                           | Adds locales that the application should support.                 | ['en']        |
+| Locale Path           | `$piperlang->locale_path = '/path_to_your_locales/'`                           | Specifies the path to your localization files.                    | '/locales/'   |
+| Locale File Extension | `$piperlang->locale_file_extension = 'json'`                                   | Specifies the extension of your localization files.               | 'json'        |
+| Loaded Locales        | `$piperlang->loaded_locales = ['en' => ['greeting' => 'Hello']];`              | Adds/edits existing loaded locales.                               | []            |
+| Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                                 | Alters the variable pattern to something other than the default.  | '/{{(.*?)}}/' |
+| Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']`           | Defines the plural rules for your supported locales.              | []            |
+| Session Enabled       | `$piperlang->session_enabled = false`                                          | Enables or disables the session.                                  | true          |
+| Session Key           | `$piperlang->session_key = 'user_lang'`                                        | Changes the session key for storing the user's locale preference. | 'locale'      |
+| Cookie Enabled        | `$piperlang->cookie_enabled = false`                                           | Enables or disables the cookie.                                   | false         |
+| Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                                         | Alters the cookie key for storing the user's locale preference.   | 'site_locale' |
+| HTTP Accept Locale    | `$piperlang->http_accept_locale = 'en'`                                        | Sets the HTTP accept language header.                             | null          |
+| Hooks                 | `$piperlang->hooks = ['onLocaleChange' => [['priority' => 1, 'fn' => func]]];` | Deprecated: Adds/edits hooks for events. Will be removed in 2.0.0 | []            |
 
 
 ## Methods
 Key methods of `PiperLang` include:
 
-* `getInfo()` - Returns an associative array containing PiperLang information.
-* `addHook(string $hook_name, callable $fn, int $priority = 10)` - Adds a hook action with a specific callback function and a priority.
-* `runHooks(string $hook_name, array $args = [])` - Runs all actions associated with a given hook.
-* `detectBrowserLocale()` - Detects the preferred locale based on the user's browser.
-* `detectUserLocale(string $source = 'session')` - Detects and returns the preferred locale based on the user's session or cookie.
-* `getLocale()` - Returns the current locale.
-* `setLocale(?string $preferred_lang = null)` - Sets the locale to the provided preference or the default locale if none is provided.
-* `setLocalePath(string $path)` - Sets the path to the directory containing locale files.
-* `switchLocale(string $new_lang)` - Switches the current locale to the new one provided.
-* `replaceVariables(string $string, array $variables)` - Returns a string with replaced placeholders with provided variables.
-* `translateWithPlural(string $key, int $count, array $variables = [])` - Returns a translated string with plural consideration for a given key and count. Also replaces any variables in the string.
-* `loadFile(string $locale)` - Loads a locale file, validates its content, and processes the variables inside it.
-* `unloadFile(string $locale)` - Unloads a loaded locale file from memory.
-* `formatNumber(float $number)` - Returns a formatted number string according to the current locale setting.
-* `formatCurrency(float $amount, string $currency, bool $show_symbol = false)` - Returns a formatted currency string according to the current locale setting.
-* `formatDate(DateTime $date, string $format = 'long')` - Returns a formatted date string according to the current locale setting.
-* `getFormattingRules()` - Returns the formatting rules specific to the current locale.
+* `getInfo()` - Returns an associative array containing PiperLang configuration details.
+* `addHook(string $hook_name, callable $fn, int $priority = 10)` - Adds a hook action with a callback function and priority. (Deprecated since 1.3.0, to be removed in 2.0.0)
+* `runHooks(string $hook_name, array $args = [])` - Executes all actions associated with a specific hook. (Deprecated since 1.3.0, to be removed in 2.0.0)
+* `detectBrowserLocale()` - Detects the preferred locale based on the user's browser settings.
+* `detectUserLocale(string $source = 'session')` - Determines the user’s preferred locale based on session or cookie.
+* `getLocale()` - Retrieves the current locale.
+* `setLocale(?string $preferred_lang = null)` - Sets the locale to the preferred language or defaults if none is provided.
+* `setLocalePath(string $path)` - Sets the path for locale files.
+* `switchLocale(string $new_lang)` - Switches the locale to a new language.
+* `replaceVariables(string $string, array $variables)` - Replaces placeholders in a string with specified variables.
+* `translateWithPlural(string $key, int $count, array $variables = [])` - Translates a key with pluralization and variable replacement based on count.
+* `loadFile(string $locale)` - Loads, validates, and processes a locale file.
+* `unloadFile(string $locale)` - Unloads a specified locale file from memory.
+* `formatNumber(float $number)` - Formats a number according to the current locale.
+* `formatCurrency(float $amount, string $currency, bool $show_symbol = false)` - Formats a currency amount per locale.
+* `formatDate(DateTime $date, string $format = 'long')` - Formats a date based on locale and specified format.
+* `getFormattingRules()` - Retrieves locale-specific formatting rules.
 
 
 ## Formatting
@@ -226,7 +222,7 @@ $modifier = new Modifier();
 ```
 
 
-## Hook
+## Hook (Deprecated since 1.3.0, to be removed in 2.0.0)
 The hook system allows you as a developer to integrate custom actions or modifications into specific points of execution within the PiperLang framework.
 
 #### Adding a Hook Action
