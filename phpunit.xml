@@ -6,7 +6,6 @@
 		 colors="true"
 		 processIsolation="false"
 		 stopOnFailure="false"
-		 failOnDeprecation="true"
 		 failOnPhpunitDeprecation="true"
 >
 

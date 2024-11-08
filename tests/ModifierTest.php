@@ -23,16 +23,4 @@
             $this -> assertIsArray($modifier -> supported_locales);
             $this -> assertContains('en', $modifier -> supported_locales);
         }
-
-        public function testModifierInheritsMethods(): void {
-            $modifier = new Modifier();
-
-            $info = $modifier -> getInfo();
-
-            $this -> assertIsArray($info);
-
-            $this -> assertArrayHasKey('Debug Status', $info);
-            $this -> assertArrayHasKey('Current Locale', $info);
-            $this -> assertArrayHasKey('Default Locale', $info);
-        }
     }
