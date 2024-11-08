@@ -1,6 +1,9 @@
+includes:
+    - phar://phpstan.phar/conf/bleedingEdge.neon
+
 parameters:
 	paths:
 		- src/
-	level: 9
+	level: max
 	bootstrapFiles:
 		- vendor/autoload.php

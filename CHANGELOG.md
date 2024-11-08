@@ -1,7 +1,18 @@
 # PiperLang Changelog
 
-## WIP - Next Version
-* Nothing to see yet!
+## Version 1.3.0 (??-??-??)
+* Improved github workflow
+* Now using phpstan bleeding edge
+* Updated dependencies
+
+## Version 1.2.0 (29-09-24)
+* Added fallback value for getInfo method
+* Added fallback value for getLocale method 
+* Added document root check for loadFile method 
+* Improved loadFile method 
+* Improved .editorconfig (for jetbrains phpstorm users)
+* Reworked phpunit tests 
+* Removed unneeded is_numeric checks
 
 ## Version 1.1.0 (01-06-24)
 * Added session has been started check to ```detectUserLocale``` method

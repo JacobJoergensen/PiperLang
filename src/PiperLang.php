@@ -15,7 +15,7 @@
      * @package    PiperLang\PiperLang
      * @author     Jacob Jørgensen
      * @license    MIT
-     * @version    1.2.0
+     * @version    1.3.0
      */
     class PiperLang {
         /**
@@ -100,7 +100,9 @@
          * @param callable $fn - THE CALLABLE FUNCTION OR METHOD.
          * @param int $priority - EXECUTION PRIORITY, LOWER NUMBERS HAVE HIGHER PRIORITY.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
+		 *
+		 * @deprecated(since = 1.3.0, forRemoval = true)
          */
         public function addHook(string $hook_name, callable $fn, int $priority = 10): void {
             $this -> hooks[$hook_name][$priority][] = $fn;
@@ -112,7 +114,9 @@
          * @param string $hook_name - THE NAME OF THE HOOK.
          * @param mixed[] $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
+		 *
+		 * @deprecated(since = 1.3.0, forRemoval = true)
          */
         public function runHooks(string $hook_name, array $args = []): void {
             if (!isset($this -> hooks[$hook_name])) {
@@ -121,8 +125,8 @@
 
             ksort($this -> hooks[$hook_name]);
 
-            foreach($this -> hooks[$hook_name] as $hooks) {
-                foreach($hooks as $hook) {
+            foreach ($this -> hooks[$hook_name] as $hooks) {
+                foreach ($hooks as $hook) {
                     call_user_func_array($hook, $args);
                 }
             }
@@ -221,7 +225,7 @@
          *
          * @param string|null $preferred_lang - THE DESIRED LOCALE CODE.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
          */
         public function setLocale(?string $preferred_lang = null): void {
             if (!in_array($this -> default_locale, $this -> supported_locales, true)) {
@@ -262,7 +266,7 @@
          *
          * @param string $path - THE DIRECTORY PATH TO THE LOCALE FILES.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
          *
          * @throws RuntimeException - IF THE DIRECTORY PATH IS NOT VALID.
          */
@@ -279,7 +283,7 @@
          *
          * @param string $new_locale - THE NEW LOCALE TO BE SET.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
          */
         public function switchLocale(string $new_locale): void {
             $new_locale = htmlspecialchars($new_locale, ENT_QUOTES, 'UTF-8');
@@ -429,7 +433,7 @@
          *
          * @param string $locale - THE LOCALE CODE TO UNLOAD.
          *
-         * @return void - THIS METHOD DOES NOT RETURN A VALUE.
+         * @return void
          *
          * @throws RuntimeException - IF THE LOCALE FILE IS ALREADY UNLOADED OR WAS NEVER LOADED.
          */

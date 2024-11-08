@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   build:
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') && (github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository) }}
+
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
@@ -23,38 +25,45 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --no-check-all --strict
-
       - name: Setup PHP
         id: setup-php
         uses: shivammathur/setup-php@2.31.1
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, intl
+          extensions: intl
           ini-values: post_max_size=256M, max_execution_time=180
-          coverage: xdebug3
-          tools: phpstan, phpunit
+          coverage: pcov
+          tools: composer, phpstan, phpunit
 
       - name: Print PHP Version
         run: echo ${{ steps.setup-php.outputs.php-version }}
 
-      - name: Cache Composer packages
+      - name: Setup Cache for Composer
+        id: composer-cache
         uses: actions/cache@v4
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.lock') }}
+          path: |
+            vendor
+            ~/.composer/cache
+          key: ${{ runner.os }}-php-${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.lock') }}-${{ hashFiles('**/composer.json') }}
           restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.json') }}
+            ${{ runner.os }}-php-${{ matrix.php-versions }}-composer-
             ${{ runner.os }}-composer-
 
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress
+      - name: Validate composer.json and composer.lock
+        run: composer validate --no-check-all --strict
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --prefer-dist
+        shell: bash
 
       - name: Run PHPStan (Static Analysis)
         run: |
-          vendor/bin/phpstan analyse --level max
+          vendor/bin/phpstan analyse --configuration phpstan.neon
+        shell: bash
 
-      - name: Run Unit Tests and Build Coverage
+      - name: Run Unit Tests and Generate Coverage
         run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover=coverage.xml
 
       - name: Upload Build Artifact
