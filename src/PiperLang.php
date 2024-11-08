@@ -105,6 +105,8 @@
 		 * @deprecated(since = 1.3.0, forRemoval = true)
          */
         public function addHook(string $hook_name, callable $fn, int $priority = 10): void {
+			trigger_error('Method ' . __METHOD__ . ' is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
+
             $this -> hooks[$hook_name][$priority][] = $fn;
         }
 
@@ -119,6 +121,8 @@
 		 * @deprecated(since = 1.3.0, forRemoval = true)
          */
         public function runHooks(string $hook_name, array $args = []): void {
+			trigger_error('Method ' . __METHOD__ . ' is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
+
             if (!isset($this -> hooks[$hook_name])) {
                 return;
             }

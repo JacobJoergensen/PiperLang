@@ -4,6 +4,7 @@
 * Improved github workflow
 * Now using phpstan bleeding edge
 * Updated dependencies
+* Deprecated ```addHook``` and ```runHooks``` (will be removed in 2.0.0)
 
 ## Version 1.2.0 (29-09-24)
 * Added fallback value for getInfo method
