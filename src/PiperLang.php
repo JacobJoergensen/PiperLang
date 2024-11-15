@@ -116,7 +116,7 @@
          * RUN ALL HOOKS FOR THE PROVIDED hook_name .
          *
          * @param string $hook_name - THE NAME OF THE HOOK.
-         * @param mixed[] $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
+         * @param array<int|string, mixed> $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
          *
          * @return void
 		 *
@@ -417,9 +417,11 @@
                 throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
             }
 
-            $variables = array_map(function ($value) {
-                return is_scalar($value) ? (string) $value : '';
-            }, $variables);
+			$variables = array_filter($variables, fn($key) => is_string($key), ARRAY_FILTER_USE_KEY);
+			$variables = array_map(
+				fn($value) => is_scalar($value) ? (string)$value : '',
+				$variables
+			);
 
             foreach ($locale_nodes as $key => $value) {
                 if (is_string($value)) {
