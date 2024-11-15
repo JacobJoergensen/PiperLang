@@ -571,6 +571,6 @@
 
 			return array_filter($rules, function ($value) {
 				return is_string($value) || is_int($value) || is_float($value) || $value === false;
-			});
+			}, ARRAY_FILTER_USE_BOTH);
         }
     }
