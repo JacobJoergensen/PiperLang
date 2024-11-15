@@ -430,7 +430,9 @@
                     } catch (RuntimeException $exception) {
                         throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
                     }
-                }
+                } else {
+					unset($locale_nodes[$key]);
+				}
             }
 
             $this -> loaded_locales[$locale] = $locale_nodes;
