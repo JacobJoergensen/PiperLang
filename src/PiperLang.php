@@ -569,9 +569,8 @@
 
 			$rules = localeconv();
 
-			return array_map(
-				fn ($value) => is_scalar($value) || $value === false ? $value : (string)$value,
-				$rules
-			);
+			return array_filter($rules, function ($value) {
+				return is_string($value) || is_int($value) || is_float($value) || $value === false;
+			});
         }
     }
