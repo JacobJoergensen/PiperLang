@@ -558,7 +558,7 @@
         /**
          * RETURNS THE FORMATTING RULES SPECIFIC TO THE CURRENT LOCALE LOCALE.
          *
-         * @return array<string, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
+         * @return array<mixed, string|false|int|float> - ASSOCIATIVE ARRAY CONTAINING LOCALE SPECIFIC NUMERIC AND MONETARY FORMATTING INFORMATION.
          */
         public function getFormattingRules(): array {
             if (empty($this -> current_locale) && $this -> debug) {
