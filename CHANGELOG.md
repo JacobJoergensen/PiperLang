@@ -1,8 +1,10 @@
 # PiperLang Changelog
 
 ## Version 1.3.0 (??-??-??)
+* PiperLang no works on both php 8.3 and php 8.4
+* Updated to phpstan 2.X
 * Improved github workflow
-* Now using phpstan bleeding edge
+* Improved docs
 * Updated dependencies
 * Deprecated ```addHook``` and ```runHooks``` (will be removed in version 2.0.0)
 
