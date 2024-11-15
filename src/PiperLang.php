@@ -418,8 +418,8 @@
             }
 
 			$variables = array_map(
-				fn($value) => is_scalar($value) ? (string)$value : '',
-				array_filter($variables, fn($key) => is_string($key), ARRAY_FILTER_USE_KEY)
+				fn ($value) => is_scalar($value) ? (string)$value : '',
+				array_filter($variables, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY)
 			);
 
             foreach ($locale_nodes as $key => $value) {
@@ -429,9 +429,7 @@
                     } catch (RuntimeException $exception) {
                         throw new RuntimeException("Error replacing variable '$key' in locale file: $locale_file", 0, $exception);
                     }
-                } else {
-					unset($locale_nodes[$key]);
-				}
+                }
             }
 
 			$locale_nodes = array_filter(
@@ -569,6 +567,11 @@
 
             setlocale(LC_ALL, $this -> current_locale);
 
-            return localeconv();
+			$rules = localeconv();
+
+			return array_map(
+				fn ($value) => is_scalar($value) || $value === false ? $value : (string)$value,
+				$rules
+			);
         }
     }
