@@ -69,11 +69,10 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Build
+          name: Build-${{ matrix.php-versions }}
           path: src/
 
       - name: Upload Coverage Reports to Codecov
         uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          name: coverage-report-${{ github.run_number }}-${{ github.run_id }}
