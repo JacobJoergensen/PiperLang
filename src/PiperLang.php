@@ -417,10 +417,9 @@
                 throw new RuntimeException("Locale file $locale_file does not contain required 'variables' data");
             }
 
-			$variables = array_filter($variables, fn($key) => is_string($key), ARRAY_FILTER_USE_KEY);
 			$variables = array_map(
 				fn($value) => is_scalar($value) ? (string)$value : '',
-				$variables
+				array_filter($variables, fn($key) => is_string($key), ARRAY_FILTER_USE_KEY)
 			);
 
             foreach ($locale_nodes as $key => $value) {
@@ -434,6 +433,12 @@
 					unset($locale_nodes[$key]);
 				}
             }
+
+			$locale_nodes = array_filter(
+				$locale_nodes,
+				fn($key, $value) => is_string($key) && is_string($value),
+				ARRAY_FILTER_USE_BOTH
+			);
 
             $this -> loaded_locales[$locale] = $locale_nodes;
 
