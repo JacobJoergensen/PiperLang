@@ -22,6 +22,7 @@ jobs:
         experimental: [false]
         include:
           - php: '8.5'
+            operating-system: 'ubuntu-latest'
             experimental: true
       fail-fast: true
 
