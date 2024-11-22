@@ -1,13 +1,14 @@
 # PiperLang Changelog
 
-## Version 1.3.0 (??-??-??)
-* Added support for php 8.4
+## Version 1.3.0 (22-11-24)
+* PiperLang is now compatibility with PHP 8.4
 * Added experimental support for php 8.5
-* Updated to phpstan 2.X
+* Upgraded to phpstan version 2.X.
 * Improved github workflow
 * Improved docs
 * Updated dependencies
-* Deprecated ```addHook``` and ```runHooks``` (will be removed in version 2.0.0)
+* The ```hooks``` property is deprecated and will be removed in version 2.0.0
+* The ```addHook``` and ```runHooks``` methods are deprecated and will be removed in version 2.0.0
 
 ## Version 1.2.0 (29-09-24)
 * Added fallback value for getInfo method
