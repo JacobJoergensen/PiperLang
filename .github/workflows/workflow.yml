@@ -83,4 +83,3 @@ jobs:
         uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          config: codecov.yml
