@@ -78,8 +78,8 @@ jobs:
           name: Build-${{ matrix.php }}
           path: src/
 
-      - name: Upload Coverage Reports to Codecov
-        if: ${{ matrix.php == '8.3' }}
-        uses: codecov/codecov-action@v4.6.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+#      - name: Upload Coverage Reports to Codecov
+#        if: ${{ matrix.php == '8.3' }}
+#        uses: codecov/codecov-action@v4.6.0
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
