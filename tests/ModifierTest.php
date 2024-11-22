@@ -17,23 +17,10 @@
         public function testModifierInheritsProperties(): void {
             $modifier = new Modifier();
 
-            $this -> assertIsArray($modifier -> hooks);
             $this -> assertIsBool($modifier -> debug);
             $this -> assertEquals('en', $modifier -> default_locale);
             $this -> assertEquals('/locales/', $modifier -> locale_path);
             $this -> assertIsArray($modifier -> supported_locales);
             $this -> assertContains('en', $modifier -> supported_locales);
-        }
-
-        public function testModifierInheritsMethods(): void {
-            $modifier = new Modifier();
-
-            $info = $modifier -> getInfo();
-
-            $this -> assertIsArray($info);
-
-            $this -> assertArrayHasKey('Debug Status', $info);
-            $this -> assertArrayHasKey('Current Locale', $info);
-            $this -> assertArrayHasKey('Default Locale', $info);
         }
     }

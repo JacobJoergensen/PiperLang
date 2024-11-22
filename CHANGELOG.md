@@ -1,7 +1,25 @@
 # PiperLang Changelog
 
-## WIP - Next Version
-* Nothing to see yet!
+## Version 2.0.0 (??-??-??)
+
+## Version 1.3.0 (22-11-24)
+* PiperLang is now compatibility with PHP 8.4
+* Added experimental support for php 8.5
+* Upgraded to phpstan version 2.X.
+* Improved github workflow
+* Improved docs
+* Updated dependencies
+* The ```hooks``` property is deprecated and will be removed in version 2.0.0
+* The ```addHook``` and ```runHooks``` methods are deprecated and will be removed in version 2.0.0
+
+## Version 1.2.0 (29-09-24)
+* Added fallback value for getInfo method
+* Added fallback value for getLocale method 
+* Added document root check for loadFile method 
+* Improved loadFile method 
+* Improved .editorconfig (for jetbrains phpstorm users)
+* Reworked phpunit tests 
+* Removed unneeded is_numeric checks
 
 ## Version 1.1.0 (01-06-24)
 * Added session has been started check to ```detectUserLocale``` method
