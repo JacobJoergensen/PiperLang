@@ -72,12 +72,14 @@ jobs:
         run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover=coverage.xml
 
       - name: Upload Build Artifact
+        if: ${{ matrix.php == '8.3' }}
         uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.php }}
           path: src/
 
       - name: Upload Coverage Reports to Codecov
+        if: ${{ matrix.php == '8.3' }}
         uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
