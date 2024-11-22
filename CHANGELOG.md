@@ -1,7 +1,8 @@
 # PiperLang Changelog
 
 ## Version 1.3.0 (??-??-??)
-* Added support for both php 8.3 and php 8.4
+* Added support for php 8.4
+* Added experimental support for php 8.5
 * Updated to phpstan 2.X
 * Improved github workflow
 * Improved docs
