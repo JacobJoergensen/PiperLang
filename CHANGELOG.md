@@ -1,5 +1,7 @@
 # PiperLang Changelog
 
+## Version 2.0.0 (??-??-??)
+
 ## Version 1.3.0 (22-11-24)
 * PiperLang is now compatibility with PHP 8.4
 * Added experimental support for php 8.5
