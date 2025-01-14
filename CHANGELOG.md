@@ -1,6 +1,9 @@
 # PiperLang Changelog
 
 ## Version 2.0.0 (??-??-??)
+* PiperLang now is running php 8.4
+* Removed ```hooks``` property
+* Removed ```addHook``` and ```runHooks``` methods
 
 ## Version 1.3.0 (22-11-24)
 * PiperLang is now compatibility with PHP 8.4

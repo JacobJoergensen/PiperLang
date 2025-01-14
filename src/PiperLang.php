@@ -15,16 +15,9 @@
 	 * @package    PiperLang\PiperLang
 	 * @author     Jacob Jørgensen
 	 * @license    MIT
-	 * @version    1.3.0
+	 * @version    2.0.0
 	 */
 	class PiperLang {
-		/**
-		 * @var array<string, array<int, array<int, callable>>>
-		 *
-		 * @deprecated(since = 1.3.0, forRemoval = true)
-		 */
-		public array $hooks = [];
-
 		/**
 		 * @var bool
 		 */
@@ -96,49 +89,6 @@
 		public function __construct() {}
 
 		/**
-		 * ADD A HOOK ACTION.
-		 *
-		 * @param string $hook_name - THE NAME OF THE HOOK.
-		 * @param callable $fn - THE CALLABLE FUNCTION OR METHOD.
-		 * @param int $priority - EXECUTION PRIORITY, LOWER NUMBERS HAVE HIGHER PRIORITY.
-		 *
-		 * @return void
-		 *
-		 * @deprecated(since = 1.3.0, forRemoval = true)
-		 */
-		public function addHook(string $hook_name, callable $fn, int $priority = 10): void {
-			trigger_error('Method ' . __METHOD__ . ' is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
-
-			$this -> hooks[$hook_name][$priority][] = $fn;
-		}
-
-		/**
-		 * RUN ALL HOOKS FOR THE PROVIDED hook_name .
-		 *
-		 * @param string $hook_name - THE NAME OF THE HOOK.
-		 * @param array<int|string, mixed> $args - PARAMETERS THAT PASSED TO HOOKS FUNCTIONS.
-		 *
-		 * @return void
-		 *
-		 * @deprecated(since = 1.3.0, forRemoval = true)
-		 */
-		public function runHooks(string $hook_name, array $args = []): void {
-			trigger_error('Method ' . __METHOD__ . ' is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
-
-			if (!isset($this -> hooks[$hook_name])) {
-				return;
-			}
-
-			ksort($this -> hooks[$hook_name]);
-
-			foreach ($this -> hooks[$hook_name] as $hooks) {
-				foreach ($hooks as $hook) {
-					call_user_func_array($hook, $args);
-				}
-			}
-		}
-
-		/**
 		 * RETRIEVE THE http_accept_language VALUE.
 		 *
 		 * @return string - THE http_accept_language VALUE OR AN EMPTY STRING IF NOT SET.
@@ -153,11 +103,8 @@
 		 * @return array<string, mixed> - AN ASSOCIATIVE ARRAY CONTAINING PiperLang Information.
 		 */
 		public function getInfo(): array {
-			trigger_error('The "Hooks List" entry is deprecated since version 1.3.0 and will be removed in version 2.0.0', E_USER_DEPRECATED);
-
 			return [
 				'Debug Status' => $this -> debug ?? false,
-				'Hooks List' => $this -> hooks ?? [],
 				'Current Locale' => $this -> current_locale ?? '',
 				'Default Locale' => $this -> default_locale ?? 'en',
 				'Supported Locales' => $this -> supported_locales ?? ['en'],
