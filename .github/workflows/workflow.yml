@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         operating-system: ['ubuntu-latest']
-        php: ['8.3', '8.4']
+        php: ['8.4']
         experimental: [false]
         include:
           - php: '8.5'
