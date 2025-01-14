@@ -37,7 +37,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: intl
           ini-values: post_max_size=256M, max_execution_time=180
-          coverage: pcov
+          coverage: none
           tools: composer, phpstan, phpunit
 
       - name: Print PHP Version
@@ -69,7 +69,7 @@ jobs:
         shell: bash
 
       - name: Run Unit Tests and Generate Coverage
-        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover=coverage.xml
+        run: vendor/bin/phpunit --configuration phpunit.xml
 
       - name: Upload Build Artifact
         if: ${{ matrix.php == '8.3' }}
@@ -77,9 +77,3 @@ jobs:
         with:
           name: Build-${{ matrix.php }}
           path: src/
-
-#      - name: Upload Coverage Reports to Codecov
-#        if: ${{ matrix.php == '8.3' }}
-#        uses: codecov/codecov-action@v4.6.0
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
