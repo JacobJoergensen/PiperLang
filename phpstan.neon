@@ -5,8 +5,8 @@ includes:
 
 parameters:
 	paths:
-        - src/
-        - tests/
+		- src/
+		- tests/
 	level: max
 	bootstrapFiles:
 		- vendor/autoload.php
