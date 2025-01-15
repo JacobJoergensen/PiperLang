@@ -1,9 +1,12 @@
 includes:
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
 
 parameters:
 	paths:
-		- src/
+        - src/
+        - tests/
 	level: max
 	bootstrapFiles:
 		- vendor/autoload.php
