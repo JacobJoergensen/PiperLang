@@ -187,11 +187,20 @@
 				$this -> supported_locales[] = $this -> default_locale;
 			}
 
-			if ($preferred_lang && in_array($preferred_lang, $this -> supported_locales, true)) {
-				$this -> current_locale = $preferred_lang;
-			} else {
-				$this -> current_locale = $this -> default_locale;
+			$preferred_lang = in_array($preferred_lang, $this -> supported_locales, true)
+				? $preferred_lang
+				: null;
+
+			if ($preferred_lang === null) {
+				$preferred_lang = match (true) {
+					!empty($_GET['locale']) => $_GET['locale'],
+					$this -> session_enabled && isset($_SESSION[$this -> session_key]) => $_SESSION[$this -> session_key],
+					$this -> cookie_enabled && isset($_COOKIE[$this -> cookie_key]) => $_COOKIE[$this -> cookie_key],
+					default => $this -> detectBrowserLocale(),
+				};
 			}
+
+			$this -> current_locale = $preferred_lang ?? $this -> default_locale;
 
 			if ($this -> session_enabled) {
 				if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -520,4 +529,4 @@
 				return is_string($value) || is_int($value) || is_float($value) || $value === false;
 			}, ARRAY_FILTER_USE_BOTH);
 		}
-		}
+	}
