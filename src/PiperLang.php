@@ -52,6 +52,7 @@
 			public string $locale_file_extension = 'json',
 			public bool $session_enabled = true,
 			public string $session_key = 'locale',
+            /** @var string[] */
 			public array $supported_locales = ['en']
 		) {
 			$detected_locale = $this->detectLocale();
@@ -67,19 +68,19 @@
 		 */
 		public function getInfo(): array {
 			return [
-				'Debug Status'          => $this->debug ?? false,
+				'Debug Status'          => $this->debug,
 				'Current Locale'        => $this->current_locale ?? '',
-				'Default Locale'        => $this->default_locale ?? 'en',
-				'Supported Locales'     => $this->supported_locales ?? ['en'],
-				'Path to Locales'       => $this->locale_path ?? '/locales/',
-				'Locale File Extension' => $this->locale_file_extension ?? 'json',
+				'Default Locale'        => $this->default_locale,
+				'Supported Locales'     => $this->supported_locales,
+				'Path to Locales'       => $this->locale_path,
+				'Locale File Extension' => $this->locale_file_extension,
 				'Loaded Locales'        => $this->loaded_locales ?? [],
-				'Allowed HTML Tags'     => $this->allowed_tags ?? '<a><br>',
-				'Variable Pattern'      => $this->variable_pattern ?? '/{{(.*?)}}/',
-				'Session Enabled'       => $this->session_enabled ?? true,
-				'Session Key'           => $this->session_key ?? 'locale',
-				'Cookie Enabled'        => $this->cookie_enabled ?? false,
-				'Cookie Key'            => $this->cookie_key ?? 'site_locale',
+				'Allowed HTML Tags'     => $this->allowed_tags,
+				'Variable Pattern'      => $this->variable_pattern,
+				'Session Enabled'       => $this->session_enabled,
+				'Session Key'           => $this->session_key,
+				'Cookie Enabled'        => $this->cookie_enabled,
+				'Cookie Key'            => $this->cookie_key,
 			];
 		}
 
@@ -113,7 +114,7 @@
 			}
 
 			// 3. Browser language header.
-			if (!$locale && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+			if (!$locale && isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && is_string($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 				foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $lang) {
 					$lang_code = strtolower(substr(trim(explode(';', $lang)[0]), 0, 2));
 
@@ -159,8 +160,8 @@
 		 * @return string      - The translated string
 		 */
 		public function getTranslation(string $key, bool $escape = true): string {
-			$translations = $this -> loaded_locales[$this -> current_locale] ?? [];
-			$translation = array_key_exists($key, $translations) && is_scalar($translations[$key])
+			$translations = $this->loaded_locales[$this->current_locale] ?? [];
+			$translation = array_key_exists($key, $translations)
 				? (string) $translations[$key]
 				: "Translation missing: $key";
 
@@ -205,14 +206,14 @@
 			}
 
 			if (!$force && !in_array($locale, $this->supported_locales, true)) {
-				if ($this->debug) {
-					throw new InvalidArgumentException("Unsupported locale: $locale");
-				}
-
 				$locale = $this->default_locale;
 			}
 
-			$this->current_locale = $locale;
+            if (is_string($locale)) {
+                $this->current_locale = $locale;
+            } else {
+                throw new InvalidArgumentException('Locale must be a string.');
+            }
 
 			if ($this->session_enabled) {
 				if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -253,14 +254,19 @@
 		 * @return string                          - The processed string with variables replaced.
 		 */
 		public function replaceVariables(string $string, array $variables): string {
-			if ($this->variable_pattern !== '/{{(.*?)}}/') {
-				// Fallback to regex if a custom pattern is set.
-				return preg_replace_callback($this->variable_pattern, static function ($matches) use ($variables) {
-					return $variables[$matches[1]] ?? $matches[0];
-				}, $string) ?: '';
-			}
+            if (is_string($this->variable_pattern) && $this->variable_pattern !== '/{{(.*?)}}/') {
+                // Fallback to regex if a custom pattern is set.
+                return preg_replace_callback(
+                    $this->variable_pattern,
+                    static function ($matches) use ($variables) {
+                        return $variables[$matches[1]] ?? $matches[0];
+                    },
+                    $string
+                ) ?: '';
+            }
 
-			// Optimized replacement using strtr for the default pattern.
+
+            // Optimized replacement using strtr for the default pattern.
 			$placeholders = array_map(fn($key) => '{{' . $key . '}}', array_keys($variables));
 			$replacements = array_combine($placeholders, $variables);
 
