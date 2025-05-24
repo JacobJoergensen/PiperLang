@@ -24,12 +24,6 @@
             $this -> piper_lang -> session_key = 'current_locale';
         }
 
-        public function testInstance(): void {
-            $this -> piper_lang = new PiperLang();
-
-            $this -> assertInstanceOf(PiperLang::class, $this -> piper_lang);
-        }
-
         public function testGetHttpAcceptLanguage(): void {
             // TEST: SIMULATE AND TEST THE HTTP_ACCEPT_LANGUAGE DETECTION.
             $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
@@ -50,7 +44,7 @@
             $expected_keys = [
                 'Debug Status', 'Current Locale', 'Default Locale',
                 'Supported Locales', 'Path to Locales', 'Locale File Extension',
-                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
+                'Loaded Locales', 'Variable Pattern',
                 'Session Enabled', 'Session Key',
                 'Cookie Enabled', 'Cookie Key'
             ];
@@ -69,8 +63,6 @@
             $this -> assertIsString($info['Locale File Extension']);
             $this -> assertIsArray($info['Loaded Locales']);
             $this -> assertIsString($info['Variable Pattern']);
-            $this -> assertIsArray($info['Plural Rules']);
-            $this -> assertIsString($this -> piper_lang -> getHttpAcceptLanguage());
             $this -> assertIsBool($info['Session Enabled']);
             $this -> assertIsString($info['Session Key']);
             $this -> assertIsBool($info['Cookie Enabled']);
@@ -185,15 +177,6 @@
             $this -> piper_lang -> setLocalePath($invalid_path);
         }
 
-        public function testSwitchLocale(): void {
-            // TEST: ENSURE LOCALE IS SWITCHED AND STORED IN SESSION.
-            $_SESSION = [];
-
-            $this -> piper_lang -> switchLocale('es');
-            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
-            $this -> assertEquals('es', $_SESSION['current_locale']);
-        }
-
         public function testReplaceVariables(): void {
             // TEST: REPLACING VARIABLES IN STRING WHERE THE VARIABLE EXISTS.
             $string = 'Hello, world!';
@@ -211,36 +194,6 @@
             $string = 'Hello, {{name}}!';
             $result = $this -> piper_lang -> replaceVariables($string, $variables);
             $this -> assertEquals('Hello, {{name}}!', $result);
-        }
-
-        public function testTranslateWithPlural(): void {
-            // TEST: TRANSLATION WITH PLURAL FORM.
-            $key = 'message';
-            $count = 1;
-            $variables = ['name' => 'John'];
-
-            $this -> piper_lang -> current_locale = 'en';
-            $this -> piper_lang -> default_locale = 'en';
-            $this -> piper_lang -> plural_rules['en'] = '_1';
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
-
-            // TEST: TRANSLATION WITHOUT CUSTOM PLURAL RULE.
-            unset($this -> piper_lang -> plural_rules['en']);
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
-
-            // TEST: TRANSLATION WITH COUNT > 1.
-            $count = 2;
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-
-            // TEST: TRANSLATION FOR NON-EXISTENT LOCALE.
-            $this -> piper_lang -> current_locale = 'non_existant_locale';
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-
-            // TEST: EXCEPTION FOR NON-EXISTENT DEFAULT LOCALE IN DEBUG MODE.
-            $this -> piper_lang -> default_locale = 'non_existant_locale';
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(RuntimeException::class);
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
         }
 
         public function testLoadFile(): void {

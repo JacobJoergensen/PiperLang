@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
-		 backupGlobals="false"
-		 bootstrap="vendor/autoload.php"
-		 colors="true"
-		 processIsolation="false"
-		 stopOnFailure="false"
-		 failOnPhpunitDeprecation="true"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnNotice="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
 >
 
 	<testsuites>
@@ -15,9 +19,9 @@
 		</testsuite>
 	</testsuites>
 
-	<source>
-		<include>
-			<directory suffix=".php">src</directory>
-		</include>
-	</source>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
 </phpunit>

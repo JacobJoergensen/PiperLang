@@ -2,8 +2,8 @@
 	namespace PiperLang;
 
 	/**
-	 * PiperLang - IS A COMPACT AND EFFICIENT PHP FRAMEWORK DESIGNED TO
-	 * PROVIDE LOCALIZATION CAPABILITIES FOR YOUR WEB APPLICATION.
+	 * PiperLang - Is a compact and efficient PHP library designed to
+	 * provide localization capabilities for your web application.
 	 *
 	 * @package    PiperLang\PiperLang
 	 * @author     Jacob Jørgensen
@@ -12,15 +12,15 @@
 	 */
 	class Modifier extends PiperLang {
 		/**
-		 * MODIFY CONSTRUCTOR.
+		 * Modify constructor.
 		 *
-		 * CALLS THE PARENT PiperLang CLASS CONSTRUCTOR
-		 * FIRST, AND THEN EXECUTE THE CUSTOM CODE.
+		 * Calls the parent PiperLang class constructor
+		 * first and then execute the custom code.
 		 *
-		 * @see PiperLang::__construct() - FOR THE PARENT CONSTRUCTOR.
+		 * @see PiperLang::__construct() - For the parent constructor.
 		 */
 		public function __construct() {
 			parent::__construct();
-			// ADD YOUR CUSTOM CODE HERE.
+			// Add your custom code here.
 		}
 	}

@@ -102,21 +102,15 @@ You can change various settings in the `PiperLang` framework. Here's an example 
 | Locale File Extension | `$piperlang->locale_file_extension = 'json'`                                   | Specifies the extension of your localization files.               | 'json'        |
 | Loaded Locales        | `$piperlang->loaded_locales = ['en' => ['greeting' => 'Hello']];`              | Adds/edits existing loaded locales.                               | []            |
 | Variable Pattern      | `$piperlang->variable_pattern = '/<<(.*?)>>/'`                                 | Alters the variable pattern to something other than the default.  | '/{{(.*?)}}/' |
-| Plural Rules          | `$piperlang->plural_rules = ['es' => '_plural', 'fr' => '_pluriel']`           | Defines the plural rules for your supported locales.              | []            |
 | Session Enabled       | `$piperlang->session_enabled = false`                                          | Enables or disables the session.                                  | true          |
 | Session Key           | `$piperlang->session_key = 'user_lang'`                                        | Changes the session key for storing the user's locale preference. | 'locale'      |
 | Cookie Enabled        | `$piperlang->cookie_enabled = false`                                           | Enables or disables the cookie.                                   | false         |
 | Cookie Key            | `$piperlang->cookie_key = 'user_lang'`                                         | Alters the cookie key for storing the user's locale preference.   | 'site_locale' |
-| HTTP Accept Locale    | `$piperlang->http_accept_locale = 'en'`                                        | Sets the HTTP accept language header.                             | null          |
-| Hooks                 | `$piperlang->hooks = ['onLocaleChange' => [['priority' => 1, 'fn' => func]]];` | Deprecated: Adds/edits hooks for events. Will be removed in 2.0.0 | []            |
-
 
 ## Methods
 Key methods of `PiperLang` include:
 
 * `getInfo()` - Returns an associative array containing PiperLang configuration details.
-* `addHook(string $hook_name, callable $fn, int $priority = 10)` - Adds a hook action with a callback function and priority. (Deprecated since 1.3.0, to be removed in 2.0.0)
-* `runHooks(string $hook_name, array $args = [])` - Executes all actions associated with a specific hook. (Deprecated since 1.3.0, to be removed in 2.0.0)
 * `detectBrowserLocale()` - Detects the preferred locale based on the user's browser settings.
 * `detectUserLocale(string $source = 'session')` - Determines the user’s preferred locale based on session or cookie.
 * `getLocale()` - Retrieves the current locale.
@@ -124,8 +118,7 @@ Key methods of `PiperLang` include:
 * `setLocalePath(string $path)` - Sets the path for locale files.
 * `switchLocale(string $new_lang)` - Switches the locale to a new language.
 * `replaceVariables(string $string, array $variables)` - Replaces placeholders in a string with specified variables.
-* `translateWithPlural(string $key, int $count, array $variables = [])` - Translates a key with pluralization and variable replacement based on count.
-* `loadFile(string $locale)` - Loads, validates, and processes a locale file.
+* `loadLocale(string $locale)` - Loads, validates, and processes a locale file.
 * `unloadFile(string $locale)` - Unloads a specified locale file from memory.
 * `formatNumber(float $number)` - Formats a number according to the current locale.
 * `formatCurrency(float $amount, string $currency, bool $show_symbol = false)` - Formats a currency amount per locale.
@@ -220,96 +213,3 @@ use PiperLang\Modifier;
 ```php
 $modifier = new Modifier();
 ```
-
-
-## Hook (Deprecated since 1.3.0, to be removed in 2.0.0)
-The hook system allows you as a developer to integrate custom actions or modifications into specific points of execution within the PiperLang framework.
-
-#### Adding a Hook Action
-To add a hook action, use the addHook method provided by the PiperLang class.
-```php
-public function addHook(string $hook_name, callable $fn, int $priority = 10):
-```
-
-##### Parameters:
-* ```$hook_name (string)```: The name of the hook.
-* ```$fn (callable)```: The callable function or method to be executed when the hook is triggered.
-* ```$priority (int)```: Execution priority of the hook action. Lower numbers indicate higher priority.
-
-##### Example:
-```php
-$piper->addHook('before_save', function() {
-    // Custom action before saving data
-});
-```
-
-#### Running Hooks
-To execute all hooks associated with a particular hook name, use the runHooks method provided by the PiperLang class.
-```php
-public function runHooks(string $hook_name, array $args = []):
-```
-
-##### Parameters:
-* ```$hook_name (string)```: The name of the hook for which to execute associated actions.
-* ```$args (mixed[])```: Parameters to be passed to the hook functions.
-
-##### Example:
-```php
-$piper->runHooks('before_save', [$data]);
-```
-
-This will execute all hook actions associated with the ```"before_save"``` hook, passing $data as an argument to each hook function.
-
-
-## Docker
-The Docker setup for PiperLang provides a convenient environment for running the application with all dependencies installed.
-
-#### Dockerfile
-The Dockerfile defines the environment for running PiperLang. It uses PHP 8.3 CLI version as the base image and installs necessary dependencies.
-```dockerfile
-FROM php:8.3-cli
-
-RUN apt-get update && apt-get upgrade -y && apt-get install -y libicu-dev
-RUN docker-php-ext-install intl
-WORKDIR /PiperLang
-
-COPY . /PiperLang
-
-RUN curl --silent --show-error https://getcomposer.org/installer | php \
-&& mv composer.phar /usr/local/bin/composer
-
-RUN composer install
-```
-
-##### Instructions:
-* Base Image: The Dockerfile starts with the PHP 8.3 CLI version as the base image.
-* Dependencies: It installs the libicu-dev package required for internationalization support.
-* Composer: Downloads and installs Composer, a dependency manager for PHP.
-* Application Setup: Copies the application code into the container and installs dependencies using Composer.
-
-#### Docker Compose Configuration
-The Docker Compose configuration simplifies container orchestration and defines the services required for running PiperLang.
-```yml
-version: '3'
-services:
-  app:
-    build: .
-    volumes:
-      - .:/PiperLang
-    working_dir: /PiperLang
-```
-
-##### Instructions:
-* Service: Defines the app service for running PiperLang.
-* Build: Specifies to build the Docker image using the current directory (.) containing the Dockerfile.
-* Volumes: Mounts the current directory as a volume inside the container to enable live code reloading and development.
-* Working Directory: Sets the working directory inside the container to /PiperLang.
-
-#### Usage
-To use Docker with PiperLang:
-
-1) Create a Dockerfile with the specified content.
-2) Create a docker-compose.yml file with the specified content.
-3) Run docker-compose up --build to build and start the containerized environment.
-
-With Docker, you can easily set up a consistent development environment for PiperLang across different platforms.
