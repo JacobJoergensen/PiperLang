@@ -5,7 +5,7 @@ Thank you for contributing to PiperLang. Before you submit your pull request, pl
 ## Pull Request Description
 Please provide a clear description. Replace this paragraph with your description and include:
 
-1. Why this pull request is necessary, and how it benefits the project.
+1. Why this pull request is necessary and how it benefits the project.
 2. How this pull request fits in PiperLang's capabilities.
 
 ## Type of Pull Request

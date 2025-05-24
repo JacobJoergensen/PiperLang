@@ -3,23 +3,26 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      time: "06:00"
+      timezone: "Europe/Copenhagen"
     labels:
-      - "dependencies"
-    reviewers:
-      - "JacobJoergensen"
+      - "github-dependencies"
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "**"
+
   - package-ecosystem: "composer"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      time: "06:00"
+      timezone: "Europe/Copenhagen"
     labels:
-      - "dependencies"
-    reviewers:
-      - "JacobJoergensen"
-    versioning-strategy: increase
-    open-pull-requests-limit: 10
+      - "composer-dependencies"
     groups:
-      production-dependencies:
-        dependency-type: "production"
-      development-dependencies:
-        dependency-type: "development"
+      composer-dependencies:
+        patterns:
+          - "**"
+    versioning-strategy: increase
