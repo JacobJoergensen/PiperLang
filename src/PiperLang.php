@@ -13,11 +13,11 @@ namespace PiperLang;
      * provide localization capabilities for your web application.
      *
      *
-     * @author     Jacob Jørgensen
+     * @author   Jacob Jørgensen
      *
-     * @license    MIT
+     * @license  MIT
      *
-     * @version    2.0.0
+     * @version  2.0.0
      */
     class PiperLang {
         /**
@@ -152,10 +152,10 @@ namespace PiperLang;
         /**
          * Get the translation for a given key.
          *
-         * @param  string  $key  - The key for the translation
-         * @param  bool  $escape  - Whether to escape HTML characters (default: true)
+         * @param string $key  - The key for the translation
+         * @param bool $escape - Whether to escape HTML characters (default: true)
          *
-         * @return string - The translated string
+         * @return string      - The translated string
          */
         public function getTranslation(string $key, bool $escape = true): string {
             $translations = $this->loaded_locales[$this->current_locale] ?? [];
@@ -174,12 +174,12 @@ namespace PiperLang;
         /**
          * Sets the active locale for the current request/session.
          *
-         * @param  string|null  $locale  - The preferred locale code (optional)
-         * @param  bool  $force  - Force set the locale even if not supported
+         * @param string|null $locale - The preferred locale code (optional)
+         * @param bool $force         - Force set the locale even if not supported
          *
-         * @return bool - True if locale was set successfully, otherwise false
+         * @return bool               - True if locale was set successfully, otherwise false
          *
-         * @throws JsonException - If the locale file is not valid and debug mode is enabled
+         * @throws JsonException      - If the locale file is not valid and debug mode is enabled
          */
         public function setLocale(?string $locale = null, bool $force = false): bool {
             // Ensure default locale is supported.
@@ -246,10 +246,10 @@ namespace PiperLang;
         /**
          * Replaces placeholders in a string with variable values.
          *
-         * @param  string  $string  - The input string containing placeholders.
-         * @param  array<string, string>  $variables  - The variables to replace in the string.
+         * @param string $string                   - The input string containing placeholders.
+         * @param array<string, string> $variables - The variables to replace in the string.
          *
-         * @return string - The processed string with variables replaced.
+         * @return string                          - The processed string with variables replaced.
          */
         public function replaceVariables(string $string, array $variables): string {
             if (is_string($this->variable_pattern) && $this->variable_pattern !== '/{{(.*?)}}/') {
@@ -271,7 +271,7 @@ namespace PiperLang;
         /**
          * Loads and parses a locale JSON file and stores its translations.
          *
-         * @param  string  $locale  - Locale code (e.g. 'en', 'fr')
+         * @param string $locale                  - Locale code (e.g. 'en', 'fr')
          *
          * @throws RuntimeException|JsonException - On file or JSON issues when debug mode is enabled
          */
@@ -376,13 +376,13 @@ namespace PiperLang;
         /**
          * Formats a number according to the current locale.
          *
-         * @param  float  $number  - The number to format
-         * @param  int  $max_fraction_digits  - the maximum number of fraction digits (default: 2)
+         * @param float $number             - The number to format
+         * @param int $max_fraction_digits  - the maximum number of fraction digits (default: 2)
          *
-         * @return string - The formatted number
+         * @return string                   - The formatted number
          *
          * @throws InvalidArgumentException - Thrown if the current locale is not set
-         * @throws RuntimeException - Thrown if number formatting fails
+         * @throws RuntimeException         - Thrown if number formatting fails
          */
         public function formatNumber(float $number, int $max_fraction_digits = 2): string {
             if (! $this->current_locale) {
@@ -404,14 +404,14 @@ namespace PiperLang;
         /**
          * Formats a currency amount according to the current locale.
          *
-         * @param  float  $amount  - The amount to format
-         * @param  string  $currency  - The iso 4217 currency code (e.g. "usd", "eur")
-         * @param  bool  $show_symbol  - Whether to show the currency symbol (default: true)
+         * @param float $amount             - The amount to format
+         * @param string $currency          - The iso 4217 currency code (e.g. "usd", "eur")
+         * @param bool $show_symbol         - Whether to show the currency symbol (default: true)
          *
-         * @return string - The formatted currency amount
+         * @return string                   - The formatted currency amount
          *
          * @throws InvalidArgumentException - Thrown if the locale is not set or the currency code is invalid
-         * @throws RuntimeException - Thrown if currency formatting fails
+         * @throws RuntimeException         - Thrown if currency formatting fails
          */
         public function formatCurrency(float $amount, string $currency, bool $show_symbol = true): string {
             if (! $this->current_locale) {
@@ -440,10 +440,10 @@ namespace PiperLang;
         /**
          * Formats a date according to the current locale.
          *
-         * @param  DateTimeImmutable  $date  - The date to format
-         * @param  string  $format           - One of 'short', 'medium', 'long', or 'full' (default: 'long')
+         * @param DateTimeImmutable $date - The date to format
+         * @param string $format          - One of 'short', 'medium', 'long', or 'full' (default: 'long')
          *
-         * @return string                    - The formatted date
+         * @return string                 - The formatted date
          */
         public function formatDate(DateTimeImmutable $date, string $format = 'long'): string {
             if (! $this->current_locale) {
@@ -472,8 +472,8 @@ namespace PiperLang;
          *
          * @return array<string|false|int|float> - Associative array of formatting rules from localeconv()
          *
-         * @throws InvalidArgumentException - Thrown if the current locale is not set
-         * @throws RuntimeException - Thrown if the locale cannot be applied (in debug mode)
+         * @throws InvalidArgumentException      - Thrown if the current locale is not set
+         * @throws RuntimeException              - Thrown if the locale cannot be applied (in debug mode)
          */
         public function getFormattingRules(): array {
             if (! $this->current_locale) {
