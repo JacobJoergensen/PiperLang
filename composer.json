@@ -22,7 +22,8 @@
 	},
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=1G",
-        "phpunit": "vendor/bin/phpunit --configuration phpunit.xml"
+        "phpunit": "vendor/bin/phpunit --configuration phpunit.xml",
+        "pint": "vendor/bin/pint --config pint.json"
     },
 	"require": {
 		"php": "^8.4",
@@ -33,7 +34,8 @@
 		"phpunit/phpunit": "^12.1.6",
 		"phpstan/phpstan-phpunit": "^2.0.6",
 		"phpstan/phpstan-deprecation-rules": "^2.0.3",
-		"spaze/phpstan-disallowed-calls": "^4.5.0"
+		"spaze/phpstan-disallowed-calls": "^4.5.0",
+		"laravel/pint": "^1.22.1"
 	},
 	"autoload": {
 		"psr-4": {
