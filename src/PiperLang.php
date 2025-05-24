@@ -265,7 +265,6 @@
                 ) ?: '';
             }
 
-
             // Optimized replacement using strtr for the default pattern.
 			$placeholders = array_map(fn($key) => '{{' . $key . '}}', array_keys($variables));
 			$replacements = array_combine($placeholders, $variables);
