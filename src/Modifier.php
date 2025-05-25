@@ -5,13 +5,13 @@
      * PiperLang - Is a compact and efficient PHP library designed to
      * provide localization capabilities for your web application.
      *
-     * @package    PiperLang\PiperLang
+     * @package  PiperLang\PiperLang
      *
-     * @author     Jacob Jørgensen
+     * @author   Jacob Jørgensen
      *
-     * @license    MIT
+     * @license  MIT
      *
-     * @version    2.0.0
+     * @version  2.0.0
      */
     class Modifier extends PiperLang {
         /**
