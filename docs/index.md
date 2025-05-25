@@ -1,4 +1,4 @@
-<h3 align="center">PiperLang DOCUMENTATION</h3>
+<h3 align="center">PiperLang DOCUMENTATION (v2.0.0)</h3>
 
 <hr>
 
@@ -10,8 +10,6 @@
 - [Methods](#methods)
 - [Formatting](#formatting)
 - [Modifier](#modifier)
-- [Hook](#hook)
-- [Docker](#docker)
 - <a href="https://github.com/JacobJoergensen/PiperLang/blob/main/CHANGELOG.md">Changelog</a>
 
 
