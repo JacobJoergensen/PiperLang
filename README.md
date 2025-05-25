@@ -19,7 +19,7 @@
 <hr>
 <br>
 
-> :information_source: **PHP Version:** The development cycle of PiperLang operates on PHP 8.3. For optimal compatibility and performance, we recommend using this version when working with PiperLang.
+> :information_source: **PHP Version:** The development cycle of PiperLang operates on PHP 8.4. For optimal compatibility and performance, we recommend using this version when working with PiperLang.
 
 <br>
 
