@@ -1,10 +1,25 @@
 # PiperLang Changelog
 
-## Version 2.0.0 (??-??-??)
+## Version 2.0.0 (25-05-25)
+PiperLang 2.0.0 includes significant improvements to architecture, performance, and security. However, these improvements come with breaking changes that may require updates to your existing code. This document outlines the major changes to help you migrate from version 1.x to 2.0.0.
+
 * PiperLang now is running php 8.4
 
+### Breaking Changes
+* The deprecated hooks system has been completely removed as planned.
+* The formatDate() method now requires DateTimeImmutable instead of DateTime:
+    * Old way: $piperLang->formatDate(new DateTime());
+    * New way: $piperLang->formatDate(new DateTimeImmutable());
+* The formatNumber() method syntax have been improved:
+    * Old way: $piperLang->formatNumber($number);
+    * New way: $piperLang->formatNumber($number, $max_fraction_digits = 2);
+* The formatCurrency() method behavior change, it will now show the currency symbol as default:
+    * Old way: $piperLang->formatCurrency($amount, 'USD', false); // false was default
+    * New way: $piperLang->formatCurrency($amount, 'USD', true); // true is default
+* The translateWithPlural() method has been removed. If your code used this method for pluralization, you'll need to implement a custom solution.
+* Locale files are now automatically loaded when setting a locale. If your code explicitly managed loading, this logic may need to be removed to prevent duplicate loading.
+
 ### ✨ Major Features
-* Constructor now accepts named arguments with sensible defaults, including locale_path, debug, allowed_tags, etc., to improve readability and configuration flexibility.
 * Introduced a robust detectLocale() method that checks:
     * Session
     * Cookie
