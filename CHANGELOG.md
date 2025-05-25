@@ -2,8 +2,36 @@
 
 ## Version 2.0.0 (??-??-??)
 * PiperLang now is running php 8.4
-* Removed ```hooks``` property
-* Removed ```addHook``` and ```runHooks``` methods
+
+### ✨ Major Features
+* Constructor now accepts named arguments with sensible defaults, including locale_path, debug, allowed_tags, etc., to improve readability and configuration flexibility.
+* Introduced a robust detectLocale() method that checks:
+    * Session
+    * Cookie
+    * Browser (Accept-Language header)
+    * Fallback to default locale 
+    * The result is saved to session/cookie as appropriate
+* Added a new setLocale() method that:
+    * Accepts a locale string and an optional boolean to force loading the locale.
+    * Automatically loads the locale if it hasn't been loaded yet.
+    * Returns the current locale after setting it.
+* Added a new getTranslation() method that:
+    * Accepts a key and an optional locale.
+    * Returns the translation for the given key in the specified locale.
+    * Uses the current locale if none is provided.
+* Improved replaceVariables() method:
+    * Uses strtr() for default {{var}} patterns.
+    * Falls back to preg_replace_callback() for custom regex patterns.
+
+### 🛠 Improvements
+* Improved error handling with more descriptive exceptions.
+
+### 🧹 Removed
+* Deprecated hook system (addHook, runHooks) was fully removed.
+* translateWithPlural() method removed.
+* loadFile() replaced with modern loadLocale() logic.
+* getHttpAcceptLanguage() replaced by detectLocale() internally.
+* No more internal support for plural_rules – the plural handling feature was dropped.
 
 ## Version 1.3.0 (22-11-24)
 * PiperLang is now compatibility with PHP 8.4

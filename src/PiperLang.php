@@ -1,5 +1,5 @@
 <?php
-namespace PiperLang;
+    namespace PiperLang;
 
     use DateTimeImmutable;
     use IntlDateFormatter;
