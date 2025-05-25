@@ -1,26 +1,47 @@
 <?php
+    /**
+     * How the locale file should be structured for this example:
+     * {
+     * "variables": {
+     * "site_name": "MonSite"
+     * },
+     * "welcome": "Bienvenue à {{site_name}}",
+     * "about": "À propos de {{company}}"
+     * }
+    */
+
     use PiperLang\PiperLang;
 
-    // Include the framework
-    require_once '../src/PiperLang.php';
+    $_SERVER['DOCUMENT_ROOT'] = __DIR__;
+    session_start();
 
-    // Initialize PiperLang
-    $piperLang = new PiperLang();
+    $piper = new PiperLang(
+        allowed_tags: '<strong><a>',
+        debug: true,
+        default_locale: 'en',
+        supported_locales: ['en', 'fr', 'es']
+    );
 
-    // Enable session storage
-    $piperLang->session_enabled = true;
+    // Manually switch to French.
+    $piper->setLocale('fr');
 
-    // Enable cookie storage
-    $piperLang->cookie_enabled = true;
+    // Get a dynamic welcome message.
+    echo $piper->getTranslation('welcome'); // → "Bienvenue à {{site_name}}".
 
-    // Set locale from browser
-    $piperLang->setLocale($piperLang->detectBrowserLocale());
+    // Replacing custom variables manually.
+    $translated = $piper->replaceVariables(
+        $piper->getTranslation('about'),
+        ['company' => 'ACME Corp']
+    );
 
-    // Load file for the locale
-    $piperLang->loadFile($piperLang->getLocale());
+    echo $translated; // → "À propos de ACME Corp".
 
-    // Format a number
-    $originalNumber = 1234567.89;
-    $formattedNumber = $piperLang->formatNumber($originalNumber);
+    // Format currency.
+    echo $piper->formatCurrency(1234.56, 'EUR'); // → "1 234,56 €"
 
-    echo "Original number: $originalNumber, formatted number: $formattedNumber";
+    // Format number.
+    echo $piper->formatNumber(1234.5678); // → "1 234,57" (depends on locale)
+
+    // Format date.
+    echo $piper->formatDate(new DateTimeImmutable('2025-05-24')); // → "24 mai 2025" (in French)
+

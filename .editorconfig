@@ -4,7 +4,8 @@ root = true
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-indent_style = tab
+indent_style = space
+indent_size = 4
 trim_trailing_whitespace = true
 
 [*.php]
@@ -28,7 +29,6 @@ ij_php_blank_lines_before_return_statement = 1
 ij_php_keep_blank_lines_before_right_brace = 0
 
 [*.yml]
-indent_style = space
 indent_size = 2
 
 [*.md]

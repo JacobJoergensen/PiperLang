@@ -10,15 +10,20 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') && (github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository) }}
 
     runs-on: ${{ matrix.operating-system }}
+
     strategy:
       matrix:
         operating-system: ['ubuntu-latest']
-        php: ['8.3', '8.4']
+        php: ['8.4']
         experimental: [false]
         include:
           - php: '8.5'
@@ -27,8 +32,10 @@ jobs:
       fail-fast: true
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
       - name: Setup PHP
         id: setup-php
@@ -36,8 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: intl
-          ini-values: post_max_size=256M, max_execution_time=180
-          coverage: pcov
+          coverage: none
           tools: composer, phpstan, phpunit
 
       - name: Print PHP Version
@@ -48,28 +54,29 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            vendor
             ~/.composer/cache
-          key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}-${{ hashFiles('**/composer.json') }}
+            vendor
+          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-            ${{ runner.os }}-php-${{ matrix.php }}-composer-
-            ${{ runner.os }}-composer-
+            composer-${{ runner.os }}-${{ matrix.php }}-
+            composer-${{ runner.os }}-
+            composer-
 
       - name: Validate composer.json and composer.lock
         run: composer validate --no-check-all --strict
 
       - name: Install Composer Dependencies
-        run: composer install --no-progress --prefer-dist
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
         shell: bash
+
+      - name: Security Audit
+        run: composer audit
 
       - name: Run PHPStan (Static Analysis)
-        run: |
-          vendor/bin/phpstan analyse --configuration phpstan.neon
-        shell: bash
+        run: composer phpstan
 
-      - name: Run Unit Tests and Generate Coverage
-        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover=coverage.xml
+      - name: Run Unit Tests
+        run: composer phpunit
 
       - name: Upload Build Artifact
         if: ${{ matrix.php == '8.3' }}
@@ -77,9 +84,3 @@ jobs:
         with:
           name: Build-${{ matrix.php }}
           path: src/
-
-#      - name: Upload Coverage Reports to Codecov
-#        if: ${{ matrix.php == '8.3' }}
-#        uses: codecov/codecov-action@v4.6.0
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}

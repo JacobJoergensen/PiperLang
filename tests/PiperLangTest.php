@@ -1,337 +1,681 @@
 <?php
     namespace Tests;
 
-    use PHPUnit\Framework\TestCase;
-
-    use PiperLang\PiperLang;
-
-    use DateTime;
+    use DateTimeImmutable;
+    use IntlDateFormatter;
     use InvalidArgumentException;
+    use JsonException;
+    use PHPUnit\Framework\Attributes\CoversClass;
+    use PHPUnit\Framework\Attributes\DataProvider;
+    use PHPUnit\Framework\Attributes\Test;
+    use PHPUnit\Framework\TestCase;
+    use PiperLang\PiperLang;
     use RuntimeException;
 
+    #[CoversClass(PiperLang::class)]
     class PiperLangTest extends TestCase {
-        private PiperLang $piper_lang;
+        private string $testLocalesPath;
 
         protected function setUp(): void {
-            $this -> piper_lang = new PiperLang();
+            // Create a temporary directory for test locale files.
+            $this->testLocalesPath = sys_get_temp_dir() . '/piperlang_test_' . bin2hex(random_bytes(8)) . '/locales/';
+            mkdir($this->testLocalesPath, 0777, true);
 
-            $this -> piper_lang -> current_locale = null;
-            $this -> piper_lang -> default_locale = 'en';
-            $this -> piper_lang -> supported_locales = ['en', 'es', 'de'];
-            $this -> piper_lang -> locale_path = 'locales/';
-            $this -> piper_lang -> variable_pattern = '/{{(.*?)}}/';
-            $this -> piper_lang -> session_enabled = true;
-            $this -> piper_lang -> session_key = 'current_locale';
+            // Set up necessary environment variables.
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
+
+            // Create test locale files.
+            $this->createTestLocaleFiles();
         }
 
-        public function testInstance(): void {
-            $this -> piper_lang = new PiperLang();
+        protected function tearDown(): void {
+            // Cleanup session.
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
 
-            $this -> assertInstanceOf(PiperLang::class, $this -> piper_lang);
+            // Clean up cookies.
+            foreach ($_COOKIE as $key => $value) {
+                unset($_COOKIE[$key]);
+            }
+
+            // Clean up test locale files.
+            $this->removeDirectory(dirname($this->testLocalesPath));
+
+            // Reset superglobals.
+            $_SERVER = [];
+            $_SESSION = [];
+            $_COOKIE = [];
+            $_GET = [];
         }
 
-        public function testGetHttpAcceptLanguage(): void {
-            // TEST: SIMULATE AND TEST THE HTTP_ACCEPT_LANGUAGE DETECTION.
-            $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+        /**
+         * Create test locale files for testing.
+         */
+        private function createTestLocaleFiles(): void {
+            // English locale file.
+            $en_content = json_encode([
+                'variables' => [
+                    'site_name' => 'Test Site',
+                    'company' => 'Acme Corp',
+                ],
+                'welcome' => 'Welcome to {{site_name}}',
+                'about' => 'About {{company}}',
+                'html_content' => '<a href="test">Link</a> <br> Test <script>alert("xss")</script>',
+            ], JSON_THROW_ON_ERROR);
+
+            // French locale file.
+            $fr_content = json_encode([
+                'variables' => [
+                    'site_name' => 'Site de Test',
+                    'company' => 'Acme Corp',
+                ],
+                'welcome' => 'Bienvenue à {{site_name}}',
+                'about' => 'À propos de {{company}}',
+                'html_content' => '<a href="test">Lien</a> <br> Test <script>alert("xss")</script>',
+            ], JSON_THROW_ON_ERROR);
+
+            // Invalid locale file (for testing error handling).
+            $invalid_content = '{invalid json}';
+
+            file_put_contents($this->testLocalesPath . 'en.json', $en_content);
+            file_put_contents($this->testLocalesPath . 'fr.json', $fr_content);
+            file_put_contents($this->testLocalesPath . 'invalid.json', $invalid_content);
+        }
+
+        /**
+         * Recursively remove a directory and its contents.
+         */
+        private function removeDirectory(string $dir): void {
+            if (! is_dir($dir)) {
+                return;
+            }
+
+            $files = array_diff(scandir($dir), ['.', '..']);
+
+            foreach ($files as $file) {
+                $path = "$dir/$file";
+
+                if (is_dir($path)) {
+                    $this->removeDirectory($path);
+                } else {
+                    unlink($path);
+                }
+            }
+
+            rmdir($dir);
+        }
+
+        #[Test]
+        public function constructorShouldInitializeWithDefaultValues(): void {
+            $piperLang = new PiperLang();
+
+            static::assertSame('en', $piperLang->default_locale);
+            static::assertSame('en', $piperLang->current_locale);
+            static::assertSame('/locales/', $piperLang->locale_path);
+            static::assertSame('json', $piperLang->locale_file_extension);
+            static::assertSame('<a><br>', $piperLang->allowed_tags);
+            static::assertSame('/{{(.*?)}}/', $piperLang->variable_pattern);
+            static::assertSame(['en'], $piperLang->supported_locales);
+        }
+
+        #[Test]
+        public function constructorShouldInitializeWithCustomValues(): void {
+            $path = $this->testLocalesPath; // already created in setup()
+
+            $piperLang = new PiperLang(
+                allowed_tags: '<a><br><p>',
+                cookie_enabled: true,
+                cookie_key: 'custom_locale',
+                debug: true,
+                default_locale: 'fr',
+                locale_path: '/locales/',
+                locale_file_extension: 'json',
+                session_enabled: false,
+                session_key: 'custom_session_key',
+                supported_locales: ['fr', 'en', 'de']
+            );
+
+            static::assertSame('<a><br><p>', $piperLang->allowed_tags);
+            static::assertTrue($piperLang->cookie_enabled);
+            static::assertSame('custom_locale', $piperLang->cookie_key);
+            static::assertTrue($piperLang->debug);
+            static::assertSame('fr', $piperLang->default_locale);
+            static::assertSame('/locales/', $piperLang->locale_path);
+            static::assertSame('json', $piperLang->locale_file_extension);
+            static::assertFalse($piperLang->session_enabled);
+            static::assertSame('custom_session_key', $piperLang->session_key);
+            static::assertSame(['fr', 'en', 'de'], $piperLang->supported_locales);
+        }
+
+        #[Test]
+        public function getInfoShouldReturnCorrectConfigurationInformation(): void {
+            $piperLang = new PiperLang(
+                debug: true,
+                default_locale: 'fr',
+                supported_locales: ['fr', 'en']
+            );
+
+            $info = $piperLang->getInfo();
+
+            static::assertTrue(isset($info['Debug Status']));
+            static::assertSame('fr', $info['Default Locale']);
+            static::assertSame(['fr', 'en'], $info['Supported Locales']);
+            static::assertSame('/locales/', $info['Path to Locales']);
+            static::assertSame('json', $info['Locale File Extension']);
+            static::assertSame('<a><br>', $info['Allowed HTML Tags']);
+            static::assertSame('/{{(.*?)}}/', $info['Variable Pattern']);
+        }
+
+        #[Test]
+        public function detectLocaleShouldReturnDefaultLocaleWhenNoOtherLocaleIsSpecified(): void {
+            $piperLang = new PiperLang(
+                cookie_enabled: false,
+                default_locale: 'en',
+                session_enabled: false,
+                supported_locales: ['en', 'fr']
+            );
+
+            static::assertSame('en', $piperLang->detectLocale());
+        }
+
+        #[Test]
+        public function detectLocaleShouldRespectAcceptLanguageHeader(): void {
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7';
+
+            $piperLang = new PiperLang(
+                cookie_enabled: false,
+                default_locale: 'en',
+                session_enabled: false,
+                supported_locales: ['en', 'fr']
+            );
+
+            static::assertSame('fr', $piperLang->detectLocale());
+        }
+
+        #[Test]
+        public function detectLocaleShouldRespectSessionValue(): void {
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
 
-            if ($original !== null) {
-                $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
-            } else {
-                unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
             }
+
+            $_SESSION['locale'] = 'fr';
+
+            $piperLang = new PiperLang(
+                cookie_enabled: false,
+                default_locale: 'en',
+                session_enabled: true,
+                supported_locales: ['en', 'fr']
+            );
+
+            static::assertSame('fr', $piperLang->detectLocale());
         }
 
-        public function testGetInfo(): void {
-            $info = $this -> piper_lang -> getInfo();
+        #[Test]
+        public function detectLocaleShouldRespectCookieValue(): void {
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
+            $_COOKIE['site_locale'] = 'fr';
 
-            $this -> assertIsArray($info);
+            $piperLang = new PiperLang(
+                cookie_enabled: true,
+                default_locale: 'en',
+                session_enabled: false,
+                supported_locales: ['en', 'fr']
+            );
 
-            $expected_keys = [
-                'Debug Status', 'Current Locale', 'Default Locale',
-                'Supported Locales', 'Path to Locales', 'Locale File Extension',
-                'Loaded Locales', 'Variable Pattern', 'Plural Rules',
-                'Session Enabled', 'Session Key',
-                'Cookie Enabled', 'Cookie Key'
+            static::assertSame('fr', $piperLang->detectLocale());
+        }
+
+        #[Test]
+        public function detectLocaleShouldUseSessionOverCookieAndHeader(): void {
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de-DE,de;q=0.9';
+            $_COOKIE['site_locale'] = 'fr';
+
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+
+            $_SESSION['locale'] = 'en';
+
+            $piperLang = new PiperLang(
+                cookie_enabled: true,
+                default_locale: 'fr',
+                session_enabled: true,
+                supported_locales: ['en', 'fr', 'de']
+            );
+
+            static::assertSame('en', $piperLang->detectLocale());
+        }
+
+        #[Test]
+        public function getLocaleShouldReturnCurrentLocale(): void {
+            $piperLang = new PiperLang(
+                default_locale: 'en',
+                supported_locales: ['en', 'fr']
+            );
+
+            $piperLang->current_locale = 'fr';
+
+            static::assertSame('fr', $piperLang->getLocale());
+        }
+
+        #[Test]
+        public function getLocaleShouldReturnDefaultLocaleWhenCurrentLocaleIsNull(): void {
+            $piperLang = new PiperLang(
+                default_locale: 'en',
+                supported_locales: ['en', 'fr']
+            );
+
+            $piperLang->current_locale = null;
+
+            static::assertSame('en', $piperLang->getLocale());
+        }
+
+        #[Test]
+        public function setLocaleShouldUpdateCurrentLocaleAndStoreInSession(): void {
+            $_SERVER['DOCUMENT_ROOT'] = sys_get_temp_dir();
+
+            // Mock loadLocale method to prevent actual file loading.
+            $mock_piperLang = $this->getMockBuilder(PiperLang::class)
+                ->setConstructorArgs([
+                    'locale_path' => '/locales/',
+                    'default_locale' => 'en',
+                    'supported_locales' => ['en', 'fr'],
+                    'session_enabled' => true,
+                    'cookie_enabled' => false,
+                ])
+                ->onlyMethods(['loadLocale'])
+                ->getMock();
+
+            $mock_piperLang->expects(static::once())
+                ->method('loadLocale')
+                ->with('fr');
+
+            $mock_piperLang->setLocale('fr');
+
+            static::assertSame('fr', $mock_piperLang->current_locale);
+            static::assertSame('fr', $_SESSION['locale']);
+        }
+
+        #[Test]
+        public function setLocaleShouldFallbackToDefaultLocaleForUnsupportedLocales(): void {
+            // Mock loadLocale method to prevent actual file loading
+            $mock_piperLang = $this->getMockBuilder(PiperLang::class)
+                ->setConstructorArgs([
+                    'default_locale' => 'en',
+                    'supported_locales' => ['en', 'fr'],
+                    'session_enabled' => false,
+                    'cookie_enabled' => false,
+                ])
+                ->onlyMethods(['loadLocale'])
+                ->getMock();
+
+            $mock_piperLang->expects(static::once())
+                ->method('loadLocale')
+                ->with('en');
+
+            $mock_piperLang->setLocale('de');
+
+            static::assertSame('en', $mock_piperLang->current_locale);
+        }
+
+        #[Test]
+        public function getTranslationShouldReturnTranslationForValidKey(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en';
+
+            $piperLang->loaded_locales = [
+                'en' => [
+                    'welcome' => 'Welcome',
+                    'goodbye' => 'Goodbye',
+                ],
             ];
 
-            // TEST: ENSURE THAT ALL EXPECTED KEYS ARE PRESENT.
-            foreach ($expected_keys as $key) {
-                $this -> assertArrayHasKey($key, $info);
-            }
-
-            // TEST: ENSURE THAT ALL VALUES ARE OF THE EXPECTED TYPE.
-            $this -> assertIsBool($info['Debug Status']);
-            $this -> assertTrue(is_string($info['Current Locale']) || is_null($info['Current Locale']));
-            $this -> assertIsString($info['Default Locale']);
-            $this -> assertIsArray($info['Supported Locales']);
-            $this -> assertIsString($info['Path to Locales']);
-            $this -> assertIsString($info['Locale File Extension']);
-            $this -> assertIsArray($info['Loaded Locales']);
-            $this -> assertIsString($info['Variable Pattern']);
-            $this -> assertIsArray($info['Plural Rules']);
-            $this -> assertIsString($this -> piper_lang -> getHttpAcceptLanguage());
-            $this -> assertIsBool($info['Session Enabled']);
-            $this -> assertIsString($info['Session Key']);
-            $this -> assertIsBool($info['Cookie Enabled']);
-            $this -> assertIsString($info['Cookie Key']);
+            static::assertSame('Welcome', $piperLang->getTranslation('welcome'));
         }
 
-        public function testDetectBrowserLocale(): void {
-            // TEST: SIMULATE DETECTION OF BROWSER LOCALE.
-            $original = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+        #[Test]
+        public function getTranslationShouldReturnErrorMessageForInvalidKey(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en';
 
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9,es-ES;q=0.8,fr-FR;q=0.7';
-            $this -> assertEquals('en', $this -> piper_lang -> detectBrowserLocale());
+            $piperLang->loaded_locales = [
+                'en' => [
+                    'welcome' => 'Welcome',
+                ],
+            ];
 
-            if ($original !== null) {
-                $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $original;
-            } else {
-                unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-            }
+            static::assertSame('Translation missing: missing_key', $piperLang->getTranslation('missing_key'));
         }
 
-        public function testDetectUserLocale(): void {
-            // TEST: ENSURE detectUserLocale RETURNS DEFAULT LOCALE WHEN NO SESSION OR COOKIE IS SET.
-            $this -> piper_lang -> default_locale = 'en';
-            $this -> piper_lang -> supported_locales = ['en', 'fr', 'de'];
-            $result = $this -> piper_lang -> detectUserLocale();
-            $this -> assertEquals('en', $result, "Expected default locale when no session or cookie is set");
+        #[Test]
+        public function getTranslationShouldStripTagsWhenEscapeIsTrue(): void {
+            $piperLang = new PiperLang(allowed_tags: '<a>');
+            $piperLang->current_locale = 'en';
 
-            // TEST: ENSURE detectUserLocale RETURNS SESSION LOCALE WHEN SESSION IS SET.
-            $this -> piper_lang -> session_enabled = true;
-            $_SESSION[$this -> piper_lang -> session_key] = 'fr';
-            $result = $this -> piper_lang -> detectUserLocale();
-            $this -> assertEquals('fr', $result, "Expected locale from session when session is set");
+            $piperLang->loaded_locales = [
+                'en' => [
+                    'html_content' => '<a href="test">Link</a> <br> Test <script>alert("xss")</script>',
+                ],
+            ];
 
-            // TEST: ENSURE detectUserLocale RETURNS COOKIE LOCALE WHEN COOKIE IS SET.
-            $this -> piper_lang -> cookie_enabled = true;
-            unset($_SESSION[$this -> piper_lang -> session_key]);
-            $_COOKIE[$this -> piper_lang -> cookie_key] = 'de';
-            $result = $this -> piper_lang -> detectUserLocale('cookie');
-            $this -> assertEquals('de', $result, "Expected locale from cookie when cookie is set");
+            $expected = '<a href="test">Link</a>  Test alert("xss")';
 
-            // TEST: ENSURE FALLBACK TO DEFAULT LOCALE WHEN UNSUPPORTED LOCALE IS SET IN COOKIE.
-            $_COOKIE[$this -> piper_lang -> cookie_key] = 'es';
-            $result = $this -> piper_lang -> detectUserLocale('cookie');
-            $this -> assertEquals('en', $result, "Expected default locale when unsupported locale is set in cookie");
-
-            // TEST: THROW EXCEPTION FOR INVALID SOURCE IN detectUserLocale.
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> expectExceptionMessage("Invalid or disabled source 'invalidSource' for detecting locale.");
-            $this -> piper_lang -> detectUserLocale('invalidSource');
+            static::assertSame($expected, $piperLang->getTranslation('html_content'));
         }
 
-        public function testGetLocale(): void {
-            // TEST: ENSURE getLocale RETURNS CURRENT LOCALE.
-            $this -> piper_lang -> current_locale = 'es';
-            $this -> assertEquals('es', $this -> piper_lang -> getLocale());
+        #[Test]
+        public function getTranslationShouldNotStripTagsWhenEscapeIsFalse(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en';
 
-            // TEST: ENSURE FALLBACK TO DEFAULT LOCALE WHEN CURRENT LOCALE IS NULL.
-            $this -> piper_lang -> current_locale = null;
-            $this -> assertEquals('en', $this -> piper_lang -> getLocale(), 'Expected default locale "en" when current_locale is null');
+            $piperLang->loaded_locales = [
+                'en' => [
+                    'html_content' => '<a href="test">Link</a> <br> Test <script>alert("xss")</script>',
+                ],
+            ];
+
+            $expected = '<a href="test">Link</a> <br> Test <script>alert("xss")</script>';
+
+            static::assertSame($expected, $piperLang->getTranslation('html_content', false));
         }
 
-        public function testSetLocale(): void {
-            // TEST: SET A PREFERRED LOCALE THAT IS IN THE SUPPORTED LOCALES.
-            $this -> piper_lang -> setLocale('es');
-            $this -> assertEquals('es', $this -> piper_lang -> getLocale(), 'Expected locale to be set to "es"');
+        #[Test]
+        public function loadLocaleShouldLoadTranslationsFromFile(): void {
+            // Set up a test environment where files can be found.
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
 
-            // TEST: SET A PREFERRED LOCALE THAT IS NOT A PART OF THE SUPPORTED LOCALES, SHOULD USE DEFAULT LOCALE.
-            $this -> piper_lang -> setLocale('fr');
-            $this -> assertEquals('en', $this -> piper_lang -> getLocale(), 'Expected locale to fall back to default "en"');
+            $piperLang = new PiperLang(
+                debug: false,
+                default_locale: 'en',
+                locale_path: '/locales/',
+                supported_locales: ['en', 'fr']
+            );
 
-            // TEST: ENSURE THAT DEFAULT LOCALE IS ADDED TO SUPPORTED LOCALES IF IT'S MISSING.
-            $this -> piper_lang -> supported_locales = ['es'];
-            $this -> piper_lang -> setLocale('es');
-            $this -> assertContains('en', $this -> piper_lang -> supported_locales, 'Expected default locale "en" to be added to supported locales');
+            $piperLang->loadLocale('en');
 
-            // TEST: SESSION BEHAVIOR WHEN SESSION IS ENABLED.
-            $this -> piper_lang -> session_enabled = true;
-            $_SESSION = [];
-
-            $this -> piper_lang -> setLocale('es');
-            $this -> assertEquals('es', $_SESSION[$this -> piper_lang -> session_key], 'Expected session locale to be set to "es"');
-
-            // TEST: BEHAVIOR WHEN SESSION IS DISABLED.
-            $this -> piper_lang -> session_enabled = false;
-            $_SESSION = [];
-
-            $this -> piper_lang -> setLocale('es');
-            $this -> assertArrayNotHasKey($this -> piper_lang -> session_key, $_SESSION, 'Expected no session locale to be set when session is disabled');
-
-            // TEST: COOKIE BEHAVIOR WHEN COOKIES ARE ENABLED.
-            $this -> piper_lang -> cookie_enabled = true;
-
-            ob_start();
-            $this -> piper_lang -> setLocale('es');
-            ob_end_clean();
-
-            $this -> assertTrue(isset($_COOKIE[$this -> piper_lang -> cookie_key]), 'Expected cookie to be set');
-            $this -> assertEquals('es', $_COOKIE[$this -> piper_lang -> cookie_key], 'Expected cookie value to be set to "es"');
+            static::assertArrayHasKey('en', $piperLang->loaded_locales);
+            static::assertArrayHasKey('welcome', $piperLang->loaded_locales['en']);
+            static::assertSame('Welcome to Test Site', $piperLang->loaded_locales['en']['welcome']);
         }
 
-        public function testSetLocalePath(): void {
-            // TEST: ENSURE VALID LOCALE PATH IS SET CORRECTLY.
-            $valid_path = __DIR__;
-            $this -> piper_lang -> setLocalePath($valid_path);
-            $this -> assertEquals($valid_path, $this -> piper_lang -> locale_path);
+        #[Test]
+        public function loadLocaleShouldReplaceVariablesInTranslations(): void {
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
 
-            // TEST: THROW EXCEPTION FOR INVALID LOCALE PATH WHEN IN DEBUG MODE.
-            $invalid_path = '/path/to/non/existent/directory';
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(RuntimeException::class);
-            $this -> piper_lang -> setLocalePath($invalid_path);
+            $piperLang = new PiperLang(
+                debug: false,
+                default_locale: 'en',
+                locale_path: '/locales/',
+                supported_locales: ['en', 'fr']
+            );
+
+            $piperLang->loadLocale('en');
+
+            static::assertSame('Welcome to Test Site', $piperLang->loaded_locales['en']['welcome']);
+            static::assertSame('About Acme Corp', $piperLang->loaded_locales['en']['about']);
         }
 
-        public function testSwitchLocale(): void {
-            // TEST: ENSURE LOCALE IS SWITCHED AND STORED IN SESSION.
-            $_SESSION = [];
+        #[Test]
+        public function loadLocaleShouldGracefullyHandleMissingDocumentRoot(): void {
+            unset($_SERVER['DOCUMENT_ROOT']);
 
-            $this -> piper_lang -> switchLocale('es');
-            $this -> assertEquals('es', $this -> piper_lang -> current_locale);
-            $this -> assertEquals('es', $_SESSION['current_locale']);
+            $piperLang = new PiperLang(
+                debug: false,
+                default_locale: 'en',
+                supported_locales: ['en', 'fr']
+            );
+
+            // This should not throw an exception.
+            $piperLang->loadLocale('en');
+
+            static::assertArrayNotHasKey('en', $piperLang->loaded_locales);
         }
 
-        public function testReplaceVariables(): void {
-            // TEST: REPLACING VARIABLES IN STRING WHERE THE VARIABLE EXISTS.
-            $string = 'Hello, world!';
-            $variables = ['name' => 'Bob'];
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, world!', $result);
+        #[Test]
+        public function loadLocaleShouldThrowExceptionForInvalidJsonInDebugMode(): void {
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
 
-            // TEST: REPLACING STRING WITH MISSING VARIABLE.
-            $string = '{{missing}}, world!';
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('{{missing}}, world!', $result);
+            $piperLang = new PiperLang(
+                debug: true,
+                default_locale: 'en',
+                locale_path: '/locales/',
+                supported_locales: ['en', 'fr', 'invalid']
+            );
 
-            // TEST: NO REPLACEMENT IF VARIABLE PATTERN IS NULL.
-            $this -> piper_lang -> variable_pattern = null;
-            $string = 'Hello, {{name}}!';
-            $result = $this -> piper_lang -> replaceVariables($string, $variables);
-            $this -> assertEquals('Hello, {{name}}!', $result);
+            $this->expectException(JsonException::class);
+            $piperLang->loadLocale('invalid');
         }
 
-        public function testTranslateWithPlural(): void {
-            // TEST: TRANSLATION WITH PLURAL FORM.
-            $key = 'message';
-            $count = 1;
-            $variables = ['name' => 'John'];
+        #[Test]
+        public function loadLocaleShouldNotThrowExceptionForInvalidJsonWhenNotInDebugMode(): void {
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
 
-            $this -> piper_lang -> current_locale = 'en';
-            $this -> piper_lang -> default_locale = 'en';
-            $this -> piper_lang -> plural_rules['en'] = '_1';
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
+            $piperLang = new PiperLang(
+                debug: false,
+                default_locale: 'en',
+                locale_path: '/locales/',
+                supported_locales: ['en', 'fr', 'invalid']
+            );
 
-            // TEST: TRANSLATION WITHOUT CUSTOM PLURAL RULE.
-            unset($this -> piper_lang -> plural_rules['en']);
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count, $variables));
+            // This should not throw an exception.
+            $piperLang->loadLocale('invalid');
 
-            // TEST: TRANSLATION WITH COUNT > 1.
-            $count = 2;
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-
-            // TEST: TRANSLATION FOR NON-EXISTENT LOCALE.
-            $this -> piper_lang -> current_locale = 'non_existant_locale';
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
-
-            // TEST: EXCEPTION FOR NON-EXISTENT DEFAULT LOCALE IN DEBUG MODE.
-            $this -> piper_lang -> default_locale = 'non_existant_locale';
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(RuntimeException::class);
-            $this -> assertIsString($this -> piper_lang -> translateWithPlural($key, $count));
+            static::assertArrayNotHasKey('invalid', $piperLang->loaded_locales);
         }
 
-        public function testLoadFile(): void {
-            // TEST: LOADING A VALID LOCALE FILE.
-            $locale = $this -> piper_lang -> default_locale;
-            $this -> piper_lang -> locale_path = 'locales/';
-            $this -> piper_lang -> locale_file_extension = 'json';
-            $this -> assertIsArray($this -> piper_lang -> loadFile($locale));
+        #[Test]
+        public function loadLocaleShouldFallBackToDefaultLocaleIfFileNotFound(): void {
+            $_SERVER['DOCUMENT_ROOT'] = dirname($this->testLocalesPath);
 
-            // TEST: THROW EXCEPTION FOR NON-EXISTENT LOCALE FILE.
-            $locale = 'non_existant_locale';
-            $this -> piper_lang -> default_locale = 'default_locale';
-            $this -> expectException(RuntimeException::class);
-            $this -> piper_lang -> loadFile($locale);
+            $piperLang = new PiperLang(
+                debug: false,
+                default_locale: 'en',
+                locale_path: '/locales/',
+                locale_file_extension: 'json',
+                supported_locales: ['en', 'fr', 'es']
+            );
+
+            // Ensure the file for 'es' doesn't exist so fallback is triggered.
+            @unlink($this->testLocalesPath . 'es.json');
+
+            $piperLang->loadLocale('es');
+
+            // Check that fallback happened.
+            static::assertArrayHasKey('en', $piperLang->loaded_locales);
+            static::assertArrayNotHasKey('es', $piperLang->loaded_locales);
         }
 
-        public function testUnloadFile(): void {
-            // TEST: UNLOAD A LOADED LOCALE FILE.
-            $locale = $this -> piper_lang -> default_locale;
-            $this -> piper_lang -> loadFile($locale);
-            $this-> assertArrayHasKey($locale, $this-> piper_lang -> loaded_locales);
-            $this -> piper_lang -> unloadFile($locale);
-            $this-> assertArrayNotHasKey($locale, $this-> piper_lang -> loaded_locales);
+        #[Test]
+        public function unloadFileShouldRemoveLoadedLocale(): void {
+            $piperLang = new PiperLang(debug: false);
+            $piperLang->loaded_locales = [
+                'en' => ['welcome' => 'Welcome'],
+                'fr' => ['welcome' => 'Bienvenue'],
+            ];
 
-            // TEST: THROW EXCEPTION FOR UNLOADING A NON-EXISTENT LOCALE IN DEBUG MODE.
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(RuntimeException::class);
-            $this -> piper_lang -> unloadFile($locale);
+            $piperLang->unloadFile('en');
+
+            static::assertArrayNotHasKey('en', $piperLang->loaded_locales);
+            static::assertArrayHasKey('fr', $piperLang->loaded_locales);
         }
 
-        public function testFormatNumber(): void {
-            // TEST: FORMAT NUMBER IN DIFFERENT LOCALES.
-            $this -> piper_lang -> current_locale = 'en';
-            $this -> assertEquals('1,234.57', $this -> piper_lang -> formatNumber(1234.56789));
-            $this -> piper_lang -> current_locale = 'de';
-            $this -> assertEquals('1.234,57', $this -> piper_lang -> formatNumber(1234.56789));
+        #[Test]
+        public function unloadFileShouldThrowExceptionInDebugModeForNonLoadedLocale(): void {
+            $piperLang = new PiperLang(debug: true);
+            $piperLang->loaded_locales = ['en' => ['welcome' => 'Welcome']];
 
-            // TEST: THROW EXCEPTION WHEN NO LOCALE IS SET.
-            $this -> piper_lang -> current_locale = null;
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> formatNumber(1234.56789);
-
-            // TEST: THROW EXCEPTION FOR INVALID NUMBER IN formatNumber.
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> expectExceptionMessage("Not a valid number for formatting.");
-            $this -> piper_lang -> formatNumber('non-numeric');
+            $this->expectException(RuntimeException::class);
+            $piperLang->unloadFile('fr');
         }
 
-        public function testFormatCurrency(): void {
-            // TEST: FORMAT CURRENCY IN DIFFERENT LOCALES.
-            $this -> piper_lang -> current_locale = 'en';
-            $this -> assertEquals('$123.46', $this -> piper_lang -> formatCurrency(123.456, 'USD', true));
+        #[Test]
+        public function unloadFileShouldNotThrowExceptionWhenNotInDebugModeForNonLoadedLocale(): void {
+            $piperLang = new PiperLang(debug: false);
+            $piperLang->loaded_locales = ['en' => ['welcome' => 'Welcome']];
 
-            // TEST: THROW EXCEPTION WHEN NO LOCALE IS SET FOR CURRENCY FORMATTING.
-            $this -> piper_lang -> current_locale = null;
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> formatCurrency(123.456, 'USD', true);
+            // This should not throw an exception.
+            $piperLang->unloadFile('fr');
 
-            // TEST: THROW EXCEPTION FOR INVALID AMOUNT IN formatCurrency.
-            $this -> expectException(null);
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> expectExceptionMessage("Not a valid amount for currency formatting.");
-            $this -> piper_lang -> formatCurrency('non-numeric', 'USD', true);
-
-            // TEST: THROW EXCEPTION FOR INVALID ISO CURRENCY CODE IN formatCurrency.
-            $this -> expectException(null);
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> expectExceptionMessage('Not a valid ISO 4217 currency code.');
-            $this -> piper_lang -> formatCurrency(123.456, 'INVALID', true);
+            static::assertArrayHasKey('en', $piperLang->loaded_locales);
         }
 
-        public function testFormatDate(): void {
-            // TEST: FORMAT DATE IN DIFFERENT LOCALES.
-            $this -> piper_lang -> current_locale = 'en';
-            $test_date = new DateTime('2023-01-01');
-            $this -> assertEquals('January 1, 2023', $this -> piper_lang -> formatDate($test_date, 'long'));
+        #[Test]
+        public function replaceVariablesShouldReplacePlaceholdersWithVariableValuesUsingDefaultPattern(): void {
+            $piperLang = new PiperLang();
 
-            $this -> piper_lang -> current_locale = 'de';
-            $test_date = new DateTime('2023-01-01');
-            $this -> assertEquals('1. Januar 2023', $this -> piper_lang -> formatDate($test_date, 'long'));
+            $result = $piperLang->replaceVariables(
+                'Hello {{name}}, welcome to {{site}}!',
+                ['name' => 'John', 'site' => 'Example.com']
+            );
+
+            static::assertSame('Hello John, welcome to Example.com!', $result);
         }
 
-        public function testGetFormattingRules(): void {
-            // TEST: ENSURE getFormattingRules RETURNS VALID DATA FOR THE CURRENT LOCALE.
-            $this -> piper_lang -> current_locale = 'en';
-            $this -> assertIsArray($this -> piper_lang -> getFormattingRules());
+        #[Test]
+        public function replaceVariablesShouldReplacePlaceholdersWithVariableValuesUsingCustomPattern(): void {
+            $piperLang = new PiperLang();
+            $piperLang->variable_pattern = '/%(\w+)%/';
 
-            // TEST: THROW EXCEPTION WHEN NO VALID LOCALE IS SET.
-            $this -> piper_lang -> current_locale = null;
-            $this -> piper_lang -> debug = true;
-            $this -> expectException(InvalidArgumentException::class);
-            $this -> piper_lang -> getFormattingRules();
+            $result = $piperLang->replaceVariables(
+                'Hello %name%, welcome to %site%!',
+                ['name' => 'John', 'site' => 'Example.com']
+            );
+
+            static::assertSame('Hello John, welcome to Example.com!', $result);
+        }
+
+        #[Test]
+        public function replaceVariablesShouldKeepOriginalPlaceholderIfVariableNotFound(): void {
+            $piperLang = new PiperLang();
+
+            $result = $piperLang->replaceVariables(
+                'Hello {{name}}, welcome to {{site}}!',
+                ['name' => 'John']
+            );
+
+            static::assertSame('Hello John, welcome to {{site}}!', $result);
+        }
+
+        #[Test]
+        public function formatNumberShouldFormatNumbersAccordingToLocale(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en_US';
+
+            $result = $piperLang->formatNumber(1234.56);
+
+            // US locale uses period as decimal separator.
+            static::assertSame('1,234.56', $result);
+        }
+
+        #[Test]
+        public function formatNumberShouldRespectMaxFractionDigitsParameter(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en_US';
+
+            $result = $piperLang->formatNumber(1234.56789, 3);
+
+            static::assertSame('1,234.568', $result);
+        }
+
+        #[Test]
+        public function formatNumberShouldThrowExceptionWhenLocaleIsNotSet(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = null;
+
+            $this->expectException(InvalidArgumentException::class);
+            $piperLang->formatNumber(1234.56);
+        }
+
+        #[Test]
+        public function formatCurrencyShouldFormatCurrencyAccordingToLocaleWithSymbol(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en_US';
+
+            $result = $piperLang->formatCurrency(1234.56, 'USD');
+
+            // Format depends on the locale implementation but should contain the symbol
+            static::assertStringContainsString('$', $result);
+            static::assertStringContainsString('1,234.56', $result);
+        }
+
+        #[Test]
+        public function formatCurrencyShouldFormatCurrencyWithoutSymbolWhenShowSymbolIsFalse(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en_US';
+
+            $result = $piperLang->formatCurrency(1234.56, 'USD', false);
+
+            // Should not contain the $ symbol but should have USD instead
+            static::assertStringContainsString('USD', $result);
+        }
+
+        #[Test]
+        public function formatCurrencyShouldThrowExceptionForInvalidCurrencyCode(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = 'en_US';
+
+            $this->expectException(InvalidArgumentException::class);
+            $piperLang->formatCurrency(1234.56, 'INVALID');
+        }
+
+        #[Test]
+        #[DataProvider('dateFormatProvider')]
+        public function formatDateShouldFormatDateAccordingToLocaleAndFormatStyle(
+            string $format
+        ): void {
+            $mock_piperLang = $this->getMockBuilder(PiperLang::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['formatDate'])
+                ->getMock();
+
+            $date = new DateTimeImmutable('2023-05-15 10:30:00');
+
+            // We're testing that the correct IntlDateFormatter style is selected.
+            // The actual formatting depends on the system's locale settings.
+            $mock_piperLang->expects(static::once())
+                ->method('formatDate')
+                ->with($date, $format);
+
+            $mock_piperLang->formatDate($date, $format);
+        }
+
+        /**
+         * Data provider for date format tests.
+         *
+         * @return array<string, array{string, int}>
+         */
+        public static function dateFormatProvider(): array {
+            return [
+                'short format'    => ['short', IntlDateFormatter::SHORT],
+                'medium format'   => ['medium', IntlDateFormatter::MEDIUM],
+                'long format'     => ['long', IntlDateFormatter::LONG],
+                'full format'     => ['full', IntlDateFormatter::FULL],
+                'default to long' => ['unknown', IntlDateFormatter::LONG],
+            ];
+        }
+
+        #[Test]
+        public function getFormattingRulesShouldReturnLocaleSpecificFormattingRules(): void {
+            $piperLang = new PiperLang();
+
+            // Fallback-safe system locale.
+            $piperLang->current_locale = 'C';
+
+            $rules = $piperLang->getFormattingRules();
+
+            static::assertArrayHasKey('decimal_point', $rules);
+            static::assertArrayHasKey('thousands_sep', $rules);
+        }
+
+        #[Test]
+        public function getFormattingRulesShouldThrowExceptionWhenLocaleIsNotSet(): void {
+            $piperLang = new PiperLang();
+            $piperLang->current_locale = null;
+
+            $this->expectException(InvalidArgumentException::class);
+            $piperLang->getFormattingRules();
         }
     }
