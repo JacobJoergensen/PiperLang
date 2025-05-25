@@ -5,7 +5,7 @@ PiperLang 2.0.0 includes significant improvements to architecture, performance, 
 
 * PiperLang now is running php 8.4
 
-### Breaking Changes
+### 💥 Breaking Changes
 * The deprecated hooks system has been completely removed as planned.
 * The formatDate() method now requires DateTimeImmutable instead of DateTime:
     * Old way: $piperLang->formatDate(new DateTime());
