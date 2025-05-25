@@ -1,7 +1,7 @@
 # PiperLang Changelog
 
 ## Version 2.0.0 (25-05-25)
-PiperLang 2.0.0 includes significant improvements to architecture, performance, and security. However, these improvements come with breaking changes that may require updates to your existing code. This document outlines the major changes to help you migrate from version 1.x to 2.0.0.
+PiperLang 2.0.0 includes significant improvements to architecture, performance and security. However, these improvements come with breaking changes that may require updates to your existing code. This document outlines the major changes to help you migrate from version 1.x to 2.0.0.
 
 * PiperLang now is running php 8.4
 
