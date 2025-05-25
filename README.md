@@ -1,5 +1,5 @@
 <h1 align="center">PiperLang</h1>
-<p align="center">PiperLang is a compact and efficient PHP framework designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, dynamic pluralization, variable substitution in translations, and number, currency and date formatting in accordance with the set locale.</p>
+<p align="center">PiperLang is a compact and efficient PHP library designed to provide localization capacities for your web application. With features supporting cookie and session-based locale detection, variable substitution in translations, number, currency and date formatting in accordance with the set locale.</p>
 <hr>
 <p align="center">
       <strong>Craft your web app with precision, localize with ease.</strong>
@@ -25,14 +25,12 @@
 
 ## Features
 * <strong>Localization Support:</strong> PiperLang provides robust support for localization, allowing developers to easily translate their web applications into different languages.
-* <strong>Automatic Locale Detection:</strong> The framework can automatically detect the user's preferred locale based on their browser settings or session/cookie preferences.
+* <strong>Automatic Locale Detection:</strong> The library can automatically detect the user's preferred locale based on their browser settings or session/cookie preferences.
 * <strong>Flexible Locale Management:</strong> Developers can set, switch, and manage locales dynamically, either based on user preferences or default settings.
-* <strong>Translation with Pluralization:</strong> PiperLang facilitates translation with pluralization, ensuring accurate representation of phrases based on count variations.
 * <strong>Variable Replacement in Translations:</strong> Developers can easily replace placeholders in translated strings with provided variables, enhancing flexibility in localization.
-* <strong>Locale File Management:</strong> The framework handles loading and processing of locale files, ensuring proper validation of content and support for JSON format.
+* <strong>Locale File Management:</strong> The library handles loading and processing of locale files, ensuring proper validation of content and support for JSON format.
 * <strong>Number and Currency Formatting:</strong> PiperLang offers utilities for formatting numbers and currency amounts according to the current locale, improving user experience in diverse regions.
 * <strong>Date Formatting:</strong> Developers can format dates according to the current locale, with options for different date formats such as short, medium, long, and full.
-* <strong>Customizable Hooks:</strong> The framework allows developers to define and execute custom hook actions at various stages, providing extensibility for integrating additional functionalities.
 * <strong>Debugging Support:</strong> PiperLang includes debugging features to help developers identify and resolve issues related to locale management, file loading, and formatting.
 
 ## Quick Start
@@ -57,30 +55,8 @@
   $piper = new PiperLang();
   ```
 
-#### 3. Simple Example
-- Now we can start playing around with PiperLang, this is a super simple example of it.
-  ```php
-  $piper->supported_locales = ['en', 'da']; // Modifying supported locales
-  $piper->locale_path = '/app/assets/locales/'; // Modifying the path for the locale files
-  $piper->debug = true; // Set the debug mode to true
-
-  $piper->setLocale($piper->detectBrowserLocale()); // Set locale based on the browser locale
-
-  echo "Current Locale: " . $piper->getLocale() . "\n"; // To see the current locale
-
-  $localeNodes = $piper->loadFile($piper->detectBrowserLocale()); // Load the locale file based on the browser locale
-
-  if (isset($localeNodes['welcome'])) {
-      echo "Welcome Message: " . $localeNodes['welcome'] . "\n";
-  } else {
-      echo "No translation found for 'welcome' key in " . $piper->current_locale . " locale.\n";
-  }
-  ```
-
-- <a href="https://github.com/JacobJoergensen/PiperLang/tree/main/examples"> See more examples by clicking here!</a>
-
 ## Status
-![ci](https://github.com/JacobJoergensen/PiperLang/actions/workflows/ci.yml/badge.svg)
+![workflow](https://github.com/JacobJoergensen/PiperLang/actions/workflows/workflow.yml/badge.svg)
 [![codecov](https://codecov.io/gh/JacobJoergensen/PiperLang/graph/badge.svg?token=K6OZ3AVDPC)](https://codecov.io/gh/JacobJoergensen/PiperLang)
 
 ## Contributing
